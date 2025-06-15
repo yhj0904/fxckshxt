@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
  *
  *  </pre>
  */
-@Service("loginService")
+@Service("egovLoginService")
 public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements EgovLoginService {
 
 	@Resource(name = "loginDAO")

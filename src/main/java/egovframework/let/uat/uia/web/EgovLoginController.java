@@ -39,9 +39,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 @Controller
 public class EgovLoginController {
 
-	/** EgovLoginService */
-	@Resource(name = "loginService")
-	private EgovLoginService loginService;
+    /** EgovLoginService */
+    @Resource(name = "egovLoginService")
+    private EgovLoginService loginService;
 
 	/** EgovMessageSource */
 	@Resource(name = "egovMessageSource")

@@ -19,18 +19,19 @@
     
     <bean id="messageSource" class="kr.co.nanwe.cmmn.bean.WildcardReloadableResourceBundleMessageSource">
         <property name="basenames">
-			<list>
-				<value>classpath*:egovframework/message/vo/**/*</value>
-				<value>classpath*:egovframework/message/contents/**/*</value>
-				<value>classpath:/egovframework/message/message-common</value>
-				<value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value>
-				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
-			</list>
-		</property>
-		<property name="cacheSeconds">
-			<value>60</value>
-		</property>
+                        <list>
+                                <value>classpath*:egovframework/message/vo/**/*</value>
+                                <value>classpath*:egovframework/message/contents/**/*</value>
+                                <value>classpath:/egovframework/message/message-common</value>
+                                <value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value>
+                                <value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
+                        </list>
+                </property>
+                <property name="cacheSeconds">
+                        <value>60</value>
+                </property>
     </bean>
+    <alias name="messageSource" alias="egovMessageSource" />
 
 	<!-- 
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

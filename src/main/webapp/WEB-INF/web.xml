@@ -113,7 +113,10 @@
 		<cookie-config>
 			<path>/</path>
 			<domain>localhost</domain>
+			<http-only>true</http-only>
+			<secure>false</secure>
 		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
 	</session-config>
 	<error-page>
 		<error-code>404</error-code>

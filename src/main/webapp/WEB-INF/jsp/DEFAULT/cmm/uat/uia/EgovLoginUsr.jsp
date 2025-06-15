@@ -133,7 +133,7 @@ onkeydown="javascript:if (event.keyCode == 13) { actionLogin(); }"/>
 </div>
 <input type="hidden" name="message" value="${message}" />
 <input type="hidden" name="userSe" value="USR"/>
-<input type="hidden" name="returnLogin" value="/cmm/main/mainPage.do"/>
+<input type="hidden" name="returnLogin" value="${returnLogin}"/>
 <!-- <input type="hidden" name="j_username" />-->
 </form:form>
 <div class="text_area">

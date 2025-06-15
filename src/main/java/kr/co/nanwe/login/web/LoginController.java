@@ -242,8 +242,6 @@ public class LoginController {
 			//Redirect URL이 있는지 확인
 			if(StringUtil.isNull(returnLogin)) {
 				returnLogin = "/";
-			}else if (returnLogin =="/cmm/main/mainPage.do") {
-				return "redirect:/cmm/main/mainPage.do";
 			}
 			
 			model.addAttribute("returnLogin", returnLogin);

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- 기본 템플릿 -->
+	<definition name="defaultMain" 	template="/WEB-INF/jsp/tiles/main.jsp"></definition>	
+	<definition name="defaultSub" 	template="/WEB-INF/jsp/tiles/sub.jsp"></definition>
+	<definition name="defaultPop" 	template="/WEB-INF/jsp/tiles/pop.jsp"></definition>
+	<definition name="defaultLogin" 	template="/WEB-INF/jsp/tiles/login.jsp"></definition>
+	<definition name="defaultEmpty" 	template="/WEB-INF/jsp/tiles/empty.jsp"></definition>
+	
+	<definition name="DEFAULT/*.main" extends="defaultMain">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="DEFAULT/**/*.main" extends="defaultMain">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+	
+	<definition name="DEFAULT/*.sub" extends="defaultSub">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="DEFAULT/**/*.sub" extends="defaultSub">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="DEFAULT/*.pop" extends="defaultPop">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="DEFAULT/**/*.pop" extends="defaultPop">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="DEFAULT/*.login" extends="defaultLogin">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="DEFAULT/**/*.login" extends="defaultLogin">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="DEFAULT/*.empty" extends="defaultEmpty">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="DEFAULT/**/*.empty" extends="defaultEmpty">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+</tiles-definitions>

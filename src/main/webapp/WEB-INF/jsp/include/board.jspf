@@ -1,0 +1,12 @@
+<%@ include file="/WEB-INF/jsp/include/context.jspf" %>
+<%@ page import="kr.co.nanwe.bbs.service.BbsService" %>
+<%@ page import="kr.co.nanwe.bbs.service.BbsVO" %>
+<%@ page import="kr.co.nanwe.cmmn.util.DateUtil" %>
+<%@ page import="kr.co.nanwe.file.service.ViewFileVO" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%
+BbsService bbsService = (BbsService) webApplicationContext.getBean("bbsService");
+%>

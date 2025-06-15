@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.bbs.service.impl.BbsCmntMapper">
+
+	<select id="selectBbsCmntTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(CMNT_ID)
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</select>
+	
+	<select id="selectBbsCmntList" parameterType="map" resultType="bbsCmntVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  CMNT_ID
+					, BBS_ID
+					, BBS_CD
+					, CMNT_TXT
+					, WRITER
+					, PW
+					, CMNT_SEQ
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+		ORDER BY	CMNT_SEQ DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectBbsCmnt" parameterType="map" resultType="bbsCmntVO">
+		SELECT
+					  CMNT_ID
+					, BBS_ID
+					, BBS_CD
+					, CMNT_TXT
+					, WRITER
+					, PW
+					, CMNT_SEQ
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+		AND			CMNT_ID = #{cmntId}
+	</select>
+	
+	<insert id="insertBbsCmnt" parameterType="bbsCmntVO">
+		<selectKey resultType="string" keyProperty="cmntId" order="BEFORE">
+			SELECT 'CMNT_'||LPAD(NVL(MAX(CMNT_SEQ), 0)+1, 10, 0) FROM COM_BBS_CMNT
+		</selectKey>
+		INSERT
+		INTO 	COM_BBS_CMNT
+		(
+				  CMNT_ID
+				, BBS_ID
+				, BBS_CD
+				, CMNT_TXT
+				, WRITER
+				, PW
+				, CMNT_SEQ
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{cmntId}
+				, #{bbsId}
+				, #{bbsCd}
+				, #{cmntTxt}
+				, #{writer}
+				, #{pw}
+				, (SELECT NVL(MAX(CMNT_SEQ), 0)+1 FROM COM_BBS_CMNT)
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+		)
+	</insert>
+	
+	<update id="updateBbsCmnt" parameterType="bbsCmntVO">
+		UPDATE
+				COM_BBS_CMNT
+		SET
+				CMNT_TXT = #{cmntTxt}
+		WHERE	BBS_CD = #{bbsCd}
+		AND		BBS_ID = #{bbsId}
+		AND		CMNT_ID = #{cmntId}
+	</update>
+	
+	<delete id="deleteBbsCmnt" parameterType="map">
+		DELETE 
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+		AND			CMNT_ID = #{cmntId}
+	</delete>
+	
+	<delete id="deleteBbsCmntByBbsId" parameterType="map">
+		DELETE 
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</delete>
+	
+	<delete id="deleteBbsCmntByBbsCd" parameterType="map">
+		DELETE 
+		FROM		COM_BBS_CMNT
+		WHERE		BBS_CD = #{bbsCd}
+	</delete>
+	
+</mapper>

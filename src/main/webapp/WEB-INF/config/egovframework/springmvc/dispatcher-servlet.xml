@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="kr.co.nanwe, egovframework">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+         <context:exclude-filter type="assignable" expression="egovframework.com.cmm.web.EgovFileDownloadController"/>
+         <context:exclude-filter type="assignable" expression="egovframework.com.cmm.web.EgovFileMngController"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="kr.co.nanwe.cmmn.web.EgovBindingInitializer"/>
+        </property>
+        <property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=UTF-8</value>
+							<value>application/json;charset=UTF-8</value>
+							<value>application/xml;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+			</list>
+		</property>
+    </bean>
+    
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+    	<property name="alwaysUseFullPath" value="true"></property>
+        <property name="interceptors">
+            <list>
+                <ref bean="localeChangeInterceptor" />
+            </list>
+        </property>
+    </bean>
+    
+    <mvc:interceptors>
+    	<!-- cache config
+		<bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0"/>
+			<property name="useExpiresHeader" value="true"/>
+			<property name="useCacheControlHeader" value="true"/>
+			<property name="useCacheControlNoStore" value="true"/>
+		</bean> -->
+    
+    	<!-- 인터셉터 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/"/>
+			<mvc:mapping path="/*.do"/>
+			<mvc:mapping path="/**/*.do"/>
+			<mvc:exclude-mapping path="/*.json"/>
+			<mvc:exclude-mapping path="/**/*.json"/>
+			<mvc:exclude-mapping path="/api/*"/>
+			<mvc:exclude-mapping path="/api/**/*"/>
+			<mvc:exclude-mapping path="/cmmn/validator.do" /> <!-- validator 제외 -->
+			<mvc:exclude-mapping path="/errors/**" />
+			<mvc:exclude-mapping path="/sys/**" />
+			<mvc:exclude-mapping path="/sys.do" />
+			<mvc:exclude-mapping path="/prepare.do"/> <!-- 준비중 페이지 -->
+			<mvc:exclude-mapping path="/error/**"/> <!-- 에러페이지 -->
+			<mvc:exclude-mapping path="/logout.do"/> <!-- 로그아웃 -->
+			<mvc:exclude-mapping path="/file/**"/>
+			<mvc:exclude-mapping path="/login/sns/**"/> <!-- SNS -->
+			<mvc:exclude-mapping path="/shop/**"/> <!-- 쇼핑몰 -->
+			<mvc:exclude-mapping path="/getCnslDeptCd.json"/> <!-- 상담 학과 조회 -->
+			
+			
+			<mvc:exclude-mapping path="/egovSampleList.do" />
+			<mvc:exclude-mapping path="/addSample.do" />
+			<mvc:exclude-mapping path="/updateSampleView.do" />
+			
+			
+			<bean class="kr.co.nanwe.cmmn.interceptor.CmmnInterceptor" />
+		</mvc:interceptor>	
+		
+		<!-- 관리자 인터셉터 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/sys.do"/>
+			<mvc:mapping path="/sys/*.do"/>
+			<mvc:mapping path="/sys/**/*.do"/>
+			<mvc:exclude-mapping path="/sys/logout.do"/> <!-- 로그아웃 -->
+			<bean class="kr.co.nanwe.cmmn.interceptor.SysInterceptor" />
+		</mvc:interceptor>
+		
+		<!-- REST 인터셉터 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/*.json"/>
+			<mvc:mapping path="/**/*.json"/>
+			<mvc:mapping path="/api/*"/>
+			<mvc:mapping path="/api/**/*"/>
+			<mvc:exclude-mapping path="/login/checkLogin.json"/> <!-- 로그인 검증 -->
+			<mvc:exclude-mapping path="/sys/login/checkLogin.json"/> <!-- 로그인 검증 -->
+			<mvc:exclude-mapping path="/login/checkCertification.json"/> <!-- 2차인증 체크 -->
+			<mvc:exclude-mapping path="/login/reCertification.json"/> <!-- 2차인증 갱신 -->
+			<mvc:exclude-mapping path="/user/initRsa.json"/> <!-- RSA 생성 -->
+			<mvc:exclude-mapping path="/find/sendUserId.json"/> <!-- 아이디 발송 -->
+			<mvc:exclude-mapping path="/find/findUserPwInfo.json"/> <!-- 비밀번호 찾기 -->
+			<mvc:exclude-mapping path="/find/checkCertification.json"/> <!-- 비밀번호 2차인증 체크 -->
+			<mvc:exclude-mapping path="/find/reCertification.json"/> <!-- 비밀번호 2차인증 갱신 -->
+			<mvc:exclude-mapping path="/find/checkPw.json"/> <!-- 비밀번호 체크 -->
+			<mvc:exclude-mapping path="/user/initCertification.json"/> <!-- 2차인증 체크 -->
+			<mvc:exclude-mapping path="/user/checkCertification.json"/> <!-- 2차인증 체크 -->
+			<mvc:exclude-mapping path="/user/reCertification.json"/> <!-- 2차인증 갱신 -->
+			<mvc:exclude-mapping path="/board/cmnt/*"/> <!-- 댓글 -->
+			<mvc:exclude-mapping path="/push/users/app.json"/> <!-- 디바이스 등록 -->
+			<mvc:exclude-mapping path="/dept/getColgList.json"/> <!-- 부서 목록 조회 -->
+			<mvc:exclude-mapping path="/prog_surv/crtSurv.json"/> <!-- 설문지 생성 -->
+			<mvc:exclude-mapping path="/prog/apply.json"/> <!-- 프로그램 신청 -->
+			<mvc:exclude-mapping path="/getCnslDeptCd.json"/> <!-- 상담 학과 조회 -->
+			<mvc:exclude-mapping path="/cnsl/selectCnslerByColg.json"/> <!-- 상담선생님 조회 -->
+			<mvc:exclude-mapping path="/commCd/view.json"/> <!-- 공통코드 상세정보 -->
+			<mvc:exclude-mapping path="/emp/*"/> <!-- 채용정보 데이터 가져오기 -->
+			<mvc:exclude-mapping path="/emp/**/*"/> <!-- 채용정보 데이터 가져오기 -->
+			<bean class="kr.co.nanwe.cmmn.interceptor.RestInterceptor" />
+		</mvc:interceptor>
+		
+		 <mvc:interceptor>
+	          <mvc:mapping path="/board/*"/>
+	          <mvc:mapping path="/board/**/*"/>
+			  <mvc:mapping path="/prog/*"/>
+	          <mvc:mapping path="/prog/**/*"/>
+	          <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+	               <property name="cacheSeconds" value="0"/>
+	              <!--  <property name="cacheMappings">
+	                   <props>
+	                      <prop key="/api/photo/**">86400</prop>
+	                   </props>
+	               </property> -->
+	           </bean>
+	     </mvc:interceptor>
+		
+	</mvc:interceptors>
+    
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+    
+    <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="language" />
+    </bean>
+    
+    <!-- 
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="error/egovError"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataAccessException">error/dataAccessFailure</prop>
+                <prop key="org.springframework.transaction.TransactionException">error/transactionFailure</prop>
+                <prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">error/egovError</prop>
+                <prop key="org.springframework.security.AccessDeniedException">error/egovError</prop>
+            </props>
+        </property>
+    </bean>
+     -->
+    <bean class="kr.co.nanwe.exception.ComMappingExceptionResolver">
+        <property name="defaultErrorView" value="error/egovError"/>
+        <property name="exceptionMappings">
+            <props>
+               <prop key="org.springframework.dao.DataAccessException">error/dataAccessFailure</prop>
+               <prop key="org.springframework.transaction.TransactionException">error/transactionFailure</prop>
+               <prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">error/egovError</prop>
+               <prop key="java.lang.Throwable">error/error</prop>
+               <prop key="java.lang.Exception">error/error</prop>
+            </props>
+        </property>
+        <property name="statusCodes">
+            <props>
+               <prop key="error/error400">400</prop>
+               <prop key="error/error401">401</prop>
+               <prop key="error/error403">403</prop>
+            </props>        
+        </property>
+    </bean>
+     
+    <!-- TILES VIEW -->
+    <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+  		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+  		<property name="order" value="1" />
+	</bean>
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+  		<property name="definitions">
+   			<list>
+    			<value>/WEB-INF/config/tiles/layout-*.xml</value>
+   			</list>
+  		</property>
+	</bean>
+	<!-- TILES VIEW -->
+	
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="2"
+	    p:viewClass="org.springframework.web.servlet.view.JstlView"
+	    p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+
+	<!-- 로그기록을 위한 Controller AOP -->
+	<bean id="programLogAspect" class="kr.co.nanwe.log.service.ProgramLogAspect" />
+	<aop:config>
+		<aop:aspect id="controllerAspect" ref="programLogAspect">
+			<aop:before pointcut="execution(public * kr.co.nanwe..web.*Controller.*(..)) " method="setProgramInfo" />
+			<aop:after pointcut="execution(public * kr.co.nanwe..web.*Controller.*(..))" method="removeProgramInfo" />
+		</aop:aspect>
+	</aop:config>
+	<!-- //로그기록을 위한 Controller AOP -->
+	
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
+	<bean id="excelDownload" class="kr.co.nanwe.file.service.ExcelDownload"/>
+	<bean id="fileDownload" class="kr.co.nanwe.file.service.FileDownload"/>
+	<bean id="excelFormDownload" class="kr.co.nanwe.file.service.ExcelFormDownload"/>
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+	<bean id="xmlView" class="kr.co.nanwe.rest.web.XmlAbstractView"/>
+
+    <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
+    
+    <mvc:resources mapping="/css/**" location="/css/"/> 
+	<mvc:resources mapping="/js/**" location="/js/"/>  
+	<mvc:resources mapping="/images/**" location="/images/"/>
+	<mvc:resources mapping="/fonts/**" location="/fonts/"/>
+	<mvc:resources mapping="/html/**" location="/html/"/>
+	
+</beans>

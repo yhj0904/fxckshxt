@@ -1,0 +1,303 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<%@ include file="/WEB-INF/jsp/include/session.jspf" %>
+<%
+/**
+ * @Class Name 	: register.jsp
+ * @Description : 게시글 등록 화면
+ * @Modification Information
+ * @
+ * @ 수정일			수정자			수정내용
+ * @ --------------------------------------------------------------------------
+ * @ 2020.01.06		임문환			최초생성
+ */
+%>
+<div class="board_wrap">
+
+	<div class="board_cont">
+		<form:form commandName="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+			<c:if test='${!empty bbsMgtVO and GV_BOARD_SKIN_CODE ne null and GV_BOARD_SKIN_CODE ne ""}'>
+				<c:import url="/WEB-INF/jsp/main/board/${GV_BOARD_SKIN_CODE }/register.jsp"></c:import>
+			</c:if>
+		   	<% /** 이중방지 토큰 */ %>
+			<double-submit:preventer/>
+		   	<% /** 검색조건 유지 */ %>
+		   	<input type="hidden" name="sId" value="">
+		   	<input type="hidden" name="stdNo" value="${userVO.stdNo }" />
+		   	<input type="hidden" name="sexCd" value="${userVO.sex }" />
+		   	<input type="hidden" name="grade" value="${userVO.grade }" />
+		   	<input type="hidden" name="userTypeCd" value="${userVO.userTypeCd }" />
+		   	<input type="hidden" name="cnslColgCd" value="${userVO.colgCd }" />
+		   	<input type="hidden" name="cnslDeptCd" value="${userVO.deptCd }" />
+		   	<input type="hidden" name="cnslStatusCd" value="CNSL_STATUS_STEP1" />
+		   	<input type="hidden" name="cnslerId" id="cnslerId" />
+		   	
+		  	<c:import url="/WEB-INF/jsp/cmmn/search_cond.jsp"></c:import>
+		  	<% /** //검색조건 유지 */ %>
+		  	
+		  	<table class="detail_table cnsler_t">
+		  		<!--<colgroup>
+		  			<col style="width: 20%">
+		  			<col style="width: 30%">
+		  			<col style="width: 20%">
+		  			<col style="width: 30%">
+		  		</colgroup>-->
+		  		<tr>
+		  			<th>신청자</th>
+		  			<td colspan="3">
+		  				<input type="text" id="userId" name="userId" value="${userVO.userNm }" readonly="readonly" />
+		  			</td>
+		  		</tr>
+		  		<tr>
+					<th>상담분야</th>
+					<td colspan="3">
+						<label class="cnslLabel"><input type="checkbox" id="cnslTypeTrack" name="cnslTypeTrack" value="Y" /> 진로</label>
+						<label class="cnslLabel"><input type="checkbox" id="cnslTypeJob" name="cnslTypeJob" value="Y" /> 취업</label>
+						<label class="cnslLabel"><input type="checkbox" id="cnslTypeLife" name="cnslTypeLife" value="Y" /> 생활</label>
+						<label class="cnslLabel"><input type="checkbox" id="cnslTypeResume" name="cnslTypeResume" value="Y" /> 입사지원서</label>
+						<label class="cnslLabel"><input type="checkbox" id="cnslTypeIntv" name="cnslTypeIntv" value="Y" /> 모의면접</label>
+					</td>
+				</tr>
+		  		<tr>
+		  			<th>단과대학</th>
+		  			<td>
+		  				<select name="cnslColg" id="cnslColg">
+		  					<option value="">단과대학을 선택해주세요.</option>
+		  					<c:forEach items="${deptList }" var="dept">
+		  						<option value="${dept.deptCd }">${dept.deptNmKor }</option>
+		  					</c:forEach>
+		  				</select>
+		  			</td>
+		  			<th>상담방법</th>
+		  			<td>
+		  				<select name="cnslMthCd" id="cnslMthCd">
+		  					<option value="">선택</option>
+		  					<c:forEach var="mth" items="${progMth }">
+		  						<option value="${mth.cd }">${mth.cdNm }</option>
+		  					</c:forEach>
+		  				</select>
+		  			</td>
+		  		 </tr>
+		  		 <tr>
+		  			<th>이메일/카톡아이디</th>
+		  			<td colspan="3">
+		  				<form:input path="chatId" />
+		  			</td>
+		  		</tr>
+		  		 <tr>
+		  			<th>상담날짜</th>
+		  			<td>
+		  				<input type="date" name="hopeDt" id="hopeDt" />
+		  				<script>
+				  			// "hopeDt"라는 ID를 가진 input 요소의 값이 오늘 날짜 이전인지 확인하는 함수
+			  			    function isDateBeforeToday(dateString) {
+			  			        const selectedDate = new Date(dateString);
+			  			        const today = new Date();
+			  			        return selectedDate < today;
+			  			    }
+	
+			  			    // input 값이 변경될 때마다 실행되는 이벤트 핸들러
+			  			    $("#hopeDt").on("change", function() {
+			  			        const inputValue = $(this).val();
+	
+			  			        // 유효성 검사: 오늘 날짜 이전이면 선택 불가능하도록 설정
+			  			        if (isDateBeforeToday(inputValue)) {
+			  			            alert("오늘보다 이전 날짜는 선택하실 수 없습니다.");
+			  			            // 선택된 값을 초기화하거나 다른 조치를 취할 수 있습니다.
+			  			            $(this).val("");
+			  			        }
+			  			    });
+		  				</script>
+		  			</td>
+		  			<th>상담선생님</th>
+		  			<td>
+		  				<input type="text" id="userNm" name="userNm" readonly="readonly" />
+		  				<button type="button" class="search_btn" onclick="fn_getUserList();"><spring:message code="button.search"/></button>
+		  			</td>
+		  		</tr>
+		  		<tr>
+		  			<th>상담시간</th>
+		  			<td>
+		  				<select name="hopeTm" id="hopeTm">
+		  					
+		  				</select>
+		  			</td>
+		  			<th>상담장소</th>
+		  			<td>
+		  				<input type="text" id="cnslPlace" name="cnslPlace" readonly="readonly" />
+		  			</td>
+		  		</tr>
+		  		<tr>
+		  			<th>상담시 참고사항</th>
+		  			<td colspan="3">
+		  				<textarea rows="" cols="" name="reqstText"></textarea>
+		  			</td>
+		  		</tr>
+		  	</table>
+		  	
+		  	
+		  	<div class="btn_wrap">
+				<ul>
+					<li><a class="button register_btn" href="javascript:fn_registerAction();"><spring:message code="button.register" /></a></li>
+					<li><a class="button list_btn" href="javascript:fn_listView();"><spring:message code="button.list" /></a></li>
+				</ul>
+			</div>
+		</form:form>
+	</div>
+	
+	<script type="text/javascript" src="<c:url value='/cmmn/validator.do'/>"></script>
+	<script type="text/javascript" src="/html/ckeditor/ckeditor.js"></script> <% /** 에디터 사용시 */%>
+	<script type="text/javaScript" defer="defer">
+	
+	//목록
+	function fn_listView() {
+		document.detailForm.action = "/cnsler/list.do";
+		document.detailForm.submit();
+	}
+	
+	//등록 처리
+	function fn_registerAction() {
+		//분야선택 체크
+		if(!$('#cnslTypeTrack').is(':checked') && !$('#cnslTypeJob').is(':checked') && !$('#cnslTypeLife').is(':checked') && !$('#cnslTypeResume').is(':checked') && !$('#cnslTypeIntv').is(':checked')){
+			gf_alert("상담 분야를 하나 이상 선택해주세요.");
+			
+			return;
+		}
+		
+		//학과 선택
+		if(!$('#cnslColg > option:selected').val()) {
+		    gf_alert("상담하실 학과를 선택해주세요.");
+		    
+		    return;
+		}
+		
+		//방법 선택
+		if(!$('#cnslMthCd > option:selected').val()) {
+		    gf_alert("상담 방법을 선택해주세요.");
+		    
+		    return;
+		}
+		
+		//상담 날짜 선택
+		if($('#hopeDt').val() == '') {
+		    gf_alert("희망하는 상담 날짜를 선택해주세요.");
+		    
+		    return;
+		}
+		
+		//시간 선택
+		if(!$('#hopeTm > option:selected').val()) {
+		    gf_alert("희망하는 상담 시간을 선택해주세요.");
+		    
+		    return;
+		}
+		
+		//상담자 선택
+		if($('#userNm').val() == '') {
+		    gf_alert("희망하는 상담 선생님을 선택해주세요.");
+		    
+		    return;
+		}
+		
+		gf_confirm("상담을 신청하시겠습니까?", function(e){
+			if(e == "Y"){
+				document.detailForm.action = "/cnsler/registerAction.do";
+				document.detailForm.submit();
+			}
+		});
+	}
+		
+	//단과별 상담원 조회한다.
+	function fn_getUserList() {
+		
+		if($("#cnslColg option:selected").val() == ''){
+			gf_alert("단과를 먼저 선택해주세요.");
+			return;
+		}
+		
+		if($("#hopeDt").val() == ''){
+			gf_alert("상담날짜를 먼저 선택해주세요.");
+			return;
+		}
+		
+		var cnslColgCd = $("#cnslColg option:selected").val();
+		var schDt = $("#hopeDt").val();
+		var id = "userList";
+		var url = "/cnsl/selectCnslerByColg.json?cnslColgCd=" + cnslColgCd + "&schDt=" + schDt;
+		var param = {cnslColgCd: cnslColgCd, schDt: schDt};
+		var columns = [
+			{key:"cnslerId", name:"아이디"},
+			{key:"userNm", name:"이름"},
+			{key:"cnslPlace", name:"장소"},
+			{key:"ableTm", name:"가능시간"},
+		];
+		var callback = function(data){
+			var cnslerId = data.cnslerId;
+			var userNm = data.userNm;
+			var cnslPlace = data.cnslPlace;
+			
+			document.detailForm.cnslerId.value = cnslerId;
+			document.detailForm.userNm.value = userNm;
+			document.detailForm.cnslPlace.value = cnslPlace;
+			
+			fn_timeSet();
+		};
+		gf_openSearchPop(id, url, param, columns, callback);
+	};
+	
+	//상담원 선택시 시간조회
+	function fn_timeSet(){
+		var cnslerId = $("#cnslerId").val();
+		var schDt = $("#hopeDt").val();
+		
+		$.ajax({
+			type : 'GET',
+			url : '/cnsl/selectCnslerTmList.json',
+			data : {cnslerId: cnslerId, schDt: schDt},
+			async : false,
+			success : function(data) {
+				console.log(data);
+				
+  				var strHours = '';
+  				var time = '';
+  				
+  				//예약된시간 배열선언
+  				var unableTmArr = [];
+  				
+  				strHours += '<option value="" selected>시간선택</option>';
+  				
+  				$.each(data, function(index, item) { // 데이터 =item
+  					unableTmArr.push(item.hopeTm);
+				});
+  				
+  				for(var i = 10 ; i < 19; i++){
+  					time = i;
+  					valueTime = i + "00";
+  					if(i == 12){
+  						
+  					} else {
+	  					if(unableTmArr.includes(valueTime)){
+	  						strHours += '<option value="'+valueTime+'" disabled>'+time+'시</option>';
+	  					} else {
+	  						strHours += '<option value="'+valueTime+'">'+time+'시</option>';
+	  					}
+  					}
+					
+  				}
+				
+				$("#hopeTm").html(strHours);
+			},
+			error : function(xhr, status) {
+				alert('[' + status + ']\n\n' + xhr.responseText);
+				hasError = true;
+			}
+		});
+	};
+	
+	</script>
+</div>
+
+<style>
+.layer_pop.search_pop{max-width: 50%;}
+option:disabled{background-color: #ccc; text-decoration: line-through;}
+</style>

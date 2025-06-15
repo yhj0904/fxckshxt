@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.push.service.impl.PushNoticeSendMapper">
+	
+	<!-- 알림 전송 목록 조회 -->
+	<select id="selectPushNoticeSendList" parameterType="int" resultType="pushNoticeSendVO">
+		SELECT
+					  SEND_SEQ
+					, NOTICE_NO
+					, USER_ID
+					, USER_NM
+					, USER_MOBILE
+					, DEVICE_DV
+					, SEND_DV
+					, SEND_TIME
+					, SEND_CNT
+					, RCVE_DV
+					, RCVE_CHK
+					, RCVE_FAIL_DV
+					, RCVE_TIME
+					, NOTE
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, INPT_PROG
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+					, MODI_PROG
+		FROM 		PUSH_NOTICE_SEND_MNG
+		WHERE		NOTICE_NO = #{noticeNo}
+		ORDER BY	SEND_SEQ ASC, INPT_DTTM ASC
+	</select>
+
+	<!--  알림 전송 등록 -->
+	<insert id="insertPushNoticeSend" parameterType="pushNoticeSendVO">
+		<selectKey resultType="pushNoticeSendVO" keyProperty="sendSeq,deviceDv,sendDv" order="BEFORE">
+			SELECT 
+		              IFNULL((SELECT MAX(A.SEND_SEQ) FROM PUSH_NOTICE_SEND_MNG A WHERE A.NOTICE_NO = #{noticeNo}), 0) + 1 as sendSeq
+		            , IFNULL((SELECT A.DEVICE_DV FROM PUSH_APP_USER_MNG A WHERE A.USER_ID = #{userId}), '') AS deviceDv
+		            , CASE
+						WHEN (SELECT A.DEVICE_ID FROM PUSH_APP_USER_MNG A WHERE A.USER_ID = #{userId}) IS NOT NULL THEN 'PUSH'
+						ELSE 'SMS'
+					  END AS sendDv
+		</selectKey>
+		INSERT
+		INTO 	PUSH_NOTICE_SEND_MNG
+		(
+				  SEND_SEQ
+				, NOTICE_NO
+				, USER_ID
+				, USER_NM
+				, USER_MOBILE
+				, DEVICE_DV
+				, SEND_DV
+				, SEND_TIME
+				, SEND_CNT
+				, RCVE_DV
+				, RCVE_CHK
+				, RCVE_FAIL_DV
+				, RCVE_TIME
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, INPT_PROG
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, MODI_PROG
+		) VALUES (
+				  #{sendSeq}
+				, #{noticeNo}
+				, #{userId}
+				, #{userNm}
+				, #{userMobile}
+				, #{deviceDv}
+				, #{sendDv}
+				, #{sendTime}
+				, #{sendCnt}
+				, #{rcveDv}
+				, #{rcveChk}
+				, #{rcveFailDv}
+				, #{rcveTime}
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptProg}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptProg}
+		)
+	</insert>
+
+	<!--  알림 전송 삭제 -->
+	<delete id="deletePushNoticeSendList" parameterType="int">
+		DELETE 
+		FROM	PUSH_NOTICE_SEND_MNG
+		WHERE	NOTICE_NO = #{noticeNo}
+	</delete>
+	
+	<!-- 알림 전송 카운트 -->
+	<select id="selectPushNoticeSendCountByParam" parameterType="map" resultType="int">
+		SELECT		COUNT(A.SEND_SEQ)
+		FROM 		PUSH_NOTICE_SEND_MNG A, PUSH_NOTICE_LIST B
+		WHERE		A.NOTICE_NO = B.NOTICE_NO
+		<if test='userId != null and !"".equals(userId)'>
+		AND			B.USER_ID = #{userId}
+		</if>
+		<choose>
+			<!-- 발송건별 확인 -->
+			<when test='searchType == "sendCount"'>
+				<choose>
+					<when test='sendType == "1"'> <!-- 발송된 알림 -->
+						AND A.SEND_DV = 'PUSH'
+						AND A.SEND_CNT > 0
+						AND A.SEND_TIME IS NOT NULL
+						AND IFNULL(A.RCVE_FAIL_DV, 'N') != 'Y' -- 전송실패 구분
+					</when>
+					<when test='sendType == "2"'> <!-- 발송된 SMS -->
+						AND A.SEND_DV = 'SMS'
+						AND A.SEND_CNT > 0
+						AND A.SEND_TIME IS NOT NULL
+						AND IFNULL(A.RCVE_FAIL_DV, 'N') != 'Y' -- 전송실패 구분
+					</when>
+					<when test='sendType == "3"'> <!-- 대기중 알림 -->
+						AND A.SEND_DV = 'PUSH'
+						AND A.SEND_CNT = 0
+						AND A.SEND_TIME IS NULL
+						AND (B.RESERVATION_DT IS NULL OR DATE_FORMAT(B.RESERVATION_DT, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'))
+					</when>
+					<when test='sendType == "4"'> <!-- 대기중 SMS -->
+						AND A.SEND_DV = 'SMS'
+						AND A.SEND_CNT = 0
+						AND A.SEND_TIME IS NULL
+						AND (B.RESERVATION_DT IS NULL OR DATE_FORMAT(B.RESERVATION_DT, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'))		
+					</when>
+					<when test='sendType == "5"'> <!-- 예약된  알림-->
+						AND A.SEND_DV = 'PUSH'
+						AND A.SEND_CNT = 0
+						AND DATE_FORMAT(B.RESERVATION_DT, '%Y%m%d') >= DATE_FORMAT(NOW(), '%Y%m%d')
+					</when>
+					<when test='sendType == "6"'> <!-- 예약된 SMS -->
+						AND A.SEND_DV = 'SMS'
+						AND A.SEND_CNT = 0
+						AND DATE_FORMAT(B.RESERVATION_DT, '%Y%m%d') >= DATE_FORMAT(NOW(), '%Y%m%d')
+					</when>
+				</choose>
+			</when>
+			<!-- 캘린더 -->
+			<when test='searchType == "calendar"'>
+				<choose>
+					<when test='state == "1"'> <!-- 발송-->
+						AND A.SEND_CNT > 0
+						AND A.SEND_TIME IS NOT NULL
+						AND IFNULL(A.RCVE_FAIL_DV, 'N') != 'Y' -- 전송실패 구분
+						AND	DATE_FORMAT(A.SEND_TIME, '%Y%m%d') = #{date}
+					</when>
+					<when test='state == "2"'> <!-- 대기 -->
+						AND A.SEND_CNT = 0
+						AND A.SEND_TIME IS NULL						
+						AND (B.RESERVATION_DT IS NULL OR B.RESERVATION_DT &lt; #{date})
+						AND	DATE_FORMAT(A.INPT_DTTM, '%Y%m%d') = #{date}
+					</when>
+					<when test='state == "3"'> <!-- 예약 -->
+						AND A.SEND_CNT = 0
+						AND DATE_FORMAT(B.RESERVATION_DT, '%Y%m%d') >= #{date}
+						AND	DATE_FORMAT(A.INPT_DTTM, '%Y%m%d') = #{date}
+					</when>
+				</choose>
+			</when>
+			<!-- 채널별 월 사용량 (프로그레스바) -->
+			<when test='searchType == "monthProgressBar"'>
+				AND DATE_FORMAT(A.SEND_TIME, '%Y%m%d') BETWEEN CONCAT(DATE_FORMAT(NOW(), '%Y%m'),'01') AND DATE_FORMAT(NOW(), '%Y%m%d')
+				AND A.SEND_CNT > 0
+				AND IFNULL(A.RCVE_FAIL_DV, 'N') != 'Y' -- 전송실패 구분
+				<choose>
+					<when test='sendDv == "PUSH"'> <!-- PUSH -->
+						AND A.SEND_DV = 'PUSH'
+					</when>
+					<when test='sendDv == "SMS"'> <!-- SMS -->
+						AND A.SEND_DV = 'SMS'
+					</when>
+				</choose>
+			</when>
+		</choose>
+	</select>
+	
+	<select id="selectPushNoticeSendCountByMonth" parameterType="map" resultType="egovMap">
+		SELECT 
+		          A.DAY
+		        , IFNULL(B.CNT, 0) CNT
+		FROM
+		(
+		        SELECT
+		                  DATE_FORMAT(A.DTTM, '%Y%m%d') DTTM
+		                , TRIM(CAST((CAST((DATE_FORMAT(A.DTTM,'%d')) AS UNSIGNED)) AS CHAR(5))) DAY
+		        FROM
+		        (
+		                SELECT  STR_TO_DATE(CONCAT(DATE_FORMAT(NOW(),'%Y%m'),'01'),'%Y%m%d') + A.LV - 1 AS DTTM
+		                FROM 
+		                (
+		                        SELECT ROWNUM AS LV 
+								FROM V_ROW
+								WHERE ROWNUM &lt;= CAST(DATE_FORMAT(STR_TO_DATE(LAST_DAY(NOW()) , '%Y-%m-%d'), '%d') AS UNSIGNED)
+		                ) A
+		        ) A
+		) A
+		LEFT JOIN
+		(
+		        SELECT	 DATE_FORMAT(SEND_TIME, '%Y%m%d') SEND_TIME
+						 , COUNT(*) AS CNT
+		        FROM	 PUSH_NOTICE_SEND_MNG
+		        WHERE	 DATE_FORMAT(SEND_TIME, '%Y%m%d') BETWEEN CONCAT(DATE_FORMAT(NOW(), '%Y%m'),'01') AND DATE_FORMAT(NOW(), '%Y%m%d')
+		        AND		 SEND_CNT > 0
+		        AND		 SEND_DV = #{sendDv} 
+		        GROUP BY DATE_FORMAT(SEND_TIME, '%Y%m%d')
+		) B
+		ON	 A.DTTM = B.SEND_TIME
+		ORDER BY A.DTTM ASC
+	</select>
+	
+</mapper>

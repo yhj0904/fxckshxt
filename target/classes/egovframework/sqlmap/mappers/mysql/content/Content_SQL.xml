@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.content.service.impl.ContentMapper">
+	
+	<select id="selectContentTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(CONT_ID)
+		FROM 		COM_CONTENT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "contId"'>
+					AND CONT_ID LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "contNm"'>
+					AND CONT_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="selectContentList" parameterType="map" resultType="contentVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  CONT_ID
+					, CONT_NM
+					, CONVERT(CONT_CONT USING UTF8) AS CONT_CONT
+					, CONT_ENG_NM
+					, CONVERT(CONT_ENG_CONT USING UTF8) AS CONT_ENG_CONT 
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_CONTENT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "contId"'>
+					AND CONT_ID LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "contNm"'>
+					AND CONT_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY	INPT_DTTM DESC, CONT_ID DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectContent" parameterType="string" resultType="contentVO">
+		SELECT
+					  CONT_ID
+					, CONT_NM
+					, CONVERT(CONT_CONT USING UTF8) AS CONT_CONT
+					, CONT_ENG_NM
+					, CONVERT(CONT_ENG_CONT USING UTF8) AS CONT_ENG_CONT 
+					, INPT_ID
+					, INPT_IP
+					, DATE_FORMAT(INPT_DTTM, '%Y-%m-%d %H:%i:%s') INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, DATE_FORMAT(MODI_DTTM, '%Y-%m-%d %H:%i:%s') MODI_DTTM
+		FROM 		COM_CONTENT
+		WHERE		CONT_ID = #{contId}
+	</select>
+	
+	<insert id="insertContent" parameterType="contentVO">
+		INSERT
+		INTO 	COM_CONTENT
+		(
+				  CONT_ID
+				, CONT_NM
+				, CONT_CONT
+				, CONT_ENG_NM
+				, CONT_ENG_CONT
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{contId}
+				, #{contNm}
+				, #{contCont}
+				, #{contEngNm}
+				, #{contEngCont}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<update id="updateContent" parameterType="contentVO">
+		UPDATE
+				COM_CONTENT
+		SET
+				  CONT_ID 			= #{contId}
+				, CONT_NM 			= #{contNm}
+				, CONT_CONT 		= #{contCont}
+				, CONT_ENG_NM 		= #{contEngNm}
+				, CONT_ENG_CONT 	= #{contEngCont}
+				, MODI_ID 			= #{modiId}
+				, MODI_IP 			= #{modiIp}
+				, MODI_DTTM 		= NOW()
+		WHERE	CONT_ID 			= #{contId}
+	</update>
+	
+	<delete id="deleteContent" parameterType="string">
+		DELETE 
+		FROM	COM_CONTENT
+		WHERE 	CONT_ID = #{contId}
+	</delete>
+	
+	<select id="selectContentBackTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(CONT_ID)
+		FROM 		COM_CONTENT_BACK
+		WHERE		CONT_ID = #{contId}
+	</select>
+	
+	<select id="selectContentBackList" parameterType="map" resultType="contentVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  SEQ 
+					, CONT_ID
+					, CONT_NM
+					, CONVERT(CONT_CONT USING UTF8) AS CONT_CONT
+					, CONT_ENG_NM
+					, CONVERT(CONT_ENG_CONT USING UTF8) AS CONT_ENG_CONT 
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+					, BACK_DTTM
+		FROM 		COM_CONTENT_BACK
+		WHERE		CONT_ID = #{contId}
+		ORDER BY	BACK_DTTM DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectContentBack" parameterType="map" resultType="contentVO">
+		SELECT
+					  SEQ 
+					, CONT_ID
+					, CONT_NM
+					, CONVERT(CONT_CONT USING UTF8) AS CONT_CONT
+					, CONT_ENG_NM
+					, CONVERT(CONT_ENG_CONT USING UTF8) AS CONT_ENG_CONT
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+					, BACK_DTTM
+		FROM 		COM_CONTENT_BACK
+		WHERE		CONT_ID = #{contId}
+		AND			SEQ = #{seq}
+	</select>
+	
+	<insert id="insertContentBack" parameterType="contentVO">
+		INSERT
+		INTO 	COM_CONTENT_BACK
+		(
+				  SEQ
+				, CONT_ID
+				, CONT_NM
+				, CONT_CONT
+				, CONT_ENG_NM
+				, CONT_ENG_CONT
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, BACK_DTTM
+		) VALUES (
+				  (SELECT IFNULL(MAX(A.SEQ), 0) + 1 FROM COM_CONTENT_BACK A)
+				, #{contId}
+				, #{contNm}
+				, #{contCont}
+				, #{contEngNm}
+				, #{contEngCont}
+				, #{inptId}
+				, #{inptIp}
+				, STR_TO_DATE(#{inptDttm}, '%Y-%m-%d %H:%i:%s')
+				, #{modiId}
+				, #{modiIp}
+				, STR_TO_DATE(#{modiDttm}, '%Y-%m-%d %H:%i:%s')
+				, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteContentBack" parameterType="map">
+		DELETE 
+		FROM	COM_CONTENT_BACK
+		WHERE 	CONT_ID = #{contId}
+		AND 	SEQ = #{seq}
+	</delete>
+	
+	<delete id="deleteContentBackByContId" parameterType="string">
+		DELETE 
+		FROM	COM_CONTENT_BACK
+		WHERE 	CONT_ID = #{contId}
+	</delete>
+	
+</mapper>

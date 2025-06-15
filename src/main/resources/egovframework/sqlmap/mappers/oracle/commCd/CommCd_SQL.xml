@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.code.service.impl.CommCdMapper">
+	
+	<select id="selectCommCdList" parameterType="map" resultType="commCdVO">
+		SELECT 
+				  CD
+				, HI_CD
+				, CD_NM
+				, CD_ABBR_NM
+				, CD_ENG_NM
+				, CD_ENG_ABBR_NM
+				, WORK_BBS_CD
+				, WORK_BBS_DETL_CD
+				, EDIT_PERM_YN
+				, SORT_ORD
+				, NOTE
+				, USE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, INPT_PROG
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, MODI_PROG
+				, CHILD_CNT
+				, CD_LEVEL
+		FROM (
+				SELECT 
+						         	  A.CD
+									, A.HI_CD
+									, A.CD_NM
+									, A.CD_ABBR_NM
+									, A.CD_ENG_NM
+									, A.CD_ENG_ABBR_NM
+									, A.WORK_BBS_CD
+									, A.WORK_BBS_DETL_CD
+									, A.EDIT_PERM_YN
+									, A.SORT_ORD
+									, A.NOTE
+									, A.USE_YN
+									, A.INPT_ID
+									, A.INPT_IP
+									, A.INPT_DTTM
+									, A.INPT_PROG
+									, A.MODI_ID
+									, A.MODI_IP
+									, A.MODI_DTTM
+									, A.MODI_PROG
+									, (SELECT COUNT(S.CD) FROM COM_COMM_CD S WHERE S.HI_CD = A.CD) AS CHILD_CNT
+									, LEVEL AS CD_LEVEL
+		        					, ROWNUM AS RN	
+				FROM 				COM_COMM_CD A
+				WHERE				1=1
+				<choose>
+					<when test="hiCd !=null and !hiCd.equals('')">
+						START WITH A.HI_CD = #{hiCd}
+					</when>
+					<otherwise>
+						START WITH A.HI_CD IS NULL
+					</otherwise>
+				</choose>		
+				CONNECT BY PRIOR    A.CD = A.HI_CD
+				ORDER SIBLINGS BY 	A.SORT_ORD ASC
+		) 
+		ORDER BY RN
+	</select>
+	
+	<select id="selectCommCdListByHiCd" parameterType="string" resultType="commCdVO">
+		SELECT 
+				         	  A.CD
+							, A.HI_CD
+							, A.CD_NM
+							, A.CD_ABBR_NM
+							, A.CD_ENG_NM
+							, A.CD_ENG_ABBR_NM
+							, A.WORK_BBS_CD
+							, A.WORK_BBS_DETL_CD
+							, A.EDIT_PERM_YN
+							, A.SORT_ORD
+							, A.NOTE
+							, A.USE_YN
+							, A.INPT_ID
+							, A.INPT_IP
+							, A.INPT_DTTM
+							, A.INPT_PROG
+							, A.MODI_ID
+							, A.MODI_IP
+							, A.MODI_DTTM
+							, A.MODI_PROG
+		FROM 				COM_COMM_CD A
+		WHERE				1=1
+		AND					(A.USE_YN IS NULL OR A.USE_YN = 'Y')
+		AND					A.HI_CD = #{hiCd}
+		ORDER BY 			A.SORT_ORD ASC
+	</select>
+	
+	<select id="selectCommCd" parameterType="string" resultType="commCdVO">
+		SELECT 
+				*
+		FROM 	COM_COMM_CD
+		WHERE	CD = #{cd}
+	</select>
+	
+	<insert id="insertCommCd" parameterType="commCdVO">
+		INSERT
+		INTO 	COM_COMM_CD
+		(
+				  CD
+				, HI_CD
+				, CD_NM
+				, CD_ABBR_NM
+				, CD_ENG_NM
+				, CD_ENG_ABBR_NM
+				, WORK_BBS_CD
+				, WORK_BBS_DETL_CD
+				, EDIT_PERM_YN
+				, SORT_ORD
+				, NOTE
+				, USE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, INPT_PROG
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, MODI_PROG
+		) VALUES (
+				  #{cd}
+				, #{hiCd}
+				, #{cdNm}
+				, #{cdAbbrNm}
+				, #{cdEngNm}
+				, #{cdEngAbbrNm}
+				, #{workBbsCd}
+				, #{workBbsDetlCd}
+				, #{editPermYn}
+				, #{sortOrd}
+				, #{note}
+				, #{useYn}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{inptProg}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{inptProg}
+		)
+	</insert>
+	
+	<update id="updateCommCd" parameterType="commCdVO">
+		UPDATE
+				COM_COMM_CD
+		SET
+				  CD_NM 			= #{cdNm}
+				, CD_ABBR_NM 		= #{cdAbbrNm}
+				, CD_ENG_NM			= #{cdEngNm}
+				, CD_ENG_ABBR_NM 	= #{cdEngAbbrNm}
+				, WORK_BBS_CD		= #{workBbsCd}
+				, WORK_BBS_DETL_CD	= #{workBbsDetlCd}
+				, EDIT_PERM_YN		= #{editPermYn}
+				, SORT_ORD 			= #{sortOrd}
+				, NOTE 				= #{note}
+				, USE_YN 			= #{useYn}
+				, MODI_ID 			= #{modiId}
+				, MODI_IP 			= #{modiIp}
+				, MODI_DTTM 		= SYSDATE
+				, MODI_PROG			= #{modiProg}
+		WHERE	CD = #{cd}
+	</update>
+	
+	<delete id="deleteCommCd" parameterType="string">
+		DELETE 
+		FROM	COM_COMM_CD
+		WHERE 	CD = #{cd}
+	</delete>
+	
+	<select id="selectCommCdExist" parameterType="string" resultType="int">
+		SELECT 
+				COUNT(CD)
+		FROM 	COM_COMM_CD
+		WHERE	CD = #{cd}
+	</select>
+	
+	<select id="selectUserAuthList" parameterType="map" resultType="userAuthVO">
+		SELECT	  
+					  #{authDvcd}	AS AUTH_DVCD
+					, #{userDvcd}	AS USER_DVCD
+					, #{userDvnm}	AS USER_DVNM
+					, #{workDvcd}	AS WORK_DVCD
+					, #{workDvnm}	AS WORK_DVNM
+					, CD			AS STAT_DVCD
+					, CD_NM			AS STAT_DVNM
+		FROM		COM_COMM_CD	
+		WHERE 		HI_CD = 'AUTH'
+		AND			USE_YN = 'Y'
+		ORDER BY 	SORT_ORD, CD
+	</select>
+	
+</mapper>

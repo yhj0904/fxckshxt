@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.file.service.impl.ComFilesMapper">
+
+	<select id="selectComFiles" parameterType="int" resultType="comFilesVO">
+		SELECT
+				  FILE_NO
+				, PARENT_CD
+				, PARENT_UID
+				, ORG_NAME
+				, FILE_NAME
+				, FILE_PATH
+				, FILE_EXT
+				, FILE_TYPE
+				, FILE_MIME
+				, FILE_SIZE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, SUPPL_INFO1
+				, SUPPL_INFO2
+				, SUPPL_INFO3
+				, SUPPL_INFO4
+				, SUPPL_INFO5
+		FROM 	COM_FILES
+		WHERE	FILE_NO = #{fileNo}
+	</select>
+	
+	<insert id="insertComFiles" parameterType="comFilesVO" useGeneratedKeys="true" keyProperty="fileNo">
+		INSERT
+		INTO 	COM_FILES
+		(
+				  PARENT_CD
+				, PARENT_UID
+				, ORG_NAME
+				, FILE_NAME
+				, FILE_PATH
+				, FILE_EXT
+				, FILE_TYPE
+				, FILE_MIME
+				, FILE_SIZE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, SUPPL_INFO1
+				, SUPPL_INFO2
+				, SUPPL_INFO3
+				, SUPPL_INFO4
+				, SUPPL_INFO5
+		) VALUES (
+				  #{parentCd}
+				, #{parentUid}
+				, #{orgName}
+				, #{fileName}
+				, #{filePath}
+				, #{fileExt}
+				, #{fileType}
+				, #{fileMime}
+				, #{fileSize}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{supplInfo1}
+				, #{supplInfo2}
+				, #{supplInfo3}
+				, #{supplInfo4}
+				, #{supplInfo5}
+		)
+	</insert>
+	
+	<delete id="deleteComFiles" parameterType="int">
+		DELETE 
+		FROM	COM_FILES
+		WHERE 	FILE_NO = #{fileNo}
+	</delete>
+	
+	<select id="selectComFilesList" parameterType="map" resultType="comFilesVO">
+		SELECT 
+					  FILE_NO
+					, PARENT_CD
+					, PARENT_UID
+					, ORG_NAME
+					, FILE_NAME
+					, FILE_PATH
+					, FILE_EXT
+					, FILE_TYPE
+					, FILE_MIME
+					, FILE_SIZE
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, SUPPL_INFO1
+					, SUPPL_INFO2
+					, SUPPL_INFO3
+					, SUPPL_INFO4
+					, SUPPL_INFO5
+		FROM 		COM_FILES
+		WHERE		PARENT_CD 	= #{code}
+		AND			PARENT_UID 	= #{id}
+		ORDER BY	FILE_NO ASC
+	</select>
+	
+	<delete id="deleteComFilesList" parameterType="map">
+		DELETE 
+		FROM	COM_FILES
+		WHERE	PARENT_CD 	= #{code}
+		AND		PARENT_UID 	= #{id}
+	</delete>
+	
+	<insert id="insertComFilesLog" parameterType="comFilesLogVO">
+		INSERT
+		INTO 	COM_FILES_LOG
+		(
+				  PARENT_CODE
+				, PARENT_UID
+				, FILE_NO
+				, ORG_NAME
+				, MEMO
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{parentCode}
+				, #{parentUid}
+				, #{fileNo}
+				, #{orgName}
+				, #{memo}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteComFilesByBbsCd" parameterType="map">
+		DELETE
+		FROM 		COM_FILES
+		WHERE		PARENT_CD 	= #{code}
+		AND			SUPPL_INFO1 = #{bbsCd}
+	</delete>
+	
+	<select id="selectThumbnail" parameterType="map" resultType="comFilesVO">		
+		SELECT 
+				  PAGING.*
+		FROM (
+				
+				SELECT 
+							  'A' AS TTYPE
+							, FILE_NO
+							, PARENT_CD
+							, PARENT_UID
+							, ORG_NAME
+							, CONCAT('thumb_', FILE_NAME) AS FILE_NAME
+							, FILE_PATH
+							, FILE_EXT
+							, FILE_TYPE
+							, FILE_MIME
+							, FILE_SIZE
+				FROM 		COM_FILES
+				WHERE		PARENT_CD 	= #{code}
+				AND			PARENT_UID 	= #{id}
+				AND			FILE_TYPE = 'IMAGE'
+				
+				UNION ALL
+				
+				SELECT 
+							  'B' AS TTYPE
+							, FILE_NO
+							, PARENT_CD
+							, PARENT_UID
+							, ORG_NAME
+							, FILE_NAME
+							, FILE_PATH
+							, FILE_EXT
+							, FILE_TYPE
+							, FILE_MIME
+							, FILE_SIZE
+				FROM 		COM_EDITOR_FILES
+				WHERE		PARENT_CD 	= #{code}
+				AND			PARENT_UID 	= #{id}
+				AND			FILE_TYPE = 'IMAGE'
+				
+				ORDER BY	TTYPE ASC, FILE_NO ASC 	
+				
+		) PAGING
+		LIMIT 0, 1
+	</select>	
+</mapper>

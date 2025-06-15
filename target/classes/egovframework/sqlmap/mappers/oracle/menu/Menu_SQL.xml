@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.menu.service.impl.MenuMapper">
+	
+	<select id="selectMenuList" parameterType="map" resultType="menuVO">
+		SELECT
+							  A.MENU_CD
+							, A.MENU_ID
+							, A.HI_MENU_ID
+							, A.MENU_NM
+							, A.MENU_ABBR_NM
+							, A.MENU_ENG_NM
+							, A.MENU_ENG_ABBR_NM
+							, A.MENU_DESC
+							, A.MENU_LVL
+							, A.MENU_LINK
+							, A.PROG_YN
+							, A.PROG_CD
+							, A.PROG_PATH
+							, A.PROG_PARAM
+							, A.SORT_ORD
+							, A.USE_YN
+							, A.VIEW_YN
+							, A.NOTE
+							, A.INPT_ID
+							, A.INPT_IP
+							, A.INPT_DTTM
+							, A.MODI_ID
+							, A.MODI_IP
+							, A.MODI_DTTM
+							, (SELECT COUNT(S.MENU_ID) FROM COM_MENU S WHERE S.HI_MENU_ID = A.MENU_ID) AS CHILD_CNT
+							, A.FILE_NO
+							, A.USE_SSO
+		FROM 				COM_MENU A
+		WHERE				1=1
+		<if test="menuCd !=null and !menuCd.equals('')">
+			AND A.MENU_CD = #{menuCd}
+		</if>
+		<if test="useYn !=null and !useYn.equals('')">
+			<choose>
+				<when test='useYn.equals("Y")'>
+					AND NVL(A.USE_YN, 'N') = 'Y'
+				</when>
+				<when test='useYn.equals("N")'>
+					AND NVL(A.USE_YN, 'N') = 'N'
+				</when>
+			</choose>
+		</if>
+		<choose>
+			<when test="hiMenuId !=null and !hiMenuId.equals('')">
+				START WITH A.HI_MENU_ID = #{hiMenuId}
+			</when>
+			<otherwise>
+				START WITH (A.HI_MENU_ID IS NULL OR A.HI_MENU_ID = '')
+			</otherwise>
+		</choose>		
+		CONNECT BY PRIOR    A.MENU_ID = A.HI_MENU_ID
+		ORDER SIBLINGS BY 	A.SORT_ORD ASC
+	</select>
+	
+	<select id="selectMenuListByHiMenuId" parameterType="string" resultType="menuVO">
+		SELECT
+							  MENU_CD
+							, MENU_ID
+							, HI_MENU_ID
+							, MENU_NM
+							, MENU_ABBR_NM
+							, MENU_ENG_NM
+							, MENU_ENG_ABBR_NM
+							, MENU_DESC
+							, MENU_LVL
+							, MENU_LINK
+							, PROG_YN
+							, PROG_CD
+							, PROG_PATH
+							, PROG_PARAM
+							, SORT_ORD
+							, USE_YN
+							, VIEW_YN
+							, NOTE
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, FILE_NO
+							, USE_SSO
+		FROM 				COM_MENU
+		WHERE				1=1
+		AND					(USE_YN IS NULL OR USE_YN = 'Y')
+		AND					HI_MENU_ID = #{hiMenuId}
+		ORDER BY 			SORT_ORD ASC
+	</select>
+	
+	<select id="selectMenu" parameterType="string" resultType="menuVO">
+		SELECT 
+				*
+		FROM 	COM_MENU
+		WHERE	MENU_ID = #{menuId}
+	</select>
+	
+	<insert id="insertMenu" parameterType="menuVO">
+		INSERT
+		INTO 	COM_MENU
+		(
+				  MENU_CD
+				, MENU_ID
+				, HI_MENU_ID
+				, MENU_NM
+				, MENU_ABBR_NM
+				, MENU_ENG_NM
+				, MENU_ENG_ABBR_NM
+				, MENU_DESC
+				, MENU_LVL
+				, MENU_LINK
+				, PROG_YN
+				, PROG_CD
+				, PROG_PATH
+				, PROG_PARAM
+				, SORT_ORD
+				, USE_YN
+				, VIEW_YN
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, FILE_NO
+				, USE_SSO
+		) VALUES (
+				  #{menuCd}
+				, #{menuId}
+				, #{hiMenuId}
+				, #{menuNm}
+				, #{menuAbbrNm}
+				, #{menuEngNm}
+				, #{menuEngAbbrNm}
+				, #{menuDesc}
+				, (SELECT NVL(MAX(S.MENU_LVL), 0)+1 FROM COM_MENU S WHERE S.MENU_ID = #{hiMenuId})
+				, #{menuLink}
+				, #{progYn}
+				, #{progCd}
+				, #{progPath}
+				, #{progParam}
+				, #{sortOrd}
+				, #{useYn}
+				, #{viewYn}
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, 0
+				, #{useSso}
+		)
+	</insert>
+	
+	<update id="updateMenu" parameterType="menuVO">
+		UPDATE
+					COM_MENU
+		SET
+					  MENU_CD 			= #{menuCd}
+					, MENU_NM 			= #{menuNm}
+					, MENU_ABBR_NM 		= #{menuAbbrNm}
+					, MENU_ENG_NM 		= #{menuEngNm}
+					, MENU_ENG_ABBR_NM	= #{menuEngAbbrNm}
+					, MENU_DESC 		= #{menuDesc}
+					, MENU_LINK 		= #{menuLink}
+					, PROG_YN 			= #{progYn}
+					, PROG_CD 			= #{progCd}
+					, PROG_PATH 		= #{progPath}
+					, PROG_PARAM 		= #{progParam}
+					, SORT_ORD 			= #{sortOrd}
+					, USE_YN 			= #{useYn}
+					, VIEW_YN 			= #{viewYn}
+					, USE_SSO			= #{useSso}
+					, NOTE 				= #{note}
+					, MODI_ID 			= #{modiId}
+					, MODI_IP			= #{modiIp}
+					, MODI_DTTM 		= SYSDATE
+		WHERE 		MENU_ID	= #{menuId}
+	</update>
+	
+	<delete id="deleteMenu" parameterType="string">
+		DELETE 
+		FROM	COM_MENU
+		WHERE 	MENU_ID = #{menuId}
+	</delete>
+	
+	<delete id="deleteMenuByMenuCd" parameterType="string">
+		DELETE 
+		FROM	COM_MENU
+		WHERE 	MENU_CD = #{menuCd}
+	</delete>
+	
+	<select id="selectMenuIdExist" parameterType="string" resultType="int">
+		SELECT 
+				COUNT(MENU_ID)
+		FROM 	COM_MENU
+		WHERE	MENU_ID = #{menuId}
+	</select>
+	
+	<select id="selectMenuListByMenuCd" parameterType="map" resultType="menuVO">
+		SELECT	
+				  A.MENU_CD
+				, A.MENU_ID
+				, A.HI_MENU_ID
+				, A.MENU_NM
+				, A.MENU_ABBR_NM
+				, A.MENU_ENG_NM
+				, A.MENU_ENG_ABBR_NM
+				, A.MENU_LVL
+				, A.MENU_LINK
+				, A.PROG_YN
+				, A.PROG_CD
+				, A.PROG_PATH
+				, A.PROG_PARAM
+				, A.SORT_ORD
+				, A.VIEW_YN
+				, A.USE_SSO
+				, A.CHILD_CNT
+				, A.FILE_NO
+				, A.IMG_NAME
+				, A.IMG_PATH
+				, A.IMG_MIME
+			<choose>
+				<when test='progCd != null and !"".equals(progCd)'>
+				, CASE
+                      WHEN INSTR(A.PROG_CD_LIST, '@'||#{progCd}||'@') > 0 THEN 'Y'
+                      ELSE 'N'
+                  END 
+				</when>
+				<otherwise>
+				 , 'N'
+				</otherwise>
+			</choose> AS ACTIVE_YN
+		FROM
+		(
+				SELECT
+									  A.MENU_CD
+									, A.MENU_ID
+									, A.HI_MENU_ID
+									, CASE
+										  WHEN (NVL(A.MENU_ENG_NM, 'NULL') != 'NULL' AND 'ko' != '${language}') THEN A.MENU_ENG_NM
+								          ELSE A.MENU_NM
+							          END AS MENU_NM
+									, A.MENU_ABBR_NM
+									, A.MENU_ENG_NM
+									, A.MENU_ENG_ABBR_NM
+									, A.MENU_LVL
+									, A.MENU_LINK
+									, A.PROG_YN
+									, A.PROG_CD
+									, A.PROG_PATH
+									, A.PROG_PARAM
+									, A.SORT_ORD
+									, A.VIEW_YN
+									, A.USE_SSO
+									, (SELECT COUNT(S.MENU_ID) FROM COM_MENU S WHERE S.HI_MENU_ID = A.MENU_ID AND S.USE_YN = 'Y' AND S.VIEW_YN = 'Y') AS CHILD_CNT
+									, NVL(A.FILE_NO, 0 ) FILE_NO
+									, B.FILE_NAME IMG_NAME
+									, B.FILE_PATH IMG_PATH
+									, B.FILE_MIME IMG_MIME
+									<if test='progCd != null and !"".equals(progCd)'>
+                                    , (
+                                            SELECT              LISTAGG('@'||T.PROG_CD||'@', '') WITHIN GROUP (ORDER BY T.PROG_CD)
+                                            FROM 				COM_MENU T
+                                            WHERE 				T.MENU_CD = #{menuCd}
+                                            AND					T.USE_YN = 'Y'
+                                            AND					T.VIEW_YN = 'Y'
+                                            START WITH 			T.MENU_ID = A.MENU_ID
+                                            CONNECT BY PRIOR    T.MENU_ID = T.HI_MENU_ID AND T.USE_YN = 'Y' AND	T.VIEW_YN = 'Y'
+                                      ) AS PROG_CD_LIST
+                                    </if>
+				FROM 				COM_MENU A, COM_FILES B
+				WHERE				A.FILE_NO = B.FILE_NO(+)
+				AND 				A.MENU_CD = #{menuCd}
+				AND					A.USE_YN = 'Y'
+				AND					A.VIEW_YN = 'Y'
+				<if test="authDvcd != null and userDvcd != null and workDvcd != null and statDvcd != null">
+				AND					(
+										SELECT 	COUNT(MA.AUTH_CD) 
+										FROM 	COM_MENU_AUTH MA 
+										WHERE 	MA.MENU_CD = #{menuCd}
+										AND 	MA.MENU_ID = A.MENU_ID
+										AND		SFN_IS_AUTH_MAP(MA.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+									) > 0
+				</if>
+				<choose>
+					<when test="hiMenuId !=null and !hiMenuId.equals('')">
+						START WITH A.HI_MENU_ID = #{hiMenuId}
+					</when>
+					<otherwise>
+						START WITH (A.HI_MENU_ID IS NULL OR A.HI_MENU_ID = '')
+					</otherwise>
+				</choose>
+				CONNECT BY PRIOR    A.MENU_ID = A.HI_MENU_ID AND A.USE_YN = 'Y' AND	A.VIEW_YN = 'Y'
+				ORDER SIBLINGS BY 	A.SORT_ORD ASC
+		) A
+	</select>
+	
+	<select id="selectContentList" resultType="hashMap">
+		SELECT
+					  LOWER(SUBSTR(CONT_ID,1,1)) || SUBSTR(REPLACE(INITCAP(CONT_ID), '_' ),2) AS ID
+					, CONT_NM AS NAME
+		FROM 		COM_CONTENT
+		ORDER BY	INPT_DTTM DESC, CONT_ID DESC
+	</select>
+	
+	<select id="selectBbsMgtList" resultType="hashMap">
+		SELECT 
+					  LOWER(SUBSTR(CODE,1,1)) || SUBSTR(REPLACE(INITCAP(CODE), '_' ),2) AS ID
+					, TITLE AS NAME
+		FROM 		COM_BBS_MGT
+		ORDER BY	INPT_DTTM DESC, CODE ASC
+	</select>
+	
+	<select id="selectSchMgtList" resultType="hashMap">
+		SELECT 
+					  LOWER(SUBSTR(CODE,1,1)) || SUBSTR(REPLACE(INITCAP(CODE), '_' ),2) AS ID
+					, TITLE AS NAME
+		FROM 		COM_SCH_MGT
+		ORDER BY	INPT_DTTM DESC, CODE ASC
+	</select>
+	
+	
+	<update id="updateMenuFile" parameterType="menuVO">
+		UPDATE
+				COM_MENU
+		SET
+				FILE_NO = #{fileNo}
+		WHERE	MENU_ID = #{menuId}
+	</update>
+	
+	<select id="selectSysMenuList" parameterType="map" resultType="menuVO">
+		SELECT
+							  A.MENU_ID
+							, A.HI_MENU_ID
+							, CASE
+								  WHEN (NVL(A.MENU_ENG_NM, 'NULL') != 'NULL' AND 'ko' != '${language}') THEN A.MENU_ENG_NM
+						          ELSE A.MENU_NM
+					          END AS MENU_NM
+							, A.MENU_ABBR_NM
+							, A.MENU_ENG_NM
+							, A.MENU_ENG_ABBR_NM
+							, A.MENU_LVL
+							, A.MENU_LINK
+							, A.PROG_YN
+							, A.PROG_CD
+							, A.PROG_PATH
+							, A.PROG_PARAM
+							, A.SORT_ORD
+							, A.VIEW_YN
+							, A.USE_SSO
+							, (SELECT COUNT(S.MENU_ID) FROM COM_SYS_MENU S WHERE S.HI_MENU_ID = A.MENU_ID AND S.USE_YN = 'Y' AND S.VIEW_YN = 'Y') AS CHILD_CNT
+							, 'N' AS ACTIVE_YN
+		FROM 				COM_SYS_MENU A
+		WHERE				A.USE_YN = 'Y'
+		AND					A.VIEW_YN = 'Y'
+		START WITH 			(A.HI_MENU_ID IS NULL OR A.HI_MENU_ID = '')
+		CONNECT BY PRIOR    A.MENU_ID = A.HI_MENU_ID AND A.USE_YN = 'Y' AND	A.VIEW_YN = 'Y'
+		ORDER SIBLINGS BY 	A.SORT_ORD ASC
+	</select>
+	
+	<select id="selectPresentMenuInfo" parameterType="map" resultType="menuVO">
+		SELECT		*
+		FROM
+		(
+					SELECT
+								  MENU_CD
+								, MENU_ID
+								, HI_MENU_ID
+								, MENU_NM
+								, MENU_ABBR_NM
+								, MENU_ENG_NM
+								, MENU_ENG_ABBR_NM
+								, MENU_DESC
+								, MENU_LVL
+								, MENU_LINK
+								, PROG_YN
+								, PROG_CD
+								, PROG_PATH
+								, PROG_PARAM
+								, SORT_ORD
+								, USE_YN
+								, VIEW_YN
+								, NOTE
+								, INPT_ID
+								, INPT_IP
+								, INPT_DTTM
+								, MODI_ID
+								, MODI_IP
+								, MODI_DTTM
+								, FILE_NO
+								, USE_SSO
+					FROM 		COM_MENU
+					WHERE		MENU_CD = #{menuCd}
+					AND			USE_YN = 'Y'
+					AND			PROG_CD = #{progCd}
+					<if test='progParam != null and !"".equals(progParam)'>
+					AND			PROG_PARAM = #{progParam}
+					</if>
+					ORDER BY 	MENU_LVL DESC, SORT_ORD ASC, MENU_ID ASC
+		)
+		WHERE		ROWNUM = 1
+	</select>
+	
+	<select id="selectMenuPathList" parameterType="map" resultType="menuVO">
+		SELECT	*
+		FROM	
+		(
+				SELECT
+									  A.MENU_CD
+									, A.MENU_ID
+									, A.HI_MENU_ID
+									, A.MENU_NM
+									, A.MENU_ENG_NM
+									, A.MENU_LINK
+									, A.MENU_LVL
+									, A.PROG_YN
+									, A.PROG_CD
+									, A.PROG_PATH
+									, A.PROG_PARAM
+									, A.USE_SSO
+				FROM 				COM_MENU A
+				WHERE				1=1
+				AND 				A.MENU_CD = #{menuCd}
+				AND 				NVL(A.USE_YN, 'N') = 'Y'
+				START WITH 			A.MENU_ID = #{menuId}
+				CONNECT BY PRIOR    A.HI_MENU_ID = A.MENU_ID
+				ORDER SIBLINGS BY 	A.SORT_ORD DESC
+		)
+		ORDER BY MENU_LVL ASC
+	</select>
+	
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<!-- 
+** Validator Rule **
+ 
+EX)
+
+<field property="Property명" depends="Rule명">
+	<arg0 key=""/> 										< 해당 arg의 index로 키값이 message 파라미터 인덱스에 맞게 들어간다
+	<arg1 key="${var:var-name1}" resource="false"/> 	< var-name에 맞는 var-value가 들어간다.
+	<arg2 key="${var:var-name2}" resource="false"/>
+	<var>
+	    <var-name>var-name1</var-name>
+		<var-value>2</var-value>
+		<var-name>var-name2</var-name>
+		<var-value>10</var-value>
+	</var>
+	<msg key="메시지코드 키값" name="Rule명" />								< 미설정시 DEFAULT 값
+</field>
+
+** 기본 RULE LIST **
+
+* Rule명				Method명				설명
+
+- required			validateRequired	필수값 체크
+- minlength			validateMinLength	최소 길이 체크
+- maxlength			validateMaxLength	최대 길이 체크
+- mask				validateMask		정규식 체크
+- byte				validateByte		Byte형 체크
+- short				validateShort		Short형 체크
+- integer			validateInteger		Integer형 체크
+- long				validateLong		Long형 체크
+- float				validateFloat		Float형 체크
+- double			validateDouble		Double형 체크
+- date				validateDate		Date형 체크
+- range				validateIntRange	범위 체크
+- intRange			validateIntRange	int형 범위 체크
+- floatRange		validateFloatRange	Float형 범위체크
+- creditCard		validateCreditCard	신용카드번호체크
+- email				validateEmail		이메일체크
+
+** 추가 RULE LIST **
+
+* Rule명				Method명				설명
+
+- isId				validateIsId		아이디 유효성 검사
+- isPw				validateIsPw		비밀번호 유효성 검사
+- isDate			validateIsDate		날짜 유효성 검사
+- isLength			validateIsLength	글자수 유효성 검사
+- isNum				validateIsNum		숫자인지 체크
+- isMinNum			validateIsMinNum	최소숫자 체크
+- isMaxNum			validateIsMaxNum	최대숫자 체크
+
+ -->

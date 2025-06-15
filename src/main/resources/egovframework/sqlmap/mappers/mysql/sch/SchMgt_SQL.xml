@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.sch.service.impl.SchMgtMapper">
+	
+	<select id="selectSchMgtTotCnt" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(CODE)
+		FROM 	COM_SCH_MGT
+		WHERE	1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "code"'>
+					AND CODE LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>		
+		<if test='startDate != null and startDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<select id="selectSchMgtList" parameterType="map" resultType="schMgtVO">
+		<include refid="paging.preSql"></include>
+		SELECT 
+					  CODE
+					, TITLE
+					, CONVERT(HEADER USING UTF8) AS HEADER
+					, CONVERT(FOOTER USING UTF8) AS FOOTER
+					, SKIN_CD
+					, TYPE_CD
+					, FILE_YN
+					, FILE_CNT
+					, FILE_SIZE
+					, FILE_EXT
+					, CATE_YN
+					, CATEGORY
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_SCH_MGT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "code"'>
+					AND CODE LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &lt;= #{endDate}
+		</if>
+		ORDER BY	INPT_DTTM DESC, CODE ASC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectSchMgt" parameterType="string" resultType="schMgtVO">
+		SELECT 
+					  A.CODE
+					, A.TITLE
+					, CONVERT(A.HEADER USING UTF8) AS HEADER
+					, CONVERT(A.FOOTER USING UTF8) AS FOOTER
+					, A.SKIN_CD
+					, LOWER(B.CD_ENG_ABBR_NM) AS SKIN_CD_VAL
+					, A.TYPE_CD
+					, A.FILE_YN
+					, A.FILE_CNT
+					, A.FILE_SIZE
+					, A.FILE_EXT
+					, A.CATE_YN
+					, A.CATEGORY
+					, A.SUPPL_YN
+					, A.SUPPL01_YN
+					, A.SUPPL02_YN
+					, A.SUPPL03_YN
+					, A.SUPPL04_YN
+					, A.SUPPL05_YN
+					, A.SUPPL06_YN
+					, A.SUPPL07_YN
+					, A.SUPPL08_YN
+					, A.SUPPL09_YN
+					, A.SUPPL10_YN
+					, A.SUPPL01_TITLE
+					, A.SUPPL02_TITLE
+					, A.SUPPL03_TITLE
+					, A.SUPPL04_TITLE
+					, A.SUPPL05_TITLE
+					, A.SUPPL06_TITLE
+					, A.SUPPL07_TITLE
+					, A.SUPPL08_TITLE
+					, A.SUPPL09_TITLE
+					, A.SUPPL10_TITLE
+					, A.INPT_ID
+					, A.INPT_IP
+					, A.INPT_DTTM
+					, A.MODI_ID
+					, A.MODI_IP
+					, A.MODI_DTTM
+		FROM 		COM_SCH_MGT A
+		LEFT JOIN	COM_COMM_CD B
+		ON			A.SKIN_CD = B.CD
+		WHERE		A.CODE = #{code}
+	</select>
+	
+	<insert id="insertSchMgt" parameterType="schMgtVO">
+		INSERT
+		INTO 	COM_SCH_MGT
+		(
+				  CODE
+				, TITLE
+				, HEADER
+				, FOOTER
+				, SKIN_CD
+				, TYPE_CD
+				, FILE_YN
+				, FILE_CNT
+				, FILE_SIZE
+				, FILE_EXT
+				, CATE_YN
+				, CATEGORY
+				, SUPPL_YN
+				, SUPPL01_YN
+				, SUPPL02_YN
+				, SUPPL03_YN
+				, SUPPL04_YN
+				, SUPPL05_YN
+				, SUPPL06_YN
+				, SUPPL07_YN
+				, SUPPL08_YN
+				, SUPPL09_YN
+				, SUPPL10_YN
+				, SUPPL01_TITLE
+				, SUPPL02_TITLE
+				, SUPPL03_TITLE
+				, SUPPL04_TITLE
+				, SUPPL05_TITLE
+				, SUPPL06_TITLE
+				, SUPPL07_TITLE
+				, SUPPL08_TITLE
+				, SUPPL09_TITLE
+				, SUPPL10_TITLE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{code}
+				, #{title}
+				, #{header}
+				, #{footer}
+				, #{skinCd}
+				, #{typeCd}
+				, #{fileYn}
+				, #{fileCnt}
+				, #{fileSize}
+				, #{fileExt}
+				, #{cateYn}
+				, #{category}
+				, #{supplYn}
+				, #{suppl01Yn}
+				, #{suppl02Yn}
+				, #{suppl03Yn}
+				, #{suppl04Yn}
+				, #{suppl05Yn}
+				, #{suppl06Yn}
+				, #{suppl07Yn}
+				, #{suppl08Yn}
+				, #{suppl09Yn}
+				, #{suppl10Yn}
+				, #{suppl01Title}
+				, #{suppl02Title}
+				, #{suppl03Title}
+				, #{suppl04Title}
+				, #{suppl05Title}
+				, #{suppl06Title}
+				, #{suppl07Title}
+				, #{suppl08Title}
+				, #{suppl09Title}
+				, #{suppl10Title}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<update id="updateSchMgt" parameterType="schMgtVO">
+		UPDATE	COM_SCH_MGT
+		SET
+				  TITLE = #{title}
+				, HEADER = #{header}
+				, FOOTER = #{footer}
+				, SKIN_CD = #{skinCd}
+				, TYPE_CD = #{typeCd}
+				, FILE_YN = #{fileYn}
+				, FILE_CNT = #{fileCnt}
+				, FILE_SIZE = #{fileSize}
+				, FILE_EXT = #{fileExt}
+				, CATE_YN = #{cateYn}
+				, CATEGORY = #{category}
+				, SUPPL_YN = #{supplYn}
+				, SUPPL01_YN = #{suppl01Yn}
+				, SUPPL02_YN = #{suppl02Yn}
+				, SUPPL03_YN = #{suppl03Yn}
+				, SUPPL04_YN = #{suppl04Yn}
+				, SUPPL05_YN = #{suppl05Yn}
+				, SUPPL06_YN = #{suppl06Yn}
+				, SUPPL07_YN = #{suppl07Yn}
+				, SUPPL08_YN = #{suppl08Yn}
+				, SUPPL09_YN = #{suppl09Yn}
+				, SUPPL10_YN = #{suppl10Yn}
+				, SUPPL01_TITLE = #{suppl01Title}
+				, SUPPL02_TITLE = #{suppl02Title}
+				, SUPPL03_TITLE = #{suppl03Title}
+				, SUPPL04_TITLE = #{suppl04Title}
+				, SUPPL05_TITLE = #{suppl05Title}
+				, SUPPL06_TITLE = #{suppl06Title}
+				, SUPPL07_TITLE = #{suppl07Title}
+				, SUPPL08_TITLE = #{suppl08Title}
+				, SUPPL09_TITLE = #{suppl09Title}
+				, SUPPL10_TITLE = #{suppl10Title}
+				, MODI_ID = #{modiId}
+				, MODI_IP = #{modiIp}
+				, MODI_DTTM = NOW()
+		WHERE 	CODE = #{code}
+	</update>
+	
+	<delete id="deleteSchMgt" parameterType="string">
+		DELETE 
+		FROM	COM_SCH_MGT
+		WHERE 	CODE = #{code}
+	</delete>
+	
+	<select id="selectSchMgtCodeExist" parameterType="map" resultType="int">
+		SELECT 	COUNT(CODE)
+		FROM 	COM_SCH_MGT
+		WHERE	CODE = #{code}
+	</select>
+	
+	<delete id="deleteSchBySchCd" parameterType="string">
+		DELETE 
+		FROM	COM_SCH
+		WHERE 	SCH_CD = #{code}
+	</delete>
+	
+	<delete id="deleteSchAuthBySchCd" parameterType="string">
+		DELETE 
+		FROM	COM_SCH_AUTH
+		WHERE 	SCH_CD = #{code}
+	</delete>
+	
+	<select id="selectSchAuthListByAction" parameterType="map" resultType="schAuthVO">
+		SELECT 
+					  SCH_CD
+					, AUTH_CD
+					, USER_ID
+		FROM 		COM_SCH_AUTH
+		WHERE		SCH_CD = #{code}
+		<choose>
+			<when test='action.equals("LIST")'>
+				AND LIST_AUTH = 'Y'
+			</when>
+			<when test='action.equals("VIEW")'>
+				AND VIEW_AUTH = 'Y'
+			</when>
+			<when test='action.equals("REGI")'>
+				AND REGI_AUTH = 'Y'
+			</when>
+			<otherwise>
+				AND LIST_AUTH = 'Y'
+				AND VIEW_AUTH = 'Y'
+				AND REGI_AUTH = 'Y'
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="selectSchAuth" parameterType="map" resultType="schAuthVO">
+		SELECT
+		          MAX(A.SCH_CD)		AS SCH_CD
+				, MAX(A.LIST_AUTH)	AS LIST_AUTH
+				, MAX(A.VIEW_AUTH)	AS VIEW_AUTH
+				, MAX(A.REGI_AUTH)	AS REGI_AUTH
+		FROM 
+		(
+				SELECT 
+							  A.SCH_CD
+							, A.AUTH_CD
+							, A.USER_ID
+							, A.LIST_AUTH
+							, A.VIEW_AUTH
+							, A.REGI_AUTH
+				FROM 		COM_SCH_AUTH A
+				WHERE		A.SCH_CD = #{schCd}				
+				AND			SFN_IS_AUTH_MAP(A.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+		) A
+	</select>
+	
+	<update id="updateSchAuth" parameterType="schAuthVO">		
+		INSERT
+		INTO 	COM_SCH_AUTH
+		(
+				  SCH_CD
+				, AUTH_CD
+				, USER_ID
+				, LIST_AUTH
+				, VIEW_AUTH
+				, REGI_AUTH
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{schCd}
+				, #{authCd}
+				, #{userId}
+				, IFNULL(#{listAuth}, 'N')
+				, IFNULL(#{viewAuth}, 'N')
+				, IFNULL(#{regiAuth}, 'N')
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{modiId}
+				, #{modiIp}
+				, NOW()
+		)
+	</update>
+	
+	<update id="deleteSchAuth" parameterType="schAuthVO">		
+		DECLARE 
+			CNT NUMBER;
+		BEGIN 				
+			
+			UPDATE
+					COM_SCH_AUTH
+			SET
+			<choose>
+				<when test='action.equals("LIST")'>
+					LIST_AUTH = 'N'
+				</when>
+				<when test='action.equals("VIEW")'>
+					VIEW_AUTH = 'N'
+				</when>
+				<when test='action.equals("REGI")'>
+					REGI_AUTH = 'N'
+				</when>
+				<otherwise>
+					LIST_AUTH = 'N'
+					, VIEW_AUTH = 'N'
+					, REGI_AUTH = 'N'
+				</otherwise>
+			</choose>
+			WHERE SCH_CD = #{schCd}
+			AND	AUTH_CD = #{authCd};
+			
+			SELECT 	COUNT(SCH_CD) AS CNT
+			INTO 	CNT
+			FROM 	COM_SCH_AUTH
+			WHERE 	SCH_CD = #{schCd}
+			AND		AUTH_CD = #{authCd}
+			AND 	LIST_AUTH = 'N'
+			AND 	VIEW_AUTH = 'N'
+			AND 	REGI_AUTH = 'N';
+			
+			IF CNT > 0 THEN						
+		    	DELETE FROM COM_SCH_AUTH WHERE SCH_CD = #{schCd} AND AUTH_CD = #{authCd};
+		    END IF;				    
+		END;
+	</update>
+	
+	<update id="resetSchAuthBySchCd" parameterType="string">
+		UPDATE
+				COM_SCH_AUTH
+		SET
+				LIST_AUTH = 'N'
+				, VIEW_AUTH = 'N'
+				, REGI_AUTH = 'N'
+		WHERE 	SCH_CD = #{code}
+	</update>
+	
+	<delete id="deleteSchAuthByNoAuth" parameterType="string">
+		DELETE
+		FROM	COM_SCH_AUTH
+		WHERE 	SCH_CD = #{code}
+		AND 	LIST_AUTH = 'N'
+		AND 	VIEW_AUTH = 'N'
+		AND 	REGI_AUTH = 'N'
+	</delete>
+	
+	<delete id="deleteSchAuthByAuthCd" parameterType="string">
+		DELETE
+		FROM	COM_SCH_AUTH
+		WHERE 	AUTH_CD = #{authCd}
+	</delete>
+	
+</mapper>

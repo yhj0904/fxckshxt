@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<form-validation>
+	<formset>
+		<form name="menuVO">
+		
+			<!-- 필수값 체크 -->
+			<field property="menuCd" depends="required">
+				<arg0 key="menuVO.menuCd" />
+			</field>
+			<field property="menuId" depends="required">
+				<arg0 key="menuVO.menuId" />
+			</field>
+			<field property="menuNm" depends="required">
+				<arg0 key="menuVO.menuNm" />
+			</field>
+			
+			<!-- 숫자인지 체크 -->
+			<field property="menuLvl" depends="isNum">
+				<arg0 key="menuVO.menuLvl" />
+			</field>
+			<field property="sortOrd" depends="isNum">
+				<arg0 key="menuVO.sortOrd" />
+			</field>
+		</form>
+	</formset>
+</form-validation>

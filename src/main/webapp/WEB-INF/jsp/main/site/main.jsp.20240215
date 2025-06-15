@@ -1,0 +1,616 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<%@ include file="/WEB-INF/jsp/include/context.jspf" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="kr.co.nanwe.file.service.ViewFileVO" %>
+<%@ page import="kr.co.nanwe.bbs.service.BbsService" %>
+<%@ page import="kr.co.nanwe.bbs.service.BbsVO" %>
+<%@ page import="kr.co.nanwe.prog.service.ProgService" %>
+<%@ page import="kr.co.nanwe.prog.service.ProgVO" %>
+<%-- <%@ page import="kr.co.nanwe.bbs.service.JobApiService" %> --%>
+<%
+
+	BbsService bbsService = (BbsService) webApplicationContext.getBean("bbsService");
+	ProgService progService = (ProgService) webApplicationContext.getBean("progService");
+	//JobApiService jobApiService = (JobApiService) webApplicationContext.getBean("jobApiService");
+	
+	Map<String, Object> param = new HashMap<String, Object>();
+	
+	//공지사항
+	param.put("bbsCd", "BOARD14");
+	param.put("pagePerRow", 5);
+	param.put("useContent", "Y");
+	List<BbsVO> noticeList = bbsService.selectRecentBbsListByParam(param);
+	pageContext.setAttribute("noticeList", noticeList);
+	
+	//보도자료
+	param.clear();
+	param.put("bbsCd", "BOARD15");
+	param.put("pagePerRow", 5);
+	param.put("useContent", "Y");
+	List<BbsVO> newsList = bbsService.selectRecentBbsListByParam(param);
+	pageContext.setAttribute("newsList", newsList);
+	
+	//추천채용공고
+	param.clear();
+	param.put("bbsCd", "BOARD04");
+	param.put("pagePerRow", 15);
+	param.put("useContent", "Y");
+	List<BbsVO> empList = bbsService.selectRecentBbsListByParam(param);
+	pageContext.setAttribute("empList", empList);
+	
+	//프로그램 목록
+	param.clear();
+	param.put("pagePerRow", 12);
+	List<ProgVO> progList = progService.selectProgUserMainList(param);
+	pageContext.setAttribute("progList", progList);
+	
+	//worknet 목록
+	//param.clear();
+	//param.put("pagePerRow", 15);
+	//List<Map<String, Object>> workNetList = jobApiService.mainWorknet(param);
+	//pageContext.setAttribute("workNetList", workNetList);
+%>
+
+<c:if test="${unsurvCnt > 0 }">
+	<div id="unsurvPop">
+		미참여 설문이 있습니다.
+	</div>
+</c:if>
+<!-- Navbar & Carousel Start -->
+<div class="container-fluid position-relative p-0">
+  
+    <div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+        	<%-- MAIN-SLIDE --%>
+            	<c:import url="/WEB-INF/jsp/cmmn/main_slide.jsp"></c:import>
+            <%-- //MAIN SLIDE --%>	
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#header-carousel"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+<!-- Navbar & Carousel End -->
+
+
+<!-- Full Screen Search Start -->
+<div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
+            <div class="modal-header border-0">
+                <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center justify-content-center">
+                <div class="input-group" style="max-width: 600px;">
+                    <input type="text" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
+                    <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Full Screen Search End -->
+
+
+<!-- Facts Start -->
+<!-- <div class="container-fluid facts  pt-lg-0">
+    <div class="container  pt-lg-0">
+        <div class="row gx-0">
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.1s">
+                <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                    <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                        <i class="fa fa-users text-primary"></i>
+                    </div>
+                    <div class="ps-4">
+                        <h5 class="text-white mb-0">Happy Clients</h5>
+                        <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.3s">
+                <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                    <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                        <i class="fa fa-check text-white"></i>
+                    </div>
+                    <div class="ps-4">
+                        <h5 class="text-primary mb-0">Projects Done</h5>
+                        <h1 class="mb-0" data-toggle="counter-up">12345</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s">
+                <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                    <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                        <i class="fa fa-award text-primary"></i>
+                    </div>
+                    <div class="ps-4">
+                        <h5 class="text-white mb-0">Win Awards</h5>
+                        <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!-- Facts Start -->
+
+<!-- 프로그램 -->
+<div class="container-fluid  wow fadeInUp wku_main" data-wow-delay="0.1s">
+    <div class="container ">
+        <div class="section-title text-center position-relative mx-auto" style="max-width: 600px;">
+            <!-- <h5 class="fw-bold text-primary text-uppercase">Latest Blog</h5> -->
+            <h1 class="mb-0 pb-4">프로그램</h1>
+        </div>
+       	<c:set var="progLen" value="${fn:length(progList) }" />
+        <div class="owl-carousel program-carousel <c:if test='${progLen lt 4 }'>wr-auto</c:if>">
+        	<c:forEach var="item" items="${progList }" varStatus="i">
+	        		<div class="wow slideInUp prog-item" data-wow-delay="0.3s" data-dday-cd="${item.ddayCd}">
+		                <div class="blog-item bg-white rounded overflow-hidden position-relative">
+		                    <c:choose>
+			                	<c:when test="${!empty item.viewFile.viewUrl }">
+			                		<div class="blog-img position-relative overflow-hidden" style="background-image: url(<c:out value='${item.viewFile.viewUrl }'/>)">
+			                	</c:when>
+			                	<c:otherwise>
+			                		<div class="blog-img position-relative overflow-hidden" style="background-image: url('/images/common/no_img.png')">
+			                	</c:otherwise>
+			                </c:choose>
+	                        <c:choose>
+		                		<c:when test="${item.ddayCd eq '01' }">
+		                			<a class="position-absolute top-0 start-0 bg-primary text-white rounded-end d-day orange" href="#"><c:out value='${item.dday }'/></a>
+		                		</c:when>
+		                		<c:when test="${item.ddayCd eq '02' }">
+		                			<a class="position-absolute top-0 start-0 bg-primary text-white rounded-end d-day blue" href="#"><c:out value='${item.dday }'/></a>
+		                		</c:when>
+		                		<c:otherwise>
+		                			<a class="position-absolute top-0 start-0 bg-primary text-white rounded-end d-day" href="#"><c:out value='${item.dday }'/></a>
+		                		</c:otherwise>
+		                	</c:choose>
+	                    </div>
+	                    <div class="prog-if-box01">
+		                	<ul>
+		                		<%-- <li class="career <c:out value='${item.progCareerCd}'/>"><span><c:out value='${item.progCareerCdNm}'/></span></li> --%>
+		                		<li class="type <c:out value='${item.progTypeCd}'/>"><span><c:out value='${item.progTypeCdNm}'/></span></li>
+		                		<%-- <li class="mth <c:out value='${item.progMthCd}'/>"><span><c:out value='${item.progMthCdNm}'/></span></li> --%>
+		                	</ul>
+		                </div>
+	                    <div class="p-4 prog-if-box02">
+	                        <div class="d-flex mb-3">
+	                            <small class="me-3 user-info"><i class="far fa-user text-primary me-2"></i>모집인원 : <span class="cnt"><span class="totCnt"><c:out value="${item.reqstNmpr}"/> 명</span></small>
+	                            <!-- <small><i class="far fa-calendar-alt text-primary me-2"></i>01 Jan, 2045</small> -->
+	                        </div>
+	                       	<h4 class="mb-3 pro-tit"><c:out value='${item.progNm}'/></h4>
+	                        <div class="pro-info">
+	                        	<p class="appl-dt"><b>신청기간 :</b><span class="start_dt"><c:out value='${item.reqstSdt} ~ ${item.reqstEdt }'/></span></p>
+	                        	<p class="edu-dt"><b>교육기간 :</b><span class="start_dt"><c:out value='${item.progSdt} ~ ${item.progEdt }'/></span></p>
+	                       		<c:choose>
+		                       		<c:when test="${!empty item.progPlace and (item.progMthCd ne 'PROG_MTH_020')}">
+		                       			<p class="place"><b>교육장소 : </b><span><c:out value='${item.progPlace}'/></span></p>
+		                       		</c:when>
+		                       		<c:otherwise>
+		                       			<p class="place">
+		                       				<b>교육장소 : </b>
+		                       				<span><c:out value='${item.progContactCdNm}'/><c:if test="${!empty item.progUrl}">(<c:out value='${item.progUrl}'/>)</c:if></span>
+		                       			</p>
+		                       		</c:otherwise>
+	                       		</c:choose>
+								<%-- <p class="contact"><b>문의처 : </b><span><c:out value="${item.eduMngNm}"/><c:if test="${!empty item.eduTelNo}">(<c:out value="${item.eduTelNo}"/>)</c:if></span></p> --%>
+	                        </div>
+	                        <div class="text-sm-end appl-btn-wr">
+	                        	<a class="text-uppercase appl-link" href="/prog/view.do?sId=<c:out value='${item.progId}'/>">신청하기 <i class="bi bi-arrow-right"></i></a>
+	                        </div>
+	                    </div>
+		                </div>
+		            </div>
+        	</c:forEach>
+        	<c:if test="${empty progList }">
+	        	<div class="no-program-data">
+	        		<ul>
+	        			<li><img src="/images/common/no-data.png"></li>
+	        			<li><spring:message code="board.noData" /></li>
+	        		</ul>
+	        	</div>
+            </c:if>
+        </div>
+        <div class="pro_btn_wr">
+        	<a href="/prog/list.do">더보기</a>
+        </div>
+    </div>
+</div>
+<!-- //프로그램 -->
+
+
+<!-- 추천채용 -->
+<div id="empl01" class="container-fluid  wow fadeInUp wku_main" data-wow-delay="0.1s">
+    <div class="container ">
+        <div class="section-title text-center position-relative mx-auto" style="max-width: 600px;">
+            <!-- <h5 class="fw-bold text-primary text-uppercase">Testimonial</h5> -->
+            <h1 class="mb-0 pb-4">추천채용</h1>
+        </div>
+        <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.6s">
+            <c:forEach var="emp" items="${empList }" varStatus="status">
+            	<div class="testimonial-item">
+	                <div class="empl-cont">
+	                    <p class="mb-0 mx-auto"><a href="/board/board04/view.do?sId=<c:out value='${emp.bbsId }'/>"><c:out value='${emp.title }' escapeXml="false"/></a></p>
+	                </div>
+	            </div>
+            </c:forEach>
+        </div>
+    </div>
+</div>
+<!-- //추천채용 -->
+
+
+<!-- 게시판 최신글 -->
+<div class="container-fluid  wow fadeInUp wku_main wku_main_board" data-wow-delay="0.1s">
+    <div class="container ">
+        <div class="row g-5">
+            <div class="col-lg-5" style="min-height: 500px;">
+                <div class="position-relative h-100">
+                    <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.9s" src="/images/site/main/jmg_img.png" style="object-fit: cover;">
+                	<div class="jmg_btn_wr wow zoomIn" data-wow-delay="0.9s">	
+                		<a href="https://www.instagram.com/wku_job/" target="_blank;" class="jmg_btn jmg_btn01"><img src="/images/site/main/i_insta.png" alt="공식 인스타그램"/>공식 인스타그램</a>
+                		<a href="http://pf.kakao.com/_WGvxkxb" target="_blank;" class="jmg_btn jmg_btn02"><img src="/images/site/main/i_kakao.png" alt="카카오톡 채널"/>카카오톡 채널</a>
+                	</div>
+                </div>
+            </div>
+            <div class="col-lg-7 position-relative wku-board">
+                <div class="position-relative d-flex justify-content-start align-items-center board-top">
+                    <ul class="board-tab">
+                    	<li class=""><h1 class="section-title mb-0 on" data-boardTab="notice" >공지사항</h1></li>
+                    	<li class="slash">/</li>
+                    	<li class=""><h1 class="mb-0" data-boardTab="news">보도자료</h1></li>
+                    </ul>
+            		<a href="/board/board14.do" class="board-target-link wow zoomIn" data-wow-delay="0.9s">더보기</a>
+                </div>
+                <div class="board-list notice">
+					<ul>
+						<c:forEach var="item" items="${noticeList }" varStatus="i">
+							<li>
+								<a href="/board/board14/view.do?sId=<c:out value='${item.bbsId }'/>">
+									<p class="bd_tit"><c:out value='${item.title }'/></p>
+									<p class="bd_dt"><c:out value='${fn:substring(item.inptDttm,0,11) }'/></p>
+								</a>
+							</li>
+						</c:forEach>
+						<c:if test="${empty noticeList }">
+							<li class="no-data">
+								<p class="bd_tit">등록된 내용이 없습니다.</p>
+								<p class="bd_dt"></p>
+							</li>
+						</c:if>
+					</ul>
+                </div>
+                <div class="board-list news" style="display: none;">
+					<ul>
+						<c:forEach var="item" items="${newsList }" varStatus="i">
+							<li>
+								<a href="/board/board14/view.do?sId=<c:out value='${item.bbsId }'/>">
+									<p class="bd_tit"><c:out value='${item.title }'/></p>
+									<p class="bd_dt"><c:out value='${fn:substring(item.inptDttm,0,11) }'/></p>
+								</a>
+							</li>
+						</c:forEach>
+						<c:if test="${empty newsList }">
+							<li class="no-data">
+								<p class="bd_tit">등록된 내용이 없습니다.</p>
+								<p class="bd_dt"></p>
+							</li>
+						</c:if>
+					</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //게시판 최신글 -->
+
+
+<!-- Service Start -->
+<div class="container-fluid  wow fadeInUp wku_main" data-wow-delay="0.1s">
+    <div class="container ">
+        <div class="row g-5 service-list">
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fa text-white ico03"></i>
+                    </div>
+                    <h4 class="mb-3">진로상담</h4>
+                    <p class="m-0">온라인으로 편하게 고민을 남겨주세요.<br>전문 상담사가 여러분과 함께 합니다.</p>
+                    <a class="btn btn-lg btn-primary rounded" href="/board/board18.do">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fa text-white ico06"></i>
+                    </div>
+                    <h4 class="mb-3">인력풀 등록</h4>
+                    <p class="m-0">편리한 구직 활동을 위한<br>인력 등록 및 관리를 지원합니다.</p>
+                    <a class="btn btn-lg btn-primary rounded" href="/board/board09.do">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fa text-white ico01"></i>
+                    </div>
+                    <h4 class="mb-3">진로 & 직무검사</h4>
+                    <p class="m-0">진로 & 직무검사를 통해 본인 적성에 맞는<br>진로를 탐색해 보세요.</p>
+                    <a class="btn btn-lg btn-primary rounded" href="https://www.work.go.kr/consltJobCarpa/jobPsyExam/jobPsyExamIntro.do" target="_blank">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!--<div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fab text-white ico04"></i>
+                    </div>
+                    <h4 class="mb-3">FAQ</h4>
+                    <p class="m-0">진로검사를 통해 본인 적성에 맞는<br>진로를 탐색해 보세요.</p>
+                    <a class="btn btn-lg btn-primary rounded" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fa text-white ico05"></i>
+                    </div>
+                    <h4 class="mb-3">SEO Optimization</h4>
+                    <p class="m-0">1:1 상담신청</p>
+                    <a class="btn btn-lg btn-primary rounded" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                <div class="service-item rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon">
+                        <i class="fa text-white ico06"></i>
+                    </div>
+                    <h4 class="mb-3">WK 100 기업소개</h4>
+                    <p class="m-0">현재 가장 각광받고 있는<br>기업들을 소개합니다.</p>
+                    <a class="btn btn-lg btn-primary rounded" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>  -->
+        </div>
+    </div>
+</div>
+<!-- //Service End -->
+
+<!-- 외부 채용광고 -->
+<%-- <div id="empl02" class="container-fluid  wow fadeInUp wku_main" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="section-title text-center position-relative mx-auto" style="max-width: 600px;">
+            <!-- <h5 class="fw-bold text-primary text-uppercase">Testimonial</h5> -->
+            <h1 class="mb-0 pb-4">워크넷</h1>
+        </div>
+        <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.6s" data-tab="worknet">
+            <c:forEach var="emp" items="${workNetList }" varStatus="i">
+            	<div class="testimonial-item">
+	                <div class="d-flex flex-column align-items-center border-bottom pt-5 pb-4 px-5">
+	                    <div class="empl-comp">
+	                        <h4 class="mb-0"><c:out value="${emp.company }"/></h4>
+	                    </div>
+	                    <div class="mt-4 empl-comp">
+	                         <p class="mb-0 mx-auto"><c:out value="${emp.regDt} ~ ${emp.closeDt }"/></p>
+	                    </div>
+	                </div>
+	                <div class="empl-cont">
+	                    <p class="mb-0 mx-auto"><c:out value="${emp.title }"/></p>
+	                </div>
+	            </div>
+            </c:forEach>
+            <c:if test="${empty workNetList }">
+	            <div>
+	                <div class="empl-cont">
+	                    <p class="mb-0 mx-auto">조회된 내용이 없습니다.</p>
+	                </div>
+	            </div>
+            </c:if>
+        </div>
+    </div>
+</div> --%>
+<!-- //외부 채용광고 -->
+
+
+<!-- Vendor Start -->
+<div class="container-fluid  wow fadeInUp wku_main vendor" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="bg-white">
+			<%-- BOTTOM_BANNER --%>
+				<c:import url="/WEB-INF/jsp/cmmn/bottom_banner.jsp"></c:import>
+			<%-- //BOTTON_BANNER --%>
+        </div>
+    </div>
+</div>
+<!-- Vendor End -->
+
+<script type="text/javascript">
+
+	$(function(){
+		
+		//fn_jobExtDataCall("worknet");
+		
+		$(".board-tab h1").off("click").on("click", function(){
+			$(".board-tab h1").removeClass("section-title on");
+			$(this).addClass("section-title on");
+			
+			var tab = $(this).data("boardtab");
+			if(!gf_isNull(tab)){
+				$(".board-list").hide();
+				$(".board-list."+tab).show();
+				
+				switch (tab) {
+					case "notice":
+						$(".board-target-link").attr("href", "/board/board14.do");
+						break;
+					case "news":
+						$(".board-target-link").attr("href", "/board/board15.do");
+						break;
+					default:
+						$(".board-target-link").attr("href", "/board/board14.do");
+						break;
+				}
+			}
+		});
+	});
+
+    // program carousel 초기화
+    $(document).ready(function() {
+    // 'item.ddayCd == "03"'인 아이템들을 제거
+    $('.program-carousel .prog-item').each(function() {
+        var ddayCd = $(this).data('dday-cd');
+        if (ddayCd === '03') {
+            $(this).remove();
+        }
+    });
+
+    // 프로그램 Carousel 초기화
+    var progLen = $('.program-carousel .prog-item').length;
+	    $('.program-carousel').owlCarousel({
+	        loop: progLen >= 5,
+	        autoplay: progLen >= 5,
+	        margin: 25,
+	        dots: false,
+	        smartSpeed: 1000,
+	        nav: true,
+	        items: 4,
+	        responsive: {
+	            0: {
+	                items: 1
+	            },
+	            576: {
+	                items: 2,
+	                margin: 15
+	            },
+	            768: {
+	                items: 2,
+	                margin: 20
+	            },
+	            1280: {
+	                items: 3
+	            },
+	            1440: {
+	                items: 4
+	            }
+	        }
+	    });
+	});
+	
+
+	
+	//외부 채용정보 data call
+	function fn_jobExtDataCall(cate){
+		var url = "";
+		switch (cate) {
+		case "worknet":
+			url = "/emp/getWorknet.json";
+			break;
+
+		default:
+			url = "/emp/getWorknet.json";
+			break;
+		}
+		
+		gf_ajax({
+			url : url,
+			type : "POST",
+			dataType : "json",
+			data : {
+				pagePerRow : "15"
+			},
+		}).then(function(response){
+			fn_jobExtSlideAdd(response).then(function(){
+				//fn_jobSlide();
+				console.log($("#empl02 .testimonial-item").length);
+			});
+		});
+	}
+	
+	function fn_jobExtSlideAdd(data){
+
+		var html = "";
+		if(!gf_isNull(data)){
+			html = "<div class='carousel-inner'>";
+			data.forEach(function(item, idx){
+				
+				html += "<div class='testimonial-item'>";
+		        html += "    <div class='d-flex flex-column align-items-center border-bottom pt-5 pb-4 px-5'>";
+		        html += "        <div class='mt-4 empl-comp'>";
+		        html += "            <h4 class='mb-0'>"+ gf_nvl(item.company, "") +"</h4>";
+		        html += "        </div>";
+		        html += "        <div class='mt-4 '>";
+		        html += "            <p class='mb-0 mx-auto'>"+ gf_nvl(item.regDt, "") + " ~ "+ gf_nvl(item.closeDt, "") +"</p>";
+		        html += "        </div>";
+		        html += "    </div>";
+		        html += "    <div class='empl-cont'>";
+		        html += "        <p class='mb-0 mx-auto'>"+ gf_nvl(item.title, "") +"</p>";
+		        html += "    </div>";
+		        html += "</div>";
+		        
+			});	
+		} else{
+			html += "<div>";
+	        html += "    <div class='empl-cont'>";
+	        html += "        <p class='mb-0 mx-auto'>조회된 내용이 없습니다.</p>";
+	        html += "    </div>";
+	        html += "</div>";
+		}
+
+        html += "</div>";
+        
+		$("#empl02 .testimonial-carousel").empty();
+		$("#empl02 .testimonial-carousel").append(html);
+		
+	}
+	
+	function fn_jobSlide(){
+		 // Testimonials carousel - emp02
+	    let tflg2 = false;
+	    if($("#empl02 .testimonial-item").length > 3){
+	    	tflg2 = true;
+	    }
+	    $("#empl02 .testimonial-carousel").owlCarousel({
+	        autoplay: true,
+	        smartSpeed: 1500,
+	        dots: true,
+	        loop: tflg2,
+	        center: true,
+	        responsive: {
+	            0:{
+	                items:1
+	            },
+	            576:{
+	                items:1
+	            },
+	            768:{
+	                items:2
+	            },
+	            992:{
+	                items:3
+	            }
+	        }
+	    });
+	}
+</script>

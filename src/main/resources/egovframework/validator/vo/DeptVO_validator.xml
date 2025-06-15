@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<form-validation>
+	<formset>
+		<form name="deptVO">
+			<!-- 필수값 체크 -->
+			<field property="deptCd" depends="required">
+				<arg0 key="deptVO.deptCd" />
+			</field>
+			<field property="deptNmKor" depends="required">
+				<arg0 key="deptVO.deptNmKor" />
+			</field>
+			<field property="useYn" depends="required">
+				<arg0 key="deptVO.useYn" />
+			</field>
+		</form>
+	</formset>
+</form-validation>

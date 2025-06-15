@@ -1,0 +1,7 @@
+<%@ include file="/WEB-INF/jsp/include/context.jspf" %>
+<%@ page import="kr.co.nanwe.surv.service.SurvService" %>
+<%@ page import="kr.co.nanwe.surv.service.SurvMgtVO" %>
+<%@ page import="java.util.List" %>
+<%
+SurvService survService = (SurvService) webApplicationContext.getBean("survService");
+%>

@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+.main_box {position:relative; margin:10px; border:1px solid #e8e8e8; background-color:#fff; box-sizing:border-box; padding:10px;}
+.main_box .top {font-size:23px; font-weight:bold; color:#444;}
+.main_box .cont {min-height:340px;}
+.main_box .top + .cont {margin-top:15px;}
+.main_box.ty2 {border:0; background-color:transparent; padding:0;}
+
+/* 현재접속자 목록 */
+.current_user_list {height: 333px; max-height: 100%;}
+.current_user_list .count {}
+.current_user_list .count span{font-weight:bold;}
+.current_user_list .item {position:relative;}
+.current_user_list .item + .item {margin-top:10px;padding-top:10px;border-top:1px solid #e8e8e8;}
+.current_user_list .item .user {}
+.current_user_list .item .user p{font-weight:bold;}
+.current_user_list .item .info {overflow:hidden; color:#444; font-size:15px;}
+.current_user_list .item .info .ip{float:left;}
+.current_user_list .item .info .time{float:right;}
+.current_user_list .item .ico_logout{position:absolute; top:0; right:0;}
+.current_user_list .no_list{}
+
+.count_box {}
+.count_box>ul {display: flex; flex-direction: row; align-items: center;}
+.count_box>ul>li {text-align:center; border:1px solid #e8e8e8; border-radius:16px; box-sizing:border-box; padding:15px; background-color:#fff; min-width: 200px; min-height: 50px;}
+.count_box>ul>li + li {}
+.count_box>ul>li>p {font-weight:bold; font-size:19px;}
+.count_box>ul>li>span {}

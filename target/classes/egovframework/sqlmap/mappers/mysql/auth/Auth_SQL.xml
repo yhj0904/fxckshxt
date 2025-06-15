@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.auth.service.impl.AuthMapper">
+	
+	<select id="selectAuthList" parameterType="map" resultType="authVO">
+		SELECT
+					  AUTH_CD
+					, AUTH_NM
+					, USE_YN
+					, NOTE
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_AUTH
+		WHERE		1=1
+		<if test='useYn != null and !useYn.equals("")'>
+			<choose>
+				<when test='useYn.equals("Y")'>
+				AND	USE_YN = 'Y'
+				</when>
+				<when test='useYn.equals("N")'>
+				AND	USE_YN = 'N'
+				</when>
+			</choose>
+		</if>		
+		ORDER BY	AUTH_CD ASC, INPT_DTTM ASC
+	</select>
+	
+	<select id="selectAuth" parameterType="string" resultType="authVO">
+		SELECT
+					  AUTH_CD
+					, AUTH_NM
+					, USE_YN
+					, NOTE
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_AUTH
+		WHERE		AUTH_CD = #{authCd}
+	</select>
+	
+	<select id="selectAuthCdExist" parameterType="string" resultType="int">
+		SELECT		COUNT(AUTH_CD)
+		FROM 		COM_AUTH
+		WHERE		AUTH_CD = #{authCd}
+	</select>
+	
+	<insert id="insertAuth" parameterType="authVO">
+		INSERT
+		INTO 	  COM_AUTH
+		(
+				  AUTH_CD
+				, AUTH_NM
+				, USE_YN
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{authCd}
+				, #{authNm}
+				, #{useYn}
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<update id="updateAuth" parameterType="authVO">
+		UPDATE
+				  COM_AUTH
+		SET
+				  AUTH_NM = #{authNm}
+				, USE_YN = #{useYn}
+				, NOTE = #{note}
+				, MODI_ID = #{modiId}
+				, MODI_IP = #{modiIp}
+				, MODI_DTTM = NOW()
+		WHERE 	AUTH_CD = #{authCd}
+	</update>
+	
+	<delete id="deleteAuth" parameterType="string">
+		DELETE
+		FROM	COM_AUTH
+		WHERE	AUTH_CD = #{authCd}
+	</delete>
+	
+	<select id="selectAuthMapList" parameterType="string" resultType="authMapVO">
+		SELECT
+					  AUTH_CD
+					, AUTH_DVCD
+					, USER_DVCD
+					, USER_DVNM
+					, WORK_DVCD
+					, WORK_DVNM
+					, STAT_DVCD
+					, STAT_DVNM
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_AUTH_MAP
+		WHERE		AUTH_CD = #{authCd}
+		ORDER BY	USER_DVCD ASC, WORK_DVCD ASC, STAT_DVCD ASC, INPT_DTTM ASC
+	</select>
+	
+	<insert id="insertAuthMap" parameterType="authMapVO">
+		REPLACE INTO COM_AUTH_MAP
+		(
+				  AUTH_CD
+				, AUTH_DVCD
+				, USER_DVCD
+				, USER_DVNM
+				, WORK_DVCD
+				, WORK_DVNM
+				, STAT_DVCD
+				, STAT_DVNM
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{authCd}
+				, #{authDvcd}
+				, #{userDvcd}
+				, #{userDvnm}
+				, #{workDvcd}
+				, #{workDvnm}
+				, #{statDvcd}
+				, #{statDvnm}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteAuthMapByAuthCd" parameterType="string">
+		DELETE
+		FROM	COM_AUTH_MAP
+		WHERE	AUTH_CD = #{authCd}
+	</delete>
+	
+	
+	
+	<select id="selectAuthDeptList" parameterType="string" resultType="authDeptVO">
+		SELECT
+					  AUTH_CD
+					, AUTH_DVCD
+					, DEPT_CD
+					, DEPT_NM
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_AUTH_DEPT
+		WHERE		AUTH_CD = #{authCd}
+		ORDER BY	INPT_DTTM ASC
+	</select>
+	
+	<insert id="insertAuthDept" parameterType="authDeptVO">
+		INSERT INTO COM_AUTH_DEPT
+			(
+					  AUTH_CD
+					, AUTH_DVCD
+					, DEPT_CD
+					, DEPT_NM
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+			) VALUES (
+					  #{authCd}
+					, #{authDvcd}
+					, #{deptCd}
+					, #{deptNm}
+					, #{inptId}
+					, #{inptIp}
+					, NOW()
+			)
+		ON
+			DUPLICATE_KEY
+		UPDATE 
+	        SET 	  
+				  INPT_ID	= #{inptId}
+				, INPT_IP	= #{inptId}
+				, INPT_DTTM	= NOW()		    
+	</insert>
+	
+	<delete id="deleteAuthDeptByAuthCd" parameterType="string">
+		DELETE
+		FROM	COM_AUTH_DEPT
+		WHERE	AUTH_CD = #{authCd}
+	</delete>
+	
+	<delete id="deleteAuthDeptByDeptCd" parameterType="map">
+		DELETE
+		FROM	COM_AUTH_DEPT
+		WHERE	AUTH_DVCD = #{authDvcd}
+		AND		DEPT_CD = #{deptCd}
+	</delete>
+	
+</mapper>

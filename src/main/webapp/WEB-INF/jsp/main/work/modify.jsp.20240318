@@ -1,0 +1,458 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<%@ include file="/WEB-INF/jsp/include/session.jspf" %>
+<%
+/**
+ * @Class Name 	: modify.jsp
+ * @Description : wk인력풀 수정 화면
+ * @Modification Information
+ * @
+ * @ 수정일			수정자			수정내용
+ * @ --------------------------------------------------------------------------
+ * @ 2023.11.07		신한나			최초생성
+ */
+%>
+<div class="board_wrap">
+
+	<c:if test='${bbsMgtVO.header ne null and bbsMgtVO.header ne ""}'>
+		<div class="board_top">
+			<c:out value="${bbsMgtVO.header }" escapeXml="false"/>
+		</div>
+	</c:if>
+	
+	<div class="board_cont">
+		<form:form commandName="laborVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+			<input type="hidden" id="labrId" name="labrId" value="${laborVO.labrId }">
+			<input id="colgCd" name="colgCd" type="hidden" value="<c:out value="${laborVO.colgCd }" escapeXml="false" />">
+			<input id="userId" name="userId" type="hidden" value="<c:out value="${laborVO.userId }" escapeXml="false" />">
+			<input id="userTypeCd" name="userTypeCd" type="hidden" value="<c:out value="${laborVO.userTypeCd }" escapeXml="false" />">
+			<%-- <c:if test="${!empty laborVO.grade}">
+				<input id="grade" name="grade" type="hidden" value="<c:out value="${laborVO.grade }" escapeXml="false" />">
+			</c:if> --%>
+			
+			<input id="secret" name="secret" type="hidden" value="<c:out value="${laborVO.secret }" escapeXml="false" />">
+			<input id="agreeYn" name="agreeYn" type="hidden" value="<c:out value="${laborVO.agreeYn }" escapeXml="false" />">
+			<input id="bandMember" name="bandMember" type="hidden" value="<c:out value="${laborVO.bandMember }" escapeXml="false" />">
+			
+			<table class="detail_table">
+				<colgroup>
+			 		<col width="150"/>
+			 		<col width="?"/>
+			 	</colgroup>
+			 	<tr>
+			  		<th><label for="belong">소속</label></th>
+					<td>
+						<form:input path="belong" cssClass="w_full" placeholder="(예시)OO대학교 또는 지역 청년"/>
+						<span class="form_error" data-path="belong"><form:errors path="belong" /></span>
+					</td>
+			  	</tr>
+			  	
+			  	<tr>
+					<th><label for="userNm">성명</label></th>
+					<td>
+						<form:input path="userNm" cssClass="w_full" placeholder="성명을 입력해주세요"/>
+						<span class="form_error" data-path="userNm"><form:errors path="userNm" /></span>
+					</td>
+				</tr>
+				
+				<tr>
+					<th><label for="sexCd">성별</label></th>
+					<td>
+						<label class="radio" for="sexCd1">
+							<input id="sexCd1" name="sexCd" type="radio" value="1" <c:if test="${laborVO.sexCd eq '1'}">checked</c:if>><i></i><c:out value='남성'/>
+						</label>
+						<label class="radio" for="sexCd2">
+							<input id="sexCd2" name="sexCd" type="radio" value="2" <c:if test="${laborVO.sexCd eq '2'}">checked</c:if>><i></i><c:out value='여성'/>
+						</label>
+					</td>
+				</tr>
+				
+				<tr>
+					<th><label for="stdNo">학번</label></th>
+					<td>
+						<form:input path="stdNo" cssClass="w_full" maxlegnth="10" placeholder="학번을 입력해주세요"/>
+						<span class="form_error" data-path="stdNo"><form:errors path="stdNo" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="deptCd">학과</label></th>
+					<td>
+						<form:input path="deptCd" cssClass="w_full" placeholder="(예시)기계공학과"/>
+						<span class="form_error" data-path="deptCd"><form:errors path="deptCd" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="grade">학년</label></th>
+					<td>
+						<label class="radio" for="grade1">
+							<input id="grade1" name="grade" type="radio" value="1" <c:if test="${laborVO.grade eq '1'}">checked</c:if>><i></i><c:out value='3학년'/>
+						</label>
+						<label class="radio" for="grade2">
+							<input id="grade2" name="grade" type="radio" value="2" <c:if test="${laborVO.grade eq '2'}">checked</c:if>><i></i><c:out value='4학년'/>
+						</label>
+						<label class="radio" for="grade3">
+							<input id="grade3" name="grade" type="radio" value="3" <c:if test="${laborVO.grade eq '3'}">checked</c:if>><i></i><c:out value='5학년'/>
+						</label>
+						<label class="radio" for="grade4">
+							<input id="grade4" name="grade" type="radio" value="4" <c:if test="${laborVO.grade eq '4'}">checked</c:if>><i></i><c:out value='졸업(2년 이내)'/>
+						</label>
+						<label class="radio" for="grade5">
+							<input id="grade5" name="grade" type="radio" value="5" <c:if test="${laborVO.grade eq '5'}">checked</c:if>><i></i><c:out value='지역 청년'/>
+						</label>
+						<label class="radio" for="grade6">
+							<input id="grade6" name="grade" type="radio" value="6" <c:if test="${laborVO.grade eq '6'}">checked</c:if>><i></i><c:out value='대학원생'/>
+						</label>
+						<label class="radio" for="grade7">
+						    <input id="grade7" name="grade" type="radio" value="7" <c:if test="${laborVO.grade eq '7'}">checked</c:if>><i></i><c:out value='기타'/>
+						</label>
+						<div id="additionalInputContainer">
+						    <c:if test="${laborVO.grade eq '7'}">
+						        <input type="text" id="additionalInput" name="etcGrade" value="${laborVO.etcGrade}" placeholder="기타 정보 입력" style="width:100%;">
+						    </c:if>
+						</div> 
+					</td>
+				</tr>
+				<tr>
+					<th><label for="mbphNo">핸드폰 번호</label></th>
+					<td>
+						<form:input path="mbphNo" cssClass="w_full" placeholder="(형식 : 010-2200-3300)" maxlength="13" oninput="addPhoneHyphen(this);"/>
+						<span class="form_error" data-path="mbphNo"><form:errors path="mbphNo" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="colgScore">학점(평균평점)</label></th>
+					<td>
+						<form:input path="colgScore" cssClass="w_full" placeholder="학점을 입력해주세요" oninput="validateScore(this)"/>
+						<span class="form_error" data-path="colgScore"><form:errors path="colgScore" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="license">보유자격증(해당자만 작성)</label></th>
+					<td>
+						<form:textarea path="license"/>
+						<span class="form_error" data-path="license"><form:errors path="license" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="langScore">공인어학점수(해당자만 작성)</label></th>
+					<td>
+						<form:textarea path="langScore"/>
+						<span class="form_error" data-path="langScore"><form:errors path="langScore" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="extAct">대외활동명(개수)</label></th>
+					<td>
+						<form:input path="extAct" cssClass="w_full" placeholder="(예시) 5개 : 서포터즈, 인턴, 봉사활동, 공모전, 경진대회 참가 등 --＞ ★(Enter 금지)"/>
+						<span class="form_error" data-path="extAct"><form:errors path="extAct" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="itvExp">면접경험</label></th>
+					<td>
+						<form:input path="itvExp" cssClass="w_full" placeholder="O(2회) 또는 X"/>
+						<span class="form_error" data-path="itvExp"><form:errors path="itvExp" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whProgram01">제공 받고싶은 항목은?<br>(복수선택 3개까지 가능)</label></th>
+					<td>
+						<ul style="padding-left: 0; margin-bottom: 0;">
+							<c:forEach var="item" items="${wProgList.list }" varStatus="i">
+								<li>
+									<label class="check" for="whProgram01<c:out value="${i.count }"/>" style="line-height: normal; height: auto; margin-left: 0;">
+										<input type="checkbox" id="whProgram01<c:out value="${i.count }"/>" name="whProgram01" value="${item.cd }" <c:forEach var="prog" items="${laborVO.whProgList01}" varStatus="i"><c:if test="${prog eq item.cd }" >checked</c:if></c:forEach>/>
+    									<i id="chk" <c:if test="${item.cdNm eq '기타'}">class="chkEtc"</c:if> data-target="chkInp"></i><c:out value='${item.cdNm }'/>
+									</label>
+									<c:if test="${item.cdNm eq '기타'}">
+									    <br/><input type="text" id="chkInp" name="etcProgram" value="${laborVO.etcProgram}" style="display: none; width:100%;" placeholder="기타 정보 입력"/>
+									</c:if>
+								</li>
+							</c:forEach>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whJob">희망직종</label></th>
+					<td>
+						<form:input path="whJob" cssClass="w_full" placeholder="(예시) R&D, 기계설계, 건축설계, 생산,품질, 공공기관, 공무원.비영리, UX/UI, IT개발, 빅데이터, AI 등" />
+						<span class="form_error" data-path="whJob"><form:errors path="whJob" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whLocal">희망근무지</label></th>
+					<td class="w_local_list">
+						<label id="is_wl_label" class="check" for="whLocal0" style="line-height: normal; height: auto;">
+							<input type="checkbox" id="whLocal0" value="ALL"/>
+							<i></i>전체선택
+						</label>
+						<c:forEach var="item" items="${localList.list }" varStatus="i">
+							<label class="check localchk" for="whLocal<c:out value="${i.count }"/>" style="line-height: normal; height: auto;">
+								<input type="checkbox" id="whLocal<c:out value="${i.count }"/>" name="whLocal" value="${item.cd }" <c:forEach var="local" items="${laborVO.whLocalList}" varStatus="i"><c:if test="${local eq item.cd }" >checked</c:if></c:forEach> />
+								<i></i><c:out value='${item.cdNm }'/>
+							</label>
+						</c:forEach>
+						<span class="form_error" data-path="whLocal"><form:errors path="whLocal" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="dsrdWage">희망임금(만원)</label></th>
+					<td>
+						<form:input path="dsrdWage" cssClass="w_full" placeholder="(예시)회사내규에 따름  또는 연봉3,000만원 이상"/>
+						<span class="form_error" data-path="dsrdWage"><form:errors path="dsrdWage" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="dsrdWorkCdt">희망 근로조건</label></th>
+					<td>
+						<label class="radio" for="dsrdWorkCdt01">
+							<input id="dsrdWorkCdt01" name="dsrdWorkCdt" type="radio" value="1" <c:if test="${laborVO.dsrdWorkCdt eq '1'}">checked</c:if>><i></i><c:out value='정규직'/>
+						</label>
+						<label class="radio" for="dsrdWorkCdt02">
+							<input id="dsrdWorkCdt02" name="dsrdWorkCdt" type="radio" value="2" <c:if test="${laborVO.dsrdWorkCdt eq '2'}">checked</c:if>><i></i><c:out value='계약직 및 인턴'/>
+						</label>
+						<label class="radio" for="dsrdWorkCdt03">
+							<input id="dsrdWorkCdt03" name="dsrdWorkCdt" type="radio" value="3" <c:if test="${laborVO.dsrdWorkCdt eq '3'}">checked</c:if>><i></i><c:out value='상관없음'/>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whCompany">현재까지 입사지원한 기업<br>(합격여부 관계없음)</label></th>
+					<td>
+						<form:textarea path="whCompany"/>
+						<span class="form_error" data-path="whCompany"><form:errors path="whCompany" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="jobPrepPlan">취업준비 계획<br/>(자신의 커리어 목표)</label></th>
+					<td>
+						<form:textarea path="jobPrepPlan"/>
+						<span class="form_error" data-path="jobPrepPlan"><form:errors path="jobPrepPlan" /></span>
+					</td>
+				</tr>
+			</table>
+				   	
+			<div class="btn_wrap">
+				<ul>
+					<li><a class="button register_btn" href="javascript:fn_modifyAction();"><spring:message code="button.modify" /></a></li>
+					<li><a class="button list_btn" href="javascript:fn_listView();"><spring:message code="button.list" /></a></li>
+				</ul>
+			</div>
+
+		   	<% /** 이중방지 토큰 */ %>
+			<double-submit:preventer/>
+		   	<% /** 검색조건 유지 */ %>
+		   	<input type="hidden" name="sId" value="${laborVO.labrId }">
+			<input type="hidden" name="sCode" value="<c:out value='${sCode }'/>">
+			<input type="hidden" name="sCate" value="<c:out value='${sCate }'/>">
+		  	<c:import url="/WEB-INF/jsp/cmmn/search_cond.jsp"></c:import>
+		  	<% /** //검색조건 유지 */ %>  	
+		</form:form>
+	</div>
+	
+	<c:if test='${bbsMgtVO.footer ne null and bbsMgtVO.footer ne ""}'>
+		<div class="board_bottom">
+			<c:out value="${bbsMgtVO.footer }" escapeXml="false"/>
+		</div>
+	</c:if>
+
+	<script type="text/javascript" src="<c:url value='/cmmn/validator.do'/>"></script>
+	<validator:javascript formName="laborVO" staticJavascript="false" xhtml="true" cdata="false"/>
+	<script type="text/javascript" src="/html/ckeditor/ckeditor.js"></script> <% /** 에디터 사용시 */%>
+	<script type="text/javaScript" defer="defer">	
+		
+		$(function(){
+			
+			//희망근무지 선택  - 전체선택
+			$("#is_wl_label").click(function() {
+				if($("#whLocal0").is(":checked")){
+					$("input[name=whLocal]").prop("checked", true);
+				} else{
+					$("input[name=whLocal]").prop("checked", false);
+				}
+			});
+			
+			$(".localchk").click(function() {
+				var total = $("input[name=whLocal]").length;
+				var checked = $("input[name=whLocal]:checked").length;
+				
+				if(total != checked){
+					$("#whLocal0").prop("checked", false);
+				} else{
+					$("#whLocal0").prop("checked", true);
+				} 
+			});
+			
+			var local_check2 = $(".w_local_list").find("input[name='whLocal']:checked").length;
+			var local2 = $(".w_local_list").find("input[name='whLocal']").length;
+			if(local2 == local_check2){
+				$("input#whLocal0").prop("checked", true);
+			}
+			
+			//에디터사용시
+			//var editorYn = '<c:out value="${bbsMgtVO.editorYn}"/>';
+			//if(editorYn == "Y"){
+			//	var editorArray = [{ id : "contents" , useUpload : '<c:out value="${bbsMgtVO.editorFileYn}"/>' }];
+			//	gf_initCkEditor(editorArray);
+			//}
+			
+			//첨부파일 사용시
+			//var fileYn = '<c:out value="${bbsMgtVO.fileYn}"/>';
+			//if(fileYn == "Y"){
+			//	var multiOption = {
+			//						listId : "uploadList",
+			//						inputId : "uploadFiles",
+			//						inputName : "uploadFiles",
+			//						uploadCount : "<c:out value='${bbsMgtVO.fileCnt}'/>",
+			//						uploadFileSize : "<c:out value='${bbsMgtVO.fileSize}'/>",
+			//						uploadFileExt : "<c:out value='${bbsMgtVO.fileExt}'/>"
+			//					};
+			//	gf_initMultiSelector(multiOption);
+			//}
+		});
+		
+		//목록
+		function fn_listView() {
+			document.detailForm.action = GV_PRESENT_PATH + "/list.do";
+			document.detailForm.submit();
+		}
+		
+		//학년 - 기타
+		document.addEventListener("DOMContentLoaded", function() {
+		    var gradeRadios = document.querySelectorAll('input[name="grade"]');
+		    gradeRadios.forEach(function(radio) {
+		        radio.addEventListener('change', function() {
+		            toggleInputField();
+		        });
+		    });
+		
+		    toggleInputField();
+		});
+		
+		function toggleInputField() {
+		    var selectedRadio = document.querySelector('input[name="grade"]:checked');
+		    var container = document.getElementById("additionalInputContainer");
+		
+		    if (selectedRadio && selectedRadio.value === "7") {
+		        if (!document.getElementById("additionalInput")) {
+		            var input = document.createElement("input");
+		            input.id = "additionalInput";
+		            input.type = "text";
+		            input.name = "additionalInfo";
+		            input.placeholder = "기타 정보 입력";
+		            input.style.width = "100%";
+		            container.appendChild(input);
+		        }
+		    } else {
+		        var input = document.getElementById("additionalInput");
+		        if (input) {
+		            container.removeChild(input);
+		        }
+		    }
+		}
+		
+		//제공항목 - 기타
+		document.addEventListener('DOMContentLoaded', function() {
+		    var icons = document.querySelectorAll('.chkEtc');
+		    
+		    icons.forEach(function(icon) {
+		        // '기타' 체크박스와 연결된 입력 필드 찾기
+		        var targetId = icon.getAttribute('data-target');
+		        var targetInput = document.getElementById(targetId);
+		        var checkbox = icon.previousElementSibling; // '기타' 체크박스
+		
+		        // 페이지 로드 시 '기타' 항목이 체크되어 있고, laborVO.etcProgram에 값이 있는 경우 입력 필드 표시
+		        if (checkbox.checked && targetInput.value) {
+		            targetInput.style.display = 'inline';
+		        }
+		
+		        // '기타' 아이콘 클릭 이벤트
+		        icon.addEventListener('click', function() {
+		            if (targetInput) {
+		                targetInput.style.display = targetInput.style.display === 'none' ? 'inline' : 'none';
+		                
+		                // 입력 필드가 표시될 때 placeholder 설정
+		                if (targetInput.style.display === 'inline') {
+		                    targetInput.placeholder = "기타 정보 입력";
+		                }
+		            }
+		        });
+		    });
+		});
+		
+		//자동 하이픈
+		function addPhoneHyphen(num){
+			num.value = num.value
+		   .replace(/[^0-9]/g, '')
+		   .replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+			return num.value;
+		}
+		
+		//학점
+		function validateScore(input) {
+		    // 입력값을 소수점 두 자리로 제한하는 정규식
+		    var validFormat = /^\d{0,2}(\.\d{0,2})?$/;
+		
+		    // 입력값이 유효하지 않으면 가장 최근의 유효한 값으로 되돌림
+		    if (!validFormat.test(input.value)) {
+		      input.value = input.value.slice(0, -1);
+		    }
+		
+		    // 입력값이 정의된 범위를 벗어나면 경고 및 값 조정
+		    var score = parseFloat(input.value);
+		    if (score > 4.5) {
+		      input.value = "4.5";
+		    } else if (score < 0) {
+		      input.value = "0";
+		    }
+		}
+		
+		//기타 유효성 검사
+		function validateLaborVO(frm) {
+		    // 기타 학년 정보 검사
+		    var etcGradeSelected = document.getElementById("grade7").checked;
+		    var additionalInput = document.getElementById("additionalInput");
+		    var additionalInputValue = additionalInput ? additionalInput.value : "";
+		
+		    if (etcGradeSelected && additionalInputValue.trim() === "") {
+		        gf_alert("기타 학년 정보를 입력해주세요.");
+		        additionalInput.focus();
+		        return false;
+		    }
+		
+		    // 기타 프로그램 정보 검사
+		    var isEtcProgramSelected = false;
+		    var checkboxes = document.querySelectorAll('input[name="whProgram01"]');
+		    for (var i = 0; i < checkboxes.length; i++) {
+		        if (checkboxes[i].checked && checkboxes[i].nextElementSibling.classList.contains('chkEtc')) {
+		            isEtcProgramSelected = true;
+		            break;
+		        }
+		    }
+		    
+		    var etcProgramInput = document.getElementById("chkInp");
+		    var etcProgramInputValue = etcProgramInput ? etcProgramInput.value : "";
+		
+		    if (isEtcProgramSelected && etcProgramInputValue.trim() === "") {
+		        gf_alert("기타 프로그램 정보를 입력해주세요.");
+		        etcProgramInput.style.display = "block";
+		        etcProgramInput.focus();
+		        return false;
+		    }
+		
+		    return true;
+		}
+	
+		//등록 처리
+		function fn_modifyAction() {
+			frm = document.detailForm;
+			if (!validateLaborVO(frm)) {
+				return;
+			} else {
+				frm.action = GV_PRESENT_PATH + "/modifyAction.do";
+				frm.submit();
+			}
+		}
+		
+	</script>
+</div>

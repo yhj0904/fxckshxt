@@ -1,0 +1,1409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.prog.service.impl.ProgMapper">
+
+	<select id="selectProgTotCnt" parameterType="map" resultType="int">
+		<!-- 관리자 프로그램 관리 목록 등록 건 수 조회 --> 
+		SELECT 
+				COUNT(PROG_ID)
+		FROM 	PROG_MST
+		WHERE	1 = 1
+		<if test='year != null and year !=""'>
+			AND YEAR = #{year}
+		</if>
+		<if test='semstrCd != null and semstrCd !=""'>
+			AND SEMSTR_CD = #{semstrCd}
+		</if>
+		<if test='searchValue != null and searchValue !=""'>
+			AND (
+				PROG_NM LIKE CONCAT('%', #{searchValue} , '%')
+				OR PROG_SUMRY LIKE CONCAT('%', #{searchValue} , '%')
+			)
+		</if>
+	</select>
+	
+	<select id="selectProgList" parameterType="map" resultType="progVO">
+		<!-- 관리자 프로그램 관리 목록 조회 -->
+		<include refid="paging.preSql"></include>
+		<!--SELECT
+				  A.PROG_ID
+				, A.YEAR
+				, CASE 
+						WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+						WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+						ELSE '-'
+				  END AS SEMSTR_CD
+				, A.PROG_NM
+				, A.PROG_CAREER_CD
+				, SFN_GET_CODENM(A.PROG_CAREER_CD) AS PROG_CAREER_CD_NM
+				, A.PROG_MTH_CD
+				, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+				, A.PROG_CONTACT_CD
+				, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+				, DATE_FORMAT(A.PROG_SDT, '%y.%m.%d.') AS PROG_SDT
+				, DATE_FORMAT(A.PROG_EDT, '%y.%m.%d.') AS PROG_EDT
+				, A.EDU_MNG_NM
+				, A.EDU_TEL_NO
+				, DATE_FORMAT(A.REQST_SDT, '%y.%m.%d.') AS REQST_SDT
+				, DATE_FORMAT(A.REQST_EDT, '%y.%m.%d.') AS REQST_EDT
+				, A.REQST_NMPR
+				, A.STATUS_CD
+				, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+				, (
+						SELECT		COUNT(*) 
+						FROM 		PROG_USER F
+						LEFT OUTER JOIN COM_USER  U
+						ON 			F.USER_ID = U.USER_ID 
+						WHERE 		A.PROG_ID = F.PROG_ID
+						AND			U.USER_ID IS NOT NULL
+						AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+						AND 		F.PROG_REQST_CD = 'PROG_REQST_010'
+				) AS APPL_NMPR
+				, A.DEL_YN
+				<![CDATA[
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+						ELSE '-' 
+				  END AS DDAY
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+						ELSE '-' 
+				  END AS DDAY_CD
+				]]>  
+		FROM 	PROG_MST A
+		WHERE	1 = 1
+		<if test='year != null and year !=""'>
+			AND YEAR = #{year}
+		</if>
+		<if test='semstrCd != null and semstrCd !=""'>
+			AND SEMSTR_CD = #{semstrCd}
+		</if>
+		<if test='searchValue != null and searchValue !=""'>
+			AND (
+				PROG_NM LIKE CONCAT('%', #{searchValue} , '%')
+				OR PROG_SUMRY LIKE CONCAT('%', #{searchValue} , '%')
+			)
+		</if>
+		ORDER BY A.INPT_DTTM DESC, A.PROG_ID DESC-->
+		SELECT
+		A.PROG_ID
+		, A.YEAR
+		, CASE
+		WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+		WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+		ELSE '-'
+		END AS SEMSTR_CD
+		, A.PROG_NM
+		, A.PROG_CAREER_CD
+		, SFN_GET_CODENM(A.PROG_CAREER_CD) AS PROG_CAREER_CD_NM
+		, A.PROG_MTH_CD
+		, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+		, A.PROG_CONTACT_CD
+		, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+		, DATE_FORMAT(A.PROG_SDT, '%y.%m.%d.') AS PROG_SDT
+		, DATE_FORMAT(A.PROG_EDT, '%y.%m.%d.') AS PROG_EDT
+		, A.EDU_MNG_NM
+		, A.EDU_TEL_NO
+		, DATE_FORMAT(A.REQST_SDT, '%y.%m.%d.') AS REQST_SDT
+		, DATE_FORMAT(A.REQST_EDT, '%y.%m.%d.') AS REQST_EDT
+		, A.REQST_NMPR
+		, A.STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+		, (
+
+		SELECT
+		COUNT(*)
+		FROM
+		(SELECT		F.PROG_ID
+		,F.PROG_REQST_CD
+		FROM 		PROG_USER F
+		LEFT OUTER JOIN COM_USER  U
+		ON 			F.USER_ID = U.USER_ID
+		WHERE 		A.PROG_ID = F.PROG_ID
+		AND			U.USER_ID IS NOT NULL
+		AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+		UNION ALL
+		SELECT		G.PROG_ID
+		,G.PROG_REQST_CD
+		FROM 		PROG_USER_PUBLIC G
+		WHERE 	A.PROG_ID = G.PROG_ID) O
+		WHERE 1+1
+		AND 		O.PROG_REQST_CD = 'PROG_REQST_010'
+
+		) AS APPL_NMPR
+		, A.DEL_YN
+		<![CDATA[
+		, CASE
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+		ELSE '-'
+		END AS DDAY
+		, CASE
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+		WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+		ELSE '-'
+		END AS DDAY_CD
+		]]>
+		FROM 	PROG_MST A
+		WHERE	1 = 1
+		<if test='year != null and year !=""'>
+			AND YEAR = #{year}
+		</if>
+		<if test='semstrCd != null and semstrCd !=""'>
+			AND SEMSTR_CD = #{semstrCd}
+		</if>
+		<if test='searchValue != null and searchValue !=""'>
+			AND (
+			PROG_NM LIKE CONCAT('%', #{searchValue} , '%')
+			OR PROG_SUMRY LIKE CONCAT('%', #{searchValue} , '%')
+			)
+		</if>
+		ORDER BY A.INPT_DTTM DESC, A.PROG_ID DESC
+		<include refid="paging.postSql"></include>
+	</select>
+
+	<insert id="insertProg" parameterType="progVO">
+		<!-- 관리자 프로그램 등록-->
+		<selectKey keyProperty="progId" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+		INSERT
+		INTO 	PROG_MST
+		(
+				  YEAR
+				, SEMSTR_CD
+				, PROG_NM
+				, PROG_CAREER_CD
+				, PROG_MTH_CD
+				, PROG_TYPE_CD
+				, PROG_SUMRY
+				, PROG_CONTACT_CD
+				, PROG_URL
+				, PROG_SDT
+				, PROG_EDT
+				, PROG_STM
+				, PROG_ETM
+				, PROG_TIME
+				, PROG_PLACE
+				, EDU_ORG_NM
+				, EDU_MNG_NM
+				, EDU_TEL_NO
+				, EDU_EMAIL
+				, REQST_SDT
+				, REQST_EDT
+				, REQST_YN
+				, REQST_NMPR
+				, STATUS_CD
+				, SURVEY_YN
+				, SURVEY_SDT
+				, SURVEY_EDT
+				, RM
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				
+		) VALUES (       
+				  DATE_FORMAT(NOW(), '%Y')                 
+				, #{semstrCd}            
+				, #{progNm}              
+				, #{progCareerCd}       
+				, #{progMthCd}          
+				, #{progTypeCd}         
+				, #{progSumry}           
+				, #{progContactCd}      
+				, #{progUrl}             
+				, #{progSdt}             
+				, #{progEdt}             
+				, #{progStm}             
+				, #{progEtm}             
+				, #{progTime}            
+				, #{progPlace}           
+				, #{eduOrgNm}           
+				, #{eduMngNm}           
+				, #{eduTelNo}           
+				, #{eduEmail}            
+				, #{reqstSdt}            
+				, #{reqstEdt}            
+				, #{reqstYn}             
+				, #{reqstNmpr}           
+				, #{statusCd}            
+				, #{surveyYn}            
+				, #{surveySdt}           
+				, #{surveyEdt}           
+				, #{rm}                   
+				, #{inptId}             
+				, #{inptIp}             
+				, NOW()           
+		)
+	</insert>
+	
+	<select id="selectProg" parameterType="map" resultType="progVO">
+		<!-- 관리자 프로그램 상세 조회 -->
+		SELECT 
+				  A.PROG_ID
+				, A.YEAR
+				, CASE 
+						WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+						WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+						ELSE '-'
+				  END AS SEMSTR_CD
+				, A.PROG_NM
+				, A.PROG_CAREER_CD
+				, SFN_GET_CODENM(A.PROG_CAREER_CD) AS PROG_CAREER_CD_NM
+				, A.PROG_TGT_CD
+				, A.PROG_MTH_CD
+				, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+				, A.PROG_TYPE_CD
+				, SFN_GET_CODENM(A.PROG_TYPE_CD) AS PROG_TYPE_CD_NM
+				, CONVERT(A.PROG_SUMRY USING UTF8) AS PROG_SUMRY
+				, A.PROG_FILE_NO
+				, A.FILE_NO
+				, A.PROG_CONTACT_CD
+				, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+				, A.PROG_URL
+				, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') AS PROG_SDT
+				, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') AS PROG_EDT
+				, DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%H:%i') AS PROG_STM
+				, DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%H:%i') AS PROG_ETM
+				, A.PROG_TIME
+				, A.PROG_PLACE
+				, A.EDU_ORG_NM
+				, A.EDU_MNG_NM
+				, A.EDU_TEL_NO
+				, A.EDU_EMAIL
+				, A.EDU_CHAT_ID
+				, DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') AS REQST_SDT
+				, DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') AS REQST_EDT
+				, A.REQST_YN
+				, A.REQST_NMPR
+				, A.STATUS_CD
+				, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+				, A.SURVEY_YN
+				, DATE_FORMAT(A.SURVEY_SDT, '%Y.%m.%d.') AS SURVEY_SDT
+				, DATE_FORMAT(A.SURVEY_EDT, '%Y.%m.%d.') AS SURVEY_EDT
+				, A.SURVEY_NMPR
+				, A.SURVEY_SCORE
+				, A.RM
+				, A.INPT_ID
+				, A.INPT_IP
+				, DATE_FORMAT(A.INPT_DTTM, '%Y.%m.%d.') AS INPT_DTTM
+				, A.MODI_ID
+				, A.MODI_IP
+				, DATE_FORMAT(A.MODI_DTTM, '%Y.%m.%d.') AS MODI_DTTM
+				, (
+						SELECT		COUNT(*) 
+						FROM 		PROG_USER F
+						LEFT OUTER JOIN COM_USER  U
+						ON 			F.USER_ID = U.USER_ID 
+						WHERE 		A.PROG_ID = F.PROG_ID
+						AND			U.USER_ID IS NOT NULL
+						AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+						AND 		F.PROG_REQST_CD = 'PROG_REQST_010'
+				) AS APPL_NMPR
+				<![CDATA[
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+						ELSE '-' 
+				  END AS DDAY
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+						ELSE '-' 
+				  END AS DDAY_CD
+				]]>  
+				
+		FROM 	PROG_MST A
+		WHERE	A.PROG_ID = #{progId}
+	</select>
+	
+	<select id="selectProgUpBfView" parameterType="map" resultType="progVO">
+		<!-- 관리자 프로그램 수정 전 상세데이터 조회  -->
+		SELECT 
+				  PROG_ID
+				, YEAR
+				, SEMSTR_CD
+				, PROG_NM
+				, PROG_CAREER_CD
+				, PROG_MTH_CD
+				, PROG_TYPE_CD
+				, CONVERT(PROG_SUMRY USING UTF8) AS PROG_SUMRY
+				, PROG_FILE_NO
+				, FILE_NO
+				, PROG_CONTACT_CD
+				, PROG_URL
+				, PROG_SDT
+				, PROG_EDT
+				, PROG_STM
+				, PROG_ETM
+				, PROG_TIME
+				, PROG_PLACE
+				, EDU_ORG_NM
+				, EDU_MNG_NM
+				, EDU_TEL_NO
+				, EDU_EMAIL
+				, EDU_CHAT_ID
+				, REQST_SDT
+				, REQST_EDT
+				, REQST_YN
+				, REQST_NMPR
+				, STATUS_CD
+				, SURVEY_YN
+				, SURVEY_SDT
+				, SURVEY_EDT
+				, SURVEY_NMPR
+				, SURVEY_SCORE
+				, RM
+		FROM 	PROG_MST
+		WHERE	PROG_ID = #{progId}
+	</select>
+	
+	<update id="updateProgThumbFile" parameterType="progVO">
+		<!-- 관리자 프로그램 썸네일 번호 수정 -->
+		UPDATE
+				PROG_MST
+		SET
+				PROG_FILE_NO = #{progFileNo}
+		WHERE	PROG_ID = #{progId}
+	</update>
+	
+	<select id="selectProgId" parameterType="progVO" resultType="string">
+		SELECT 
+				LAST_INSERT_ID(PROG_ID) + 1
+		FROM	PROG_MST
+	</select>
+	
+	<update id="deleteProgToDelete" parameterType="progVO">
+		<!-- 관리자 프로그램 삭제 시 Y/N 처리 -->
+		UPDATE
+					PROG_MST
+		SET
+					  DEL_YN = 'Y'
+					, DEL_ID = #{delId}
+					, DEL_IP = #{delIp}
+					, DEL_DTTM = NOW()
+		WHERE		PROG_ID = #{progId}
+	</update>
+	
+	<delete id="deleteProg" parameterType="map">
+		<!-- 관리자 프로그램 삭제 -->
+		DELETE 
+		FROM		PROG_MST
+		WHERE		PROG_ID = #{progId}
+	</delete>
+	
+	<update id="updateProg" parameterType="progVO">
+		<!-- 관리자 프로그램 수정 -->
+		UPDATE
+					PROG_MST
+		SET
+					  PROG_NM					= #{progNm}              
+					, PROG_CAREER_CD            = #{progCareerCd}       
+					, PROG_MTH_CD               = #{progMthCd}          
+					, PROG_TYPE_CD              = #{progTypeCd}         
+					, PROG_SUMRY                = #{progSumry}           
+					, PROG_CONTACT_CD           = #{progContactCd}      
+					, PROG_URL                  = #{progUrl}             
+					, PROG_SDT                  = #{progSdt}             
+					, PROG_EDT                  = #{progEdt}             
+					, PROG_STM                  = #{progStm}             
+					, PROG_ETM                  = #{progEtm}             
+					, PROG_TIME                 = #{progTime}            
+					, PROG_PLACE                = #{progPlace}           
+					, EDU_ORG_NM                = #{eduOrgNm}           
+					, EDU_MNG_NM                = #{eduMngNm}           
+					, EDU_TEL_NO                = #{eduTelNo}           
+					, EDU_EMAIL                 = #{eduEmail}            
+					, REQST_SDT                 = #{reqstSdt}            
+					, REQST_EDT                 = #{reqstEdt}            
+					, REQST_YN                  = #{reqstYn}             
+					, REQST_NMPR                = #{reqstNmpr}           
+					<!-- , STATUS_CD                 = #{statusCd}            -->
+					, SURVEY_YN                 = #{surveyYn}            
+					, SURVEY_SDT                = #{surveySdt}           
+					, SURVEY_EDT                = #{surveyEdt}           
+					, RM                        = #{rm}                   
+					, MODI_ID                   = #{modiId}             
+					, MODI_IP                   = #{modiIp}             
+					, MODI_DTTM                 = NOW()     
+		WHERE		PROG_ID = #{progId}
+	</update>
+	
+	<insert id="insertProgUser" parameterType="progUserVO">
+		<!-- 사용자 프로그램 신청 -->
+		INSERT
+		INTO 	PROG_USER_PUBLIC
+		(
+				  PROG_ID
+				, USER_ID
+				, USER_TYPE_CD
+				, STD_NO
+				, REQST_DT
+				, PROG_REQST_CD
+				, COLG_CD
+				, DEPT_CD
+				, GRADE
+				, SEX_CD
+				, COMPL_CD
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, USER_NM
+				, MBPH_NO
+				, EMAIL
+		) VALUES (       
+				  #{progId}
+				<choose>
+					<when test='userId == null or "".equals(userId)'>, (SELECT CONCAT('TMPID', DATE_FORMAT(NOW(), '%Y%m%d%h%i%s')) FROM dual)</when>
+					<otherwise>, #{userId}</otherwise>
+				</choose>
+				, #{userTypeCd}
+				, #{stdNo}
+				, DATE_FORMAT(NOW(), '%Y%m%d')   
+				, 'PROG_REQST_010'
+				, #{colgCd}
+				, #{deptCd}
+				, #{grade}
+				, #{sexCd}      
+				, 'PROG_COMPL_020'  
+				, #{inptId}             
+				, #{inptIp}             
+				, NOW()
+				, #{userNm}
+				, #{mbphNo}
+				, #{email}
+		)
+	</insert>
+	
+	<select id="selectProgUserViewTotCnt" parameterType="map" resultType="int">
+		<!-- 사용자 프로그램 목록 데이터 전체 건 수 조회  -->
+		SELECT 
+				COUNT(PROG_ID)
+		FROM 	PROG_MST
+		WHERE	1 = 1
+		AND		IFNULL(DEL_YN, 'N') != 'Y'
+		<if test='year != null and year !=""'>
+			AND YEAR = #{year}
+		</if>
+		<if test='semstrCd != null and semstrCd !=""'>
+			AND SEMSTR_CD = #{semstrCd}
+		</if>
+		<if test='searchValue != null and searchValue !=""'>
+			AND (
+				PROG_NM LIKE CONCAT('%', #{searchValue} , '%')
+				OR PROG_SUMRY LIKE CONCAT('%', #{searchValue} , '%')
+			)
+		</if>
+	</select>
+	
+	<select id="selectProgUserViewList" parameterType="map" resultType="progVO">
+		<!-- 사용자 프로그램 목록 데이터 조회  -->
+		<include refid="paging.preSql"></include>
+		SELECT 
+				  A.PROG_ID
+				, A.YEAR
+				, CASE 
+						WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+						WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+						ELSE '-'
+				  END AS SEMSTR_CD
+				, A.PROG_NM
+				, A.PROG_FILE_NO
+				, A.PROG_CAREER_CD
+				, SUBSTRING_INDEX(REPLACE(SFN_GET_CODENM(A.PROG_CAREER_CD), ' ', '#'), '#', 1)  AS PROG_CAREER_CD_NM
+				, A.PROG_MTH_CD
+				, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+				, A.PROG_CONTACT_CD
+				, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+				, A.PROG_TYPE_CD
+				, SFN_GET_CODENM(A.PROG_TYPE_CD) AS PROG_TYPE_CD_NM
+				, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') AS PROG_SDT
+				, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') AS PROG_EDT
+				, A.PROG_PLACE
+				, A.PROG_URL
+				, A.EDU_MNG_NM
+				, A.EDU_TEL_NO
+				, DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') AS REQST_SDT
+				, DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') AS REQST_EDT
+				, A.REQST_NMPR
+				, A.STATUS_CD
+				, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+				, (
+						SELECT		COUNT(*) 
+						FROM 		PROG_USER F
+						LEFT OUTER JOIN COM_USER  U
+						ON 			F.USER_ID = U.USER_ID 
+						WHERE 		A.PROG_ID = F.PROG_ID
+						AND			U.USER_ID IS NOT NULL
+						AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+						AND 		F.PROG_REQST_CD = 'PROG_REQST_010'
+				) AS APPL_NMPR
+				<![CDATA[
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+						ELSE '-' 
+				  END AS DDAY
+				, CASE 
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+						WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+						ELSE '-' 
+				  END AS DDAY_CD
+				]]>  
+		FROM 	PROG_MST A
+		WHERE	1 = 1
+		AND		IFNULL(A.DEL_YN, 'N') != 'Y'
+		<if test='year != null and year !=""'>
+			AND YEAR = #{year}
+		</if>
+		<if test='semstrCd != null and semstrCd !=""'>
+			AND SEMSTR_CD = #{semstrCd}
+		</if>
+		<if test='searchValue != null and searchValue !=""'>
+			AND (
+				PROG_NM LIKE CONCAT('%', #{searchValue} , '%')
+				OR PROG_SUMRY LIKE CONCAT('%', #{searchValue} , '%')
+			)
+		</if>
+		ORDER BY DDAY_CD ASC, A.INPT_DTTM DESC, A.PROG_ID DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectProgUserView" parameterType="map" resultType="progVO">
+		<!-- 사용자 프로그램 상세 데이터 조회  -->
+		<![CDATA[
+			SELECT 
+					  A.PROG_ID
+					, A.YEAR
+					, CASE 
+							WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+							WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+							ELSE '-'
+					  END AS SEMSTR_CD
+					, A.PROG_NM
+					, A.PROG_CAREER_CD
+					, SFN_GET_CODENM(A.PROG_CAREER_CD) AS PROG_CAREER_CD_NM
+					, A.PROG_TGT_CD
+					, A.PROG_MTH_CD
+					, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+					, A.PROG_TYPE_CD
+					, SFN_GET_CODENM(A.PROG_TYPE_CD) AS PROG_TYPE_CD_NM
+					, CONVERT(A.PROG_SUMRY USING UTF8) AS PROG_SUMRY
+					, A.PROG_FILE_NO
+					, A.FILE_NO
+					, A.PROG_CONTACT_CD
+					, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+					, A.PROG_URL
+					, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') AS PROG_SDT
+					, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') AS PROG_EDT
+					, REPLACE(REPLACE(DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%p %h시 %i분'), 'AM', '오전'), 'PM', '오후') AS PROG_STM
+					, REPLACE(REPLACE(DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%p %h시 %i분'), 'AM', '오전'), 'PM', '오후') AS PROG_ETM
+					, A.PROG_TIME
+					, A.PROG_PLACE
+					, A.EDU_ORG_NM
+					, A.EDU_MNG_NM
+					, A.EDU_TEL_NO
+					, A.EDU_EMAIL
+					, A.EDU_CHAT_ID
+					, DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') AS REQST_SDT
+					, DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') AS REQST_EDT
+					, A.REQST_YN
+					, A.REQST_NMPR
+					, A.STATUS_CD
+					, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+					, A.SURVEY_YN
+					, DATE_FORMAT(A.SURVEY_SDT, '%Y.%m.%d.') AS SURVEY_SDT
+					, DATE_FORMAT(A.SURVEY_EDT, '%Y.%m.%d.') AS SURVEY_EDT
+					, A.SURVEY_NMPR
+					, A.SURVEY_SCORE
+					, A.RM
+					, A.INPT_ID
+					, A.INPT_IP
+					, DATE_FORMAT(A.INPT_DTTM, '%Y.%m.%d.') AS INPT_DTTM
+					, A.MODI_ID
+					, A.MODI_IP
+					, DATE_FORMAT(A.MODI_DTTM, '%Y.%m.%d.') AS MODI_DTTM
+					, (
+							SELECT		COUNT(*) 
+							FROM 		PROG_USER F
+							LEFT OUTER JOIN COM_USER  U
+							ON 			F.USER_ID = U.USER_ID 
+							WHERE 		A.PROG_ID = F.PROG_ID
+							AND			U.USER_ID IS NOT NULL
+							AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+							AND 		F.PROG_REQST_CD = 'PROG_REQST_010'
+					) AS APPL_NMPR
+					, CASE 
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+							ELSE '-' 
+					  END AS DDAY
+					, CASE 
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+							ELSE '-' 
+					  END AS DDAY_CD
+			FROM 	PROG_MST A
+			WHERE	A.PROG_ID = #{progId}
+		]]>
+	</select>
+	
+	<select id="selectProgUserMainList" parameterType="map" resultType="progVO">
+		<!-- 메인페이지 최근 등록한 프로그램 목록 조회 -->
+		SELECT 
+				  PAGING.*
+		FROM	
+		( 
+			SELECT 
+					  A.PROG_ID
+					, A.YEAR
+					, CASE 
+							WHEN	A.SEMSTR_CD = '10' THEN '1학기'
+							WHEN	A.SEMSTR_CD = '20' THEN '2학기'
+							ELSE '-'
+					  END AS SEMSTR_CD
+					, A.PROG_NM
+					, A.PROG_FILE_NO
+					, A.PROG_CAREER_CD
+					, SUBSTRING_INDEX(REPLACE(SFN_GET_CODENM(A.PROG_CAREER_CD), ' ', '#'), '#', 1)  AS PROG_CAREER_CD_NM
+					, A.PROG_MTH_CD
+					, SFN_GET_CODENM(A.PROG_MTH_CD) AS PROG_MTH_CD_NM
+					, A.PROG_CONTACT_CD
+					, SFN_GET_CODENM(A.PROG_CONTACT_CD) AS PROG_CONTACT_CD_NM
+					, A.PROG_TYPE_CD
+					, SFN_GET_CODENM(A.PROG_TYPE_CD) AS PROG_TYPE_CD_NM
+					, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') AS PROG_SDT
+					, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') AS PROG_EDT
+					, A.PROG_PLACE
+					, A.PROG_URL
+					, A.EDU_MNG_NM
+					, A.EDU_TEL_NO
+					, DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') AS REQST_SDT
+					, DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') AS REQST_EDT
+					, A.REQST_NMPR
+					, A.STATUS_CD
+					, SFN_GET_CODENM(A.STATUS_CD) AS STATUS_CD_NM
+					, (
+							SELECT		COUNT(*) 
+							FROM 		PROG_USER F
+							LEFT OUTER JOIN COM_USER  U
+							ON 			F.USER_ID = U.USER_ID 
+							WHERE 		A.PROG_ID = F.PROG_ID
+							AND			U.USER_ID IS NOT NULL
+							AND			IFNULL(U.DEL_YN, 'N') != 'Y'
+							AND 		F.PROG_REQST_CD = 'PROG_REQST_010'
+					) AS APPL_NMPR
+					<![CDATA[
+					, CASE 
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN CONCAT('D-', DATEDIFF(DATE(A.REQST_SDT), NOW()))
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '모집 중'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '마감'
+							ELSE '-' 
+					  END AS DDAY
+					, CASE 
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+							ELSE '-' 
+					  END AS DDAY_CD
+					]]>  
+			FROM 	PROG_MST A
+			WHERE	1 = 1
+			AND		IFNULL(A.DEL_YN, 'N') != 'Y'
+			AND		IFNULL(A.REQST_YN, 'N') = 'Y'
+			AND		A.STATUS_CD IN('PROG_STATUS_010', 'PROG_STATUS_020') 
+			<![CDATA[
+			AND		CASE 
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') > DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '01'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') <= DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') >= DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '02'
+							WHEN DATE_FORMAT(A.REQST_SDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') AND DATE_FORMAT(A.REQST_EDT, '%Y.%m.%d.') < DATE_FORMAT(NOW(), '%Y.%m.%d.') THEN '03'
+							ELSE '-' 
+					  END IN ('01','02')
+			]]>  
+			ORDER BY A.INPT_DTTM DESC, A.PROG_ID DESC
+		) PAGING 
+		<choose>
+			<when test='pagePerRow != null and !"".equals(pagePerRow) and pagePerRow != 0'>
+				LIMIT 0, #{pagePerRow}
+			</when>
+			<otherwise>
+				LIMIT 0, 12
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="selectProgApplUserTotCnt" parameterType="map" resultType="int">
+		<!-- 해당 프로그램 신청한 유저 수  -->
+		<!--SELECT
+				 COUNT(*) AS CNT
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'-->
+		SELECT	COUNT(*) AS CNT
+		FROM
+		(SELECT
+		A.PROG_ID
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+		UNION ALL
+		SELECT
+		A.PROG_ID
+		FROM	 PROG_USER_PUBLIC  A
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}) O
+	</select>
+	
+	<select id="selectProgApplUserList" parameterType="map" resultType="HashMap">
+		<!-- 해당 프로그램 신청한 유저 데이터 목록  조회 -->
+		<!--<include refid="paging.preSql"></include> -->
+		<!--SELECT
+				   A.PROG_ID                        AS PROG_ID
+			     , A.PROG_NM                        AS PROG_NM
+			     , A.STATUS_CD                      AS STATUS_CD
+			     , SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+			     , SFN_GET_CODENM(A.PROG_MTH_CD) 	AS PROG_MTH_NM
+			     , B.STD_NO							AS STD_NO
+			     , B.USER_ID                        AS USER_ID
+			     , U.USER_NM                        AS USER_NM
+			     , DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+			     , B.USER_TYPE_CD                   AS USER_TYPE_CD
+			     , SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+			     , B.COLG_CD                        AS COLG_CD
+			     , SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+			     , B.DEPT_CD                        AS DEPT_CD
+			     , SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+			     , B.GRADE                          AS GRADE
+			     , B.SEX_CD         				AS SEX_CD
+			     , CASE 
+						WHEN	B.SEX_CD = '1' THEN '남자'
+						WHEN	B.SEX_CD = '2' THEN '여자'
+						ELSE 	'-'
+				  END AS SEX_CD_NM
+			     , B.COMPL_CD                       AS COMPL_CD
+			     , SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM               
+			     , B.SURVEY_YN
+				 , CASE 
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+						ELSE 	'-'
+				  END AS SURVEY_YN_NM
+				 , CONCAT(SUBSTR(U.MBPH_NO, 1, 3),'-',SUBSTR(U.MBPH_NO, 4, 4),'-',SUBSTR(U.MBPH_NO, 8))						AS MBPH_NO
+			     , U.EMAIL							AS EMAIL
+			     , B.PROG_REQST_CD					AS PROG_REQST_CD
+			     , A.SURVEY_SDT                     AS SURVEY_SDT
+			     , A.SURVEY_EDT                     AS SURVEY_EDT
+			     , SFN_GET_CODENM(B.PROG_REQST_CD)	AS PROG_REQST_CD_NM
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+		ORDER BY B.INPT_DTTM DESC
+			   , B.USER_TYPE_CD
+		       , B.COLG_CD
+		       , B.DEPT_CD
+		       , U.USER_NM-->
+
+<!--		<include refid="paging.postSql"></include>-->
+		SELECT
+		PAGING.*
+		FROM
+		(
+
+		SELECT
+		A.PROG_ID                        AS PROG_ID
+		, A.PROG_NM                        AS PROG_NM
+		, A.STATUS_CD                      AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+		, SFN_GET_CODENM(A.PROG_MTH_CD) 	AS PROG_MTH_NM
+		, B.STD_NO							AS STD_NO
+		, B.USER_ID                        AS USER_ID
+		, U.USER_NM                        AS USER_NM
+		, DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+		, B.USER_TYPE_CD                   AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+		, B.COLG_CD                        AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+		, B.DEPT_CD                        AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+		, B.GRADE                          AS GRADE
+		, B.SEX_CD         				AS SEX_CD
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END AS SEX_CD_NM
+		, B.COMPL_CD                       AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+		, CONCAT(SUBSTR(U.MBPH_NO, 1, 3),'-',SUBSTR(U.MBPH_NO, 4, 4),'-',SUBSTR(U.MBPH_NO, 8))						AS MBPH_NO
+		, U.EMAIL							AS EMAIL
+		, B.PROG_REQST_CD					AS PROG_REQST_CD
+		, A.SURVEY_SDT                     AS SURVEY_SDT
+		, A.SURVEY_EDT                     AS SURVEY_EDT
+		, SFN_GET_CODENM(B.PROG_REQST_CD)	AS PROG_REQST_CD_NM
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+
+		UNION ALL
+
+		SELECT
+		A.PROG_ID                        AS PROG_ID
+		, A.PROG_NM                        AS PROG_NM
+		, A.STATUS_CD                      AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+		, SFN_GET_CODENM(A.PROG_MTH_CD) 	  AS PROG_MTH_NM
+		, B.STD_NO							     AS STD_NO
+		, B.USER_ID                        AS USER_ID
+		, B.USER_NM                        AS USER_NM
+		, DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+		, B.USER_TYPE_CD                   AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+		, B.COLG_CD                        AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+		, B.DEPT_CD                        AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+		, B.GRADE                          AS GRADE
+		, B.SEX_CD         				     AS SEX_CD
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END 										  AS SEX_CD_NM
+		, B.COMPL_CD                       AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+		, CONCAT(SUBSTR(B.MBPH_NO, 1, 3),'-',SUBSTR(B.MBPH_NO, 4, 4),'-',SUBSTR(B.MBPH_NO, 8))						AS MBPH_NO
+		, B.EMAIL								  AS EMAIL
+		, B.PROG_REQST_CD						  AS PROG_REQST_CD
+		, A.SURVEY_SDT                     AS SURVEY_SDT
+		, A.SURVEY_EDT                     AS SURVEY_EDT
+		, SFN_GET_CODENM(B.PROG_REQST_CD)  AS PROG_REQST_CD_NM
+		FROM	 PROG_MST  A
+		INNER JOIN PROG_USER_PUBLIC B ON A.PROG_ID = B.PROG_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		) PAGING
+		ORDER BY PAGING.INPT_DTTM DESC
+		, PAGING.USER_TYPE_CD
+		, PAGING.COLG_CD
+		, PAGING.DEPT_CD
+		, PAGING.USER_NM
+		LIMIT ${beginRow}, ${pagePerRow}
+	</select>
+	
+	<select id="selectExcelProgApplUserList" parameterType="map" resultType="HashMap">
+		<!-- 엑셀다운용 프로그램 신청 유저정보 조회 -->
+		<!--SELECT
+				   ROW_NUMBER() OVER(ORDER BY B.USER_TYPE_CD, B.COLG_CD, B.DEPT_CD, U.USER_NM, B.INPT_DTTM DESC) AS ROWNUM
+				 , A.PROG_ID                        AS PROG_ID
+			     , A.PROG_NM                        AS PROG_NM
+			     , A.PROG_SDT                       AS PROG_SDT			     
+			     , A.PROG_STM                       AS PROG_STM
+			     , A.PROG_MTH_CD
+			     , A.STATUS_CD                      AS STATUS_CD
+			     , SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+			     , B.STD_NO							AS STD_NO
+			     , B.USER_ID                        AS USER_ID
+			     , U.USER_NM                        AS USER_NM
+			     , B.USER_TYPE_CD                   AS USER_TYPE_CD
+			     , SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+			     , B.COLG_CD                        AS COLG_CD
+			     , SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+			     , B.DEPT_CD                        AS DEPT_CD
+			     , SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+			     , B.GRADE                          AS GRADE
+			     , B.SEX_CD         				AS SEX_CD
+			     , CASE 
+						WHEN	B.SEX_CD = '1' THEN '남자'
+						WHEN	B.SEX_CD = '2' THEN '여자'
+						ELSE 	'-'
+				  END AS SEX_CD_NM
+			     , B.COMPL_CD                       AS COMPL_CD
+			     , SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM               
+			     , B.SURVEY_YN
+				 , CASE 
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+						ELSE 	'-'
+				  END AS SURVEY_YN_NM-->
+			     <!--, U.MBPH_NO						AS MBPH_NO-->
+				 <!--, CONCAT(SUBSTR(U.MBPH_NO, 1, 3),'-',SUBSTR(U.MBPH_NO, 4, 4),'-',SUBSTR(U.MBPH_NO, 8))				AS MBPH_NO
+			     , U.EMAIL							AS EMAIL
+			     , B.PROG_REQST_CD					AS PROG_REQST_CD
+			     , SFN_GET_CODENM(B.PROG_REQST_CD)	AS PROG_REQST_CD_NM
+			     , DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+			     , A.SURVEY_SDT                     AS SURVEY_SDT
+			     , A.SURVEY_EDT                     AS SURVEY_EDT
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'-->
+		<!--ORDER BY ROWNUM-->
+		<!--ORDER BY B.INPT_DTTM
+				, B.USER_TYPE_CD
+				, B.COLG_CD
+				, B.DEPT_CD
+				, U.USER_NM-->
+		SELECT
+		ROW_NUMBER() OVER(ORDER BY O.USER_TYPE_CD, O.COLG_CD, O.DEPT_CD, O.USER_NM, O.INPT_DTTM DESC) AS ROWNUM
+		,O.*
+		FROM
+		(SELECT
+		A.PROG_ID                        AS PROG_ID
+		, A.PROG_NM                        AS PROG_NM
+		, A.PROG_SDT                       AS PROG_SDT
+		, A.PROG_STM                       AS PROG_STM
+		, A.PROG_MTH_CD
+		, A.STATUS_CD                      AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+		, B.STD_NO							AS STD_NO
+		, B.USER_ID                        AS USER_ID
+		, U.USER_NM                        AS USER_NM
+		, B.USER_TYPE_CD                   AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+		, B.COLG_CD                        AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+		, B.DEPT_CD                        AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+		, B.GRADE                          AS GRADE
+		, B.SEX_CD         				AS SEX_CD
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END AS SEX_CD_NM
+		, B.COMPL_CD                       AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+
+		, CONCAT(SUBSTR(U.MBPH_NO, 1, 3),'-',SUBSTR(U.MBPH_NO, 4, 4),'-',SUBSTR(U.MBPH_NO, 8))				AS MBPH_NO
+		, U.EMAIL							AS EMAIL
+		, B.PROG_REQST_CD					AS PROG_REQST_CD
+		, SFN_GET_CODENM(B.PROG_REQST_CD)	AS PROG_REQST_CD_NM
+		, DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+		, A.SURVEY_SDT                     AS SURVEY_SDT
+		, A.SURVEY_EDT                     AS SURVEY_EDT
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 U.USER_ID IS NOT NULL
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+
+		UNION ALL
+
+		SELECT
+		A.PROG_ID                        AS PROG_ID
+		, A.PROG_NM                        AS PROG_NM
+		, A.PROG_SDT                       AS PROG_SDT
+		, A.PROG_STM                       AS PROG_STM
+		, A.PROG_MTH_CD
+		, A.STATUS_CD                      AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD )     AS STATUS_NM
+		, B.STD_NO							AS STD_NO
+		, B.USER_ID                        AS USER_ID
+		, B.USER_NM                        AS USER_NM
+		, B.USER_TYPE_CD                   AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD )  AS USER_TYPE_NM
+		, B.COLG_CD                        AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD )       AS COLG_NM
+		, B.DEPT_CD                        AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD )       AS DEPT_NM
+		, B.GRADE                          AS GRADE
+		, B.SEX_CD         				AS SEX_CD
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END AS SEX_CD_NM
+		, B.COMPL_CD                       AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+
+		, CONCAT(SUBSTR(B.MBPH_NO, 1, 3),'-',SUBSTR(B.MBPH_NO, 4, 4),'-',SUBSTR(B.MBPH_NO, 8))				AS MBPH_NO
+		, B.EMAIL							AS EMAIL
+		, B.PROG_REQST_CD					AS PROG_REQST_CD
+		, SFN_GET_CODENM(B.PROG_REQST_CD)	AS PROG_REQST_CD_NM
+		, DATE_FORMAT(B.INPT_DTTM, '%Y-%m-%d %H:%m:%s') AS INPT_DTTM
+		, A.SURVEY_SDT                     AS SURVEY_SDT
+		, A.SURVEY_EDT                     AS SURVEY_EDT
+		FROM	 PROG_MST  A
+		INNER JOIN PROG_USER_PUBLIC B ON A.PROG_ID = B.PROG_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}) O
+
+		ORDER BY O.INPT_DTTM
+		, O.USER_TYPE_CD
+		, O.COLG_CD
+		, O.DEPT_CD
+		, O.USER_NM
+	</select>
+	
+	<!-- 엑셀다운용 쿼리(수정시 위 쿼리와 동기화) -->	
+	<select id="selectProgApplUser" parameterType="map" resultType="map">
+		<!--SELECT
+				   A.PROG_ID                        						AS PROG_ID
+			     , A.PROG_NM                        						AS PROG_NM
+			     , A.PROG_MTH_CD											AS PROG_MTH_CD
+			     , SFN_GET_CODENM(A.PROG_MTH_CD)							AS PROG_MTH_CD_NM
+			     , DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') 					AS PROG_SDT
+				 , DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') 					AS PROG_EDT
+				 , DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%H:%i') 	AS PROG_STM
+				 , DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%H:%i') 	AS PROG_ETM
+			     , A.SURVEY_SDT                     		     		    AS SURVEY_SDT
+			     , A.SURVEY_EDT                     		     		    AS SURVEY_EDT
+			     , A.STATUS_CD                      		     		    AS STATUS_CD
+			     , SFN_GET_CODENM(A.STATUS_CD)	     		     		    AS STATUS_NM
+			     , B.STD_NO									     		    AS STD_NO
+			     , B.USER_ID                        		     		    AS USER_ID
+			     , U.USER_NM                        		     		    AS USER_NM
+			     , U.MBPH_NO                        		     		    AS MBPH_NO
+			     , U.EMAIL									     		    AS EMAIL
+			     , B.USER_TYPE_CD                   		     		    AS USER_TYPE_CD
+			     , SFN_GET_CODENM(B.USER_TYPE_CD)  			     		    AS USER_TYPE_NM
+			     , B.COLG_CD                        		     		    AS COLG_CD
+			     , SFN_GET_DEPTNM(B.COLG_CD)	       		     		    AS COLG_NM
+			     , B.DEPT_CD                        		     		    AS DEPT_CD
+			     , SFN_GET_DEPTNM(B.DEPT_CD)    	   		     		    AS DEPT_NM
+			     , B.GRADE                          		     		    AS GRADE
+			     , B.SEX_CD         						     		    AS SEX_CD
+			     , CASE 
+						WHEN	B.SEX_CD = '1' THEN '남자'
+						WHEN	B.SEX_CD = '2' THEN '여자'
+						ELSE 	'-'
+				  END AS SEX_CD_NM
+			     , B.COMPL_CD                       						AS COMPL_CD
+			     , SFN_GET_CODENM(B.COMPL_CD )      						AS COMPL_NM               
+			     , B.SURVEY_YN
+				 , CASE 
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+						ELSE 	'-'
+				  END AS SURVEY_YN_NM
+			     , B.PROG_REQST_CD											AS PROG_REQST_CD
+			     , SFN_GET_CODENM(B.PROG_REQST_CD)							AS PROG_REQST_CD_NM
+			     , DATE_FORMAT(B.REQST_CNCL_DT, '%Y.%m.%d. %H:%i:%s')		AS REQST_CNCL_DT
+			     , DATE_FORMAT(B.INPT_DTTM, '%Y.%m.%d. %H:%i:%s') 			AS INPT_DTTM
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 A.PROG_ID = #{progId}
+		AND		 B.USER_ID = #{userId}
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'-->
+		SELECT
+		O.*
+		FROM
+		(SELECT
+		A.PROG_ID                        						AS PROG_ID
+		, A.PROG_NM                        						AS PROG_NM
+		, A.PROG_MTH_CD											AS PROG_MTH_CD
+		, SFN_GET_CODENM(A.PROG_MTH_CD)							AS PROG_MTH_CD_NM
+		, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') 					AS PROG_SDT
+		, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') 					AS PROG_EDT
+		, DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%H:%i') 	AS PROG_STM
+		, DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%H:%i') 	AS PROG_ETM
+		, A.SURVEY_SDT                     		     		    AS SURVEY_SDT
+		, A.SURVEY_EDT                     		     		    AS SURVEY_EDT
+		, A.STATUS_CD                      		     		    AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD)	     		     		    AS STATUS_NM
+		, B.STD_NO									     		    AS STD_NO
+		, B.USER_ID                        		     		    AS USER_ID
+		, U.USER_NM                        		     		    AS USER_NM
+		, U.MBPH_NO                        		     		    AS MBPH_NO
+		, U.EMAIL									     		    AS EMAIL
+		, B.USER_TYPE_CD                   		     		    AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD)  			     		    AS USER_TYPE_NM
+		, B.COLG_CD                        		     		    AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD)	       		     		    AS COLG_NM
+		, B.DEPT_CD                        		     		    AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD)    	   		     		    AS DEPT_NM
+		, B.GRADE                          		     		    AS GRADE
+		<!--, B.SEX_CD         						     		    AS SEX_CD-->
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END AS SEX_CD
+		, B.COMPL_CD                       						AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      						AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+		, B.PROG_REQST_CD											AS PROG_REQST_CD
+		, SFN_GET_CODENM(B.PROG_REQST_CD)							AS PROG_REQST_CD_NM
+		, DATE_FORMAT(B.REQST_CNCL_DT, '%Y.%m.%d. %H:%i:%s')		AS REQST_CNCL_DT
+		, DATE_FORMAT(B.INPT_DTTM, '%Y.%m.%d. %H:%i:%s') 			AS INPT_DTTM
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE IFNULL(U.DEL_YN, 'N') != 'Y'
+		UNION ALL
+		SELECT
+		A.PROG_ID                        						AS PROG_ID
+		, A.PROG_NM                        						AS PROG_NM
+		, A.PROG_MTH_CD											AS PROG_MTH_CD
+		, SFN_GET_CODENM(A.PROG_MTH_CD)							AS PROG_MTH_CD_NM
+		, DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') 					AS PROG_SDT
+		, DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') 					AS PROG_EDT
+		, DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%H:%i') 	AS PROG_STM
+		, DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%H:%i') 	AS PROG_ETM
+		, A.SURVEY_SDT                     		     		    AS SURVEY_SDT
+		, A.SURVEY_EDT                     		     		    AS SURVEY_EDT
+		, A.STATUS_CD                      		     		    AS STATUS_CD
+		, SFN_GET_CODENM(A.STATUS_CD)	     		     		    AS STATUS_NM
+		, B.STD_NO									     		    AS STD_NO
+		, B.USER_ID                        		     		    AS USER_ID
+		, B.USER_NM                        		     		    AS USER_NM
+		, B.MBPH_NO                        		     		    AS MBPH_NO
+		, B.EMAIL									     		    AS EMAIL
+		, B.USER_TYPE_CD                   		     		    AS USER_TYPE_CD
+		, SFN_GET_CODENM(B.USER_TYPE_CD)  			     		    AS USER_TYPE_NM
+		, B.COLG_CD                        		     		    AS COLG_CD
+		, SFN_GET_DEPTNM(B.COLG_CD)	       		     		    AS COLG_NM
+		, B.DEPT_CD                        		     		    AS DEPT_CD
+		, SFN_GET_DEPTNM(B.DEPT_CD)    	   		     		    AS DEPT_NM
+		, B.GRADE                          		     		    AS GRADE
+		<!--, B.SEX_CD         						     		    AS SEX_CD-->
+		, CASE
+		WHEN	B.SEX_CD = '1' THEN '남자'
+		WHEN	B.SEX_CD = '2' THEN '여자'
+		ELSE 	'-'
+		END AS SEX_CD
+		, B.COMPL_CD                       						AS COMPL_CD
+		, SFN_GET_CODENM(B.COMPL_CD )      						AS COMPL_NM
+		, B.SURVEY_YN
+		, CASE
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+		WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+		ELSE 	'-'
+		END AS SURVEY_YN_NM
+		, B.PROG_REQST_CD											AS PROG_REQST_CD
+		, SFN_GET_CODENM(B.PROG_REQST_CD)							AS PROG_REQST_CD_NM
+		, DATE_FORMAT(B.REQST_CNCL_DT, '%Y.%m.%d. %H:%i:%s')		AS REQST_CNCL_DT
+		, DATE_FORMAT(B.INPT_DTTM, '%Y.%m.%d. %H:%i:%s') 			AS INPT_DTTM
+		FROM	 PROG_MST  A
+		INNER JOIN PROG_USER_PUBLIC B ON A.PROG_ID = B.PROG_ID) O
+		WHERE	 1 = 1
+		AND		 O.PROG_ID = #{progId}
+		AND		 O.USER_ID = #{userId}
+	</select>
+	
+	<update id="updateProgComplUser" parameterType="map">
+		<!-- 이수 / 미이수 처리 -->
+		UPDATE 
+					PROG_USER 
+		SET			
+					  COMPL_CD 		= #{complCd}
+					, MODI_ID 		= #{modiId}
+					, MODI_IP 		= #{modiIp}
+					, MODI_DTTM 	= NOW()
+		WHERE		PROG_ID 		= #{progId}
+		AND			USER_ID     	= #{userId}
+	</update>
+
+	<update id="updateProgComplPublicUser" parameterType="map">
+		<!-- 이수 / 미이수 처리 -->
+		UPDATE
+		PROG_USER_PUBLIC
+		SET
+		COMPL_CD 		= #{complCd}
+		, MODI_ID 		= #{modiId}
+		, MODI_IP 		= #{modiIp}
+		, MODI_DTTM 	= NOW()
+		WHERE		PROG_ID 		= #{progId}
+		AND			USER_ID     	= #{userId}
+	</update>
+	
+	<delete id="deleteProgApplUser" parameterType="map">
+		<!-- 해당 프로그램 신청한 유저 삭제 -->
+		DELETE 
+		FROM		PROG_USER
+		WHERE		PROG_ID = #{progId}
+		AND			USER_ID = #{userId}
+	</delete>
+
+	<delete id="deleteProgApplPublicUser" parameterType="map">
+		<!-- 해당 프로그램 신청한 유저 삭제 -->
+		DELETE
+		FROM		PROG_USER_PUBLIC
+		WHERE		PROG_ID = #{progId}
+		AND			USER_ID = #{userId}
+	</delete>
+	
+	<select id="selectMyProgTotCnt" parameterType="map" resultType="int">
+		<!-- 내가 신청한 프로그램 건 수 -->
+		SELECT
+				 COUNT(*) 		AS CNT
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 B.USER_ID = #{userId}
+		<if test="progId != 0 and progId != null and !''.equals(progId)">
+			AND		 A.PROG_ID = #{progId}
+		</if>
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+		AND		 IFNULL(A.DEL_YN, 'N') != 'Y'
+	</select>
+	
+	<select id="selectMyProgList" parameterType="map" resultType="map">
+		<!-- 내가 신청한 프로그램 목록 조회-->
+		<include refid="paging.preSql"></include>
+		SELECT
+				   A.PROG_ID                        						AS PROG_ID
+			     , A.PROG_NM                        						AS PROG_NM
+			     , A.PROG_MTH_CD											AS PROG_MTH_CD
+			     , SFN_GET_CODENM(A.PROG_MTH_CD)							AS PROG_MTH_CD_NM
+			     , A.PROG_CONTACT_CD										AS PROG_CONTACT_CD
+			     , SFN_GET_CODENM(A.PROG_CONTACT_CD)						AS PROG_CONTACT_CD_NM
+			     , A.PROG_CAREER_CD											AS PROG_CAREER_CD
+			     , SFN_GET_CODENM(A.PROG_CAREER_CD)							AS PROG_CAREER_CD_NM
+			     , DATE_FORMAT(A.PROG_SDT, '%Y.%m.%d.') 					AS PROG_SDT
+				 , DATE_FORMAT(A.PROG_EDT, '%Y.%m.%d.') 					AS PROG_EDT
+				 , DATE_FORMAT(STR_TO_DATE(A.PROG_STM, '%H%i'), '%H:%i') 	AS PROG_STM
+				 , DATE_FORMAT(STR_TO_DATE(A.PROG_ETM, '%H%i'), '%H:%i') 	AS PROG_ETM
+			     , A.SURVEY_SDT                     		     		    AS SURVEY_SDT
+			     , A.SURVEY_EDT                     		     		    AS SURVEY_EDT
+			     , A.STATUS_CD                      		     		    AS STATUS_CD
+			     , SFN_GET_CODENM(A.STATUS_CD )     		     		    AS STATUS_NM
+			     , B.STD_NO									     		    AS STD_NO
+			     , B.USER_ID                        		     		    AS USER_ID
+			     , U.USER_NM                        		     		    AS USER_NM
+			     , U.MBPH_NO                        		     		    AS MBPH_NO
+			     , U.EMAIL									     		    AS EMAIL
+			     , B.USER_TYPE_CD                   		     		    AS USER_TYPE_CD
+			     , SFN_GET_CODENM(B.USER_TYPE_CD )  		     		    AS USER_TYPE_NM
+			     , B.COLG_CD                        		     		    AS COLG_CD
+			     , SFN_GET_DEPTNM(B.COLG_CD )       		     		    AS COLG_NM
+			     , B.DEPT_CD                        		     		    AS DEPT_CD
+			     , SFN_GET_DEPTNM(B.DEPT_CD )       		     		    AS DEPT_NM
+			     , B.GRADE                          		     		    AS GRADE
+			     , B.SEX_CD         						     		    AS SEX_CD
+			     , CASE 
+						WHEN	B.SEX_CD = '1' THEN '남자'
+						WHEN	B.SEX_CD = '2' THEN '여자'
+						ELSE 	'-'
+				  END AS SEX_CD_NM
+			     , B.COMPL_CD                       						AS COMPL_CD
+			     , SFN_GET_CODENM(B.COMPL_CD )      						AS COMPL_NM               
+			     , B.SURVEY_YN
+				 , CASE 
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'Y' THEN '진행'
+						WHEN	IFNULL(B.SURVEY_YN, 'N') = 'N' THEN '미진행'
+						ELSE 	'-'
+				  END AS SURVEY_YN_NM
+			     , B.INPT_DTTM												AS APPL_DTTM
+			     , B.PROG_REQST_CD											AS PROG_REQST_CD
+			     , SFN_GET_CODENM(B.PROG_REQST_CD)							AS PROG_REQST_CD_NM
+			     , DATE_FORMAT(B.REQST_CNCL_DT, '%Y.%m.%d. %H:%i')			AS REQST_CNCL_DT
+			     , IFNULL(A.DEL_YN, 'N')									AS PROG_DEL_YN
+			     , IFNULL(B.SURVEY_YN, 'N')									AS USER_SURVEY_YN
+			     <![CDATA[
+				 , CASE 
+				 		WHEN DATE(A.SURVEY_SDT) > NOW() AND DATE(A.SURVEY_EDT) > NOW() THEN 1
+				 		WHEN DATE(A.SURVEY_SDT) <= NOW() AND DATE(A.SURVEY_EDT) >= NOW() THEN 2
+				 		WHEN DATE(A.SURVEY_SDT) < NOW() AND DATE(A.SURVEY_EDT) < NOW() THEN 3
+				 		ELSE '-' 
+				   END AS SURVEY_DT_CD
+				 ]]>  
+		FROM	 PROG_MST  A
+		LEFT OUTER JOIN PROG_USER B ON A.PROG_ID = B.PROG_ID
+		LEFT OUTER JOIN COM_USER  U ON B.USER_ID = U.USER_ID
+		WHERE	 1 = 1
+		AND		 B.USER_ID = #{userId}
+		AND		 IFNULL(A.DEL_YN, 'N') != 'Y'
+		AND		 IFNULL(U.DEL_YN, 'N') != 'Y'
+		ORDER BY B.INPT_DTTM DESC
+		<include refid="paging.postSql"></include>
+	</select>
+
+	<update id="updateProgUser" parameterType="map">
+		<!-- 내가 신청한 프로그램 신청 취소 -->
+		UPDATE 
+					PROG_USER 
+		SET			
+					  PROG_REQST_CD = #{progReqstCd}
+					  <choose>
+						<when test='progReqstCd != null and !"".equals(progReqstCd) and "PROG_REQST_090".equals(progReqstCd)'>
+							, REQST_CNCL_DT = NOW()
+					 	</when>
+					 	<otherwise>
+							, REQST_CNCL_DT = NULL
+					 	</otherwise>
+					 </choose>
+					, MODI_ID 		= #{modiId}
+					, MODI_IP 		= #{modiIp}
+					, MODI_DTTM 	= NOW()
+		WHERE		PROG_ID 		= #{progId}
+		AND			USER_ID     	= #{userId}
+	</update>
+	
+	<!-- 사용자설문 완료처리 -->
+	<update id="updateSurvYn" parameterType="map">
+		UPDATE
+				PROG_USER
+		SET
+				  SURVEY_YN = 'Y'
+				, SURVEY_SCORE = (SELECT SUM(ANSW_POINT) FROM PROG_SURV_ANSW WHERE PROG_ID = #{progId} AND USER_ID = #{userId})
+		WHERE	PROG_ID				= #{progId}
+		AND		USER_ID				= #{userId}
+	</update>
+	
+</mapper>

@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.bbs.service.impl.BbsMapper">
+	
+	<select id="selectBbsTotCnt" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(BBS_ID)
+		FROM 	COM_BBS
+		WHERE	BBS_CD = #{bbsCd}
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "writer"'>
+					AND WRITER LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "inptId"'>
+					AND INPT_ID LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='category != null and category !=""'>
+			AND CATEGORY = #{category}
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<select id="selectBbsList" parameterType="map" resultType="bbsVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+							  BBS_ID
+							, BBS_CD
+							, TITLE
+							, CONTENTS														
+							<choose>
+								<when test='nonameYn == "Y"'>
+							, 'NONAME' AS WRITER
+								</when>
+								<otherwise>
+							, WRITER								
+								</otherwise>
+							</choose>
+							, CATEGORY
+							, NOTICE
+							, SECRET
+							, BBS_DEPTH
+							, BBS_SEQ
+							, PARENT_ID
+							, VIEW_CNT
+							, BBS_INFO01
+							, BBS_INFO02
+							, BBS_INFO03
+							, BBS_INFO04
+							, BBS_INFO05
+							, BBS_INFO06
+							, BBS_INFO07
+							, BBS_INFO08
+							, BBS_INFO09
+							, BBS_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, DEL_YN
+							, DEL_ID
+							, DEL_IP
+							, DEL_DTTM
+							, GROUP_ID
+		FROM 				COM_BBS
+		WHERE				BBS_CD = #{bbsCd}
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "writer"'>
+					AND WRITER LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "inptId"'>
+					AND INPT_ID LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='category != null and category !=""'>
+			AND CATEGORY = #{category}
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+		START WITH 			(PARENT_ID IS NULL OR PARENT_ID = '')
+		CONNECT BY PRIOR    BBS_ID = PARENT_ID
+		ORDER SIBLINGS BY 	BBS_SEQ DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectBbs" parameterType="map" resultType="bbsVO">
+		SELECT
+							  BBS_ID
+							, BBS_CD
+							, TITLE
+							, CONTENTS
+							, WRITER
+							, PW
+							, CATEGORY
+							, NOTICE
+							, SECRET
+							, BBS_DEPTH
+							, BBS_SEQ
+							, PARENT_ID
+							, VIEW_CNT
+							, BBS_INFO01
+							, BBS_INFO02
+							, BBS_INFO03
+							, BBS_INFO04
+							, BBS_INFO05
+							, BBS_INFO06
+							, BBS_INFO07
+							, BBS_INFO08
+							, BBS_INFO09
+							, BBS_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, DEL_YN
+							, DEL_ID
+							, DEL_IP
+							, DEL_DTTM
+							, GROUP_ID
+		FROM 				COM_BBS
+		WHERE				BBS_CD = #{bbsCd}
+		AND					BBS_ID = #{bbsId}
+	</select>
+	
+	<insert id="insertBbs" parameterType="bbsVO">
+		<selectKey resultType="string" keyProperty="bbsId" order="BEFORE">
+			SELECT '${bbsCd}_'||LPAD(NVL(MAX(TO_NUMBER(REPLACE(BBS_ID, '${bbsCd}_', ''))), 0)+1, 10, 0) FROM COM_BBS WHERE BBS_CD = #{bbsCd}
+		</selectKey>
+		INSERT
+		INTO 	COM_BBS
+		(
+				  BBS_ID
+				, BBS_CD
+				, TITLE
+				, CONTENTS
+				, WRITER
+				, PW
+				, CATEGORY
+				, NOTICE
+				, SECRET
+				, BBS_DEPTH
+				, BBS_SEQ
+				, GROUP_ID
+				, PARENT_ID
+				, BBS_INFO01
+				, BBS_INFO02
+				, BBS_INFO03
+				, BBS_INFO04
+				, BBS_INFO05
+				, BBS_INFO06
+				, BBS_INFO07
+				, BBS_INFO08
+				, BBS_INFO09
+				, BBS_INFO10
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{bbsId}
+				, #{bbsCd}
+				, #{title}
+				, #{contents}
+				, #{writer}
+				, #{pw}
+				, #{category}
+				, #{notice}
+				, #{secret}				
+				<choose>
+					<when test='parentId != null and parentId != ""'>
+						, (SELECT BBS_DEPTH + 1 FROM COM_BBS WHERE BBS_CD = #{bbsCd} AND BBS_ID = #{parentId})
+						, (SELECT NVL(MIN(BBS_SEQ), 0)-1 FROM COM_BBS WHERE BBS_CD = #{bbsCd} AND PARENT_ID = #{parentId})
+						, (SELECT GROUP_ID FROM COM_BBS WHERE BBS_CD = #{bbsCd} AND BBS_ID = #{parentId})
+					</when>
+					<otherwise>
+						, 1
+						, (SELECT NVL(MAX(BBS_SEQ), 0)+1 FROM COM_BBS WHERE BBS_CD = #{bbsCd})
+						, #{bbsId}
+					</otherwise>
+				</choose>	
+				, #{parentId}
+				, #{bbsInfo01}
+				, #{bbsInfo02}
+				, #{bbsInfo03}
+				, #{bbsInfo04}
+				, #{bbsInfo05}
+				, #{bbsInfo06}
+				, #{bbsInfo07}
+				, #{bbsInfo08}
+				, #{bbsInfo09}
+				, #{bbsInfo10}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+		)
+	</insert>
+	
+	<update id="updateBbs" parameterType="bbsVO">
+		UPDATE
+					COM_BBS
+		SET
+					  TITLE = #{title}
+					, CONTENTS = #{contents}
+					, NOTICE = #{notice}
+					, SECRET = #{secret}
+					, MODI_ID = #{modiId}
+					, MODI_IP = #{modiIp}
+					, MODI_DTTM = SYSDATE
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</update>
+	
+	<select id="selectChildBbsCnt" parameterType="map" resultType="int">
+		SELECT
+							COUNT(BBS_ID)
+		FROM 				COM_BBS
+		WHERE				BBS_CD = #{bbsCd}
+        AND					BBS_ID != #{bbsId}
+		AND					NVL(DEL_YN, 'N') != 'Y'
+		START WITH 			BBS_ID = #{bbsId}
+		CONNECT BY PRIOR    BBS_ID = PARENT_ID
+	</select>
+	
+	<update id="updateBbsToDelete" parameterType="bbsVO">
+		UPDATE
+					COM_BBS
+		SET
+					  DEL_YN = 'Y'
+					, DEL_ID = #{delId}
+					, DEL_IP = #{delIp}
+					, DEL_DTTM = SYSDATE
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</update>
+	
+	<delete id="deleteBbs" parameterType="map">
+		DELETE 
+		FROM		COM_BBS
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</delete>
+	
+	<delete id="deleteBbsByGroupId" parameterType="map">
+		DELETE
+		FROM		COM_BBS
+		WHERE		BBS_CD = #{bbsCd}
+		AND			GROUP_ID = #{groupId}
+		AND			BBS_ID IN 
+					(
+						SELECT	A.BBS_ID
+						FROM 	COM_BBS A
+						WHERE	A.BBS_CD = #{bbsCd}
+						AND		GROUP_ID = #{groupId}
+						AND		NVL(A.DEL_YN, 'N') = 'Y'
+						AND		(
+			                        SELECT          COUNT(T1.BBS_ID) 
+			                        FROM            COM_BBS T1
+			                        WHERE		    T1.BBS_CD = A.BBS_CD
+			                        AND			    T1.GROUP_ID = A.GROUP_ID
+			                        AND             T1.BBS_ID != A.BBS_ID
+			                        AND             NVL(T1.DEL_YN, 'N') != 'Y'
+			                        START WITH 		T1.BBS_ID = A.BBS_ID
+			                        CONNECT BY PRIOR T1.BBS_ID = T1.PARENT_ID
+			                    ) = 0
+					)
+	</delete>
+	
+	<update id="updateBbsViewCnt" parameterType="map">
+		UPDATE
+					COM_BBS
+		SET
+					VIEW_CNT = VIEW_CNT + 1
+		WHERE		BBS_CD = #{bbsCd}
+		AND			BBS_ID = #{bbsId}
+	</update>
+	
+	<select id="selectBbsNoticeList" parameterType="map" resultType="bbsVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+							  BBS_ID
+							, BBS_CD
+							, TITLE
+							, CONTENTS														
+							<choose>
+								<when test='nonameYn == "Y"'>
+							, 'NONAME' AS WRITER
+								</when>
+								<otherwise>
+							, WRITER								
+								</otherwise>
+							</choose>
+							, CATEGORY
+							, NOTICE
+							, SECRET
+							, BBS_DEPTH
+							, BBS_SEQ
+							, PARENT_ID
+							, VIEW_CNT
+							, BBS_INFO01
+							, BBS_INFO02
+							, BBS_INFO03
+							, BBS_INFO04
+							, BBS_INFO05
+							, BBS_INFO06
+							, BBS_INFO07
+							, BBS_INFO08
+							, BBS_INFO09
+							, BBS_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, DEL_YN
+							, DEL_ID
+							, DEL_IP
+							, DEL_DTTM
+							, GROUP_ID
+		FROM 				COM_BBS
+		WHERE				BBS_CD = #{bbsCd}
+		AND					BBS_DEPTH = 1
+		AND					NVL(DEL_YN, 'N') != 'Y'
+		AND					NVL(NOTICE, 'N') = 'Y'
+		AND					NVL(SECRET, 'N') != 'Y'
+		ORDER BY 			BBS_SEQ DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectPrevBbs" parameterType="map" resultType="bbsVO">		
+		SELECT
+							  BBS_ID
+							, BBS_CD
+							, TITLE
+							, CONTENTS														
+							<choose>
+								<when test='nonameYn == "Y"'>
+							, 'NONAME' AS WRITER
+								</when>
+								<otherwise>
+							, WRITER								
+								</otherwise>
+							</choose>
+							, CATEGORY
+							, NOTICE
+							, SECRET
+							, BBS_DEPTH
+							, BBS_SEQ
+							, PARENT_ID
+							, VIEW_CNT
+							, BBS_INFO01
+							, BBS_INFO02
+							, BBS_INFO03
+							, BBS_INFO04
+							, BBS_INFO05
+							, BBS_INFO06
+							, BBS_INFO07
+							, BBS_INFO08
+							, BBS_INFO09
+							, BBS_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, DEL_YN
+							, DEL_ID
+							, DEL_IP
+							, DEL_DTTM
+							, GROUP_ID
+		FROM 				COM_BBS
+		WHERE				BBS_ID = (
+										SELECT A.BBS_ID FROM (
+																SELECT	A.BBS_ID
+																FROM	COM_BBS A
+																WHERE	BBS_CD = #{bbsCd}
+																AND		A.BBS_DEPTH = 1
+																AND		(A.PARENT_ID IS NULL OR A.PARENT_ID = '')
+																AND		NVL(A.DEL_YN, 'N') != 'Y'
+																AND		NVL(A.SECRET, 'N') != 'Y'
+																AND		A.BBS_SEQ &lt; #{bbsSeq}			
+																<if test='category != null and category !=""'>
+																	AND A.CATEGORY = #{category}
+																</if>
+																ORDER BY A.BBS_SEQ DESC
+															) A
+										WHERE ROWNUM = 1
+									 )		
+	</select>
+	
+	<select id="selectNextBbs" parameterType="map" resultType="bbsVO">		
+		SELECT
+							  BBS_ID
+							, BBS_CD
+							, TITLE
+							, CONTENTS													
+							<choose>
+								<when test='nonameYn == "Y"'>
+							, 'NONAME' AS WRITER
+								</when>
+								<otherwise>
+							, WRITER								
+								</otherwise>
+							</choose>
+							, CATEGORY
+							, NOTICE
+							, SECRET
+							, BBS_DEPTH
+							, BBS_SEQ
+							, PARENT_ID
+							, VIEW_CNT
+							, BBS_INFO01
+							, BBS_INFO02
+							, BBS_INFO03
+							, BBS_INFO04
+							, BBS_INFO05
+							, BBS_INFO06
+							, BBS_INFO07
+							, BBS_INFO08
+							, BBS_INFO09
+							, BBS_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+							, DEL_YN
+							, DEL_ID
+							, DEL_IP
+							, DEL_DTTM
+							, GROUP_ID
+		FROM 				COM_BBS
+		WHERE				BBS_ID = (
+										SELECT A.BBS_ID FROM (
+																SELECT	A.BBS_ID
+																FROM	COM_BBS A
+																WHERE	BBS_CD = #{bbsCd}
+																AND		A.BBS_DEPTH = 1
+																AND		(A.PARENT_ID IS NULL OR A.PARENT_ID = '')
+																AND		NVL(A.DEL_YN, 'N') != 'Y'
+																AND		NVL(A.SECRET, 'N') != 'Y'
+																AND		A.BBS_SEQ &gt; #{bbsSeq}			
+																<if test='category != null and category !=""'>
+																	AND A.CATEGORY = #{category}
+																</if>
+																ORDER BY A.BBS_SEQ ASC
+															) A
+										WHERE ROWNUM = 1
+									 )		
+	</select>
+	
+	<select id="selectRecentBbsList" resultType="bbsVO">
+		SELECT 
+				  PAGING.*
+		FROM	
+		( 
+			SELECT
+						  A.BBS_ID
+						, A.BBS_CD
+						, B.TITLE AS BBS_TITLE
+						, A.TITLE
+						, A.WRITER
+						, A.NOTICE
+						, A.SECRET
+						, A.BBS_DEPTH
+						, A.BBS_SEQ
+						, A.PARENT_ID
+						, A.VIEW_CNT
+						, A.INPT_ID
+						, A.INPT_IP
+						, A.INPT_DTTM
+			FROM		COM_BBS A, COM_BBS_MGT B
+			WHERE		A.BBS_CD = B.CODE(+)
+			AND			NVL(A.DEL_YN, 'N') != 'Y'
+			ORDER BY	A.INPT_DTTM DESC
+				
+		) PAGING 
+		WHERE ROWNUM &lt;= 10
+	</select>
+	
+	<select id="selectRecentBbsListByParam" parameterType="map" resultType="bbsVO">
+		SELECT 
+				  PAGING.*
+		FROM	
+		( 
+			SELECT
+						  A.BBS_ID
+						, A.BBS_CD
+						, B.TITLE AS BBS_TITLE
+						, A.TITLE
+						, A.CONTENTS
+						, A.WRITER
+						, A.NOTICE
+						, A.SECRET
+						, A.BBS_DEPTH
+						, A.BBS_SEQ
+						, A.PARENT_ID
+						, A.BBS_INFO01
+						, A.BBS_INFO02
+						, A.BBS_INFO03
+						, A.BBS_INFO04
+						, A.BBS_INFO05
+						, A.BBS_INFO06
+						, A.BBS_INFO07
+						, A.BBS_INFO08
+						, A.BBS_INFO09
+						, A.BBS_INFO10
+						, A.VIEW_CNT
+						, A.INPT_ID
+						, A.INPT_IP
+						, A.INPT_DTTM
+			FROM		COM_BBS A, COM_BBS_MGT B
+			WHERE		A.BBS_CD = B.CODE(+)
+			AND			A.BBS_CD = #{bbsCd}
+			AND			NVL(A.DEL_YN, 'N') != 'Y'
+			<if test='bbsInfo01 != null and !"".equals(bbsInfo01)'>
+				AND		A.BBS_INFO01 = #{bbsInfo01}
+			</if>
+			<if test='bbsInfo02 != null and !"".equals(bbsInfo02)'>
+				AND		A.BBS_INFO02 = #{bbsInfo02}
+			</if>
+			<if test='bbsInfo03 != null and !"".equals(bbsInfo03)'>
+				AND		A.BBS_INFO03 = #{bbsInfo03}
+			</if>
+			<if test='bbsInfo04 != null and !"".equals(bbsInfo04)'>
+				AND		A.BBS_INFO04 = #{bbsInfo04}
+			</if>
+			<if test='bbsInfo05 != null and !"".equals(bbsInfo05)'>
+				AND		A.BBS_INFO05 = #{bbsInfo05}
+			</if>
+			<if test='bbsInfo06 != null and !"".equals(bbsInfo06)'>
+				AND		A.BBS_INFO06 = #{bbsInfo06}
+			</if>
+			<if test='bbsInfo07 != null and !"".equals(bbsInfo07)'>
+				AND		A.BBS_INFO07 = #{bbsInfo07}
+			</if>
+			<if test='bbsInfo08 != null and !"".equals(bbsInfo08)'>
+				AND		A.BBS_INFO08 = #{bbsInfo08}
+			</if>
+			<if test='bbsInfo09 != null and !"".equals(bbsInfo09)'>
+				AND		A.BBS_INFO09 = #{bbsInfo09}
+			</if>
+			<if test='bbsInfo10 != null and !"".equals(bbsInfo10)'>
+				AND		A.BBS_INFO10 = #{bbsInfo10}
+			</if>
+			ORDER BY	A.INPT_DTTM DESC
+				
+		) PAGING
+		<choose>
+			<when test='pagePerRow != null and !"".equals(pagePerRow) and pagePerRow != 0'>
+				WHERE ROWNUM &lt;= #{pagePerRow}
+			</when>
+			<otherwise>
+				WHERE ROWNUM &lt;= 10
+			</otherwise>
+		</choose>
+	</select>
+	
+</mapper>

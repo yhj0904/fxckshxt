@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.stat.service.impl.StatMapper">
+	
+	<select id="selectTodayLoginCount" resultType="int">
+		SELECT 	COUNT(DISTINCT CONCAT(LOGIN_ID,LOGIN_IP))
+		FROM 	COM_LOGIN_LOG
+		WHERE 	LOGIN_SUCCESS = 'Y'
+		AND 	DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+	</select>
+	
+	<select id="selectWeeklyLoginCount" resultType="HashMap">
+		SELECT	    
+		                  A.CUR_DATE
+		                , IFNULL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+						SELECT DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - IDX DAY), '%Y-%m-%d') AS CUR_DATE
+						FROM   V_ROW
+						WHERE ROWNUM &lt;= 7
+					) A
+		LEFT JOIN   (
+		               SELECT	    
+		                              DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') AS LOGIN_DATE
+		                            , COUNT(DISTINCT CONCAT(LOGIN_ID,LOGIN_IP)) AS LOGIN_COUNT
+		                FROM        COM_LOGIN_LOG
+		                WHERE       LOGIN_SUCCESS = 'Y'
+		                AND         DATE_FORMAT(NOW() - 6, '%Y-%m-%d') &lt;= DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d')
+		                GROUP BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d')
+		                ORDER BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') DESC
+		            ) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectMonthlyCount" resultType="HashMap">
+		SELECT	    
+						  A.CUR_DATE
+						, IFNULL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+						SELECT DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - IDX DAY), '%Y-%m-%d') AS CUR_DATE
+						FROM   V_ROW
+						WHERE ROWNUM &lt;= 7
+					) A
+		LEFT JOIN   (
+					   SELECT	    
+									  DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') AS LOGIN_DATE
+									, COUNT(DISTINCT CONCAT(LOGIN_ID,LOGIN_IP)) AS LOGIN_COUNT
+					   FROM        COM_LOGIN_LOG
+					   WHERE       LOGIN_SUCCESS = 'Y'
+					   AND         DATE_FORMAT(NOW() - 6, '%Y-%m-%d') &lt;= DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d')
+					   GROUP BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d')
+					   ORDER BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') DESC
+					) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectMonthlyLoginCount" resultType="HashMap">
+		SELECT	    
+		                 SUBSTR(A.CUR_DATE, 9, 10) AS CUR_DATE
+		                , IFNULL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+		                SELECT 		DATE_FORMAT(LAST_DAY(NOW() - INTERVAL 1 MONTH) + INTERVAL ROWNUM DAY,'%Y-%m-%d') AS CUR_DATE
+                        FROM		V_ROW
+                        WHERE		ROWNUM &lt;= DATE_FORMAT(LAST_DAY(NOW()), '%e')
+		            ) A
+		LEFT JOIN   (
+		             	SELECT	    
+						              DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') AS LOGIN_DATE
+						            , COUNT(DISTINCT CONCAT(LOGIN_ID,LOGIN_IP)) AS LOGIN_COUNT
+						FROM        COM_LOGIN_LOG
+						WHERE       LOGIN_SUCCESS = 'Y'
+						AND         DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') &gt;= DATE_FORMAT(LAST_DAY(NOW() - INTERVAL 1 MONTH) + INTERVAL 1 DAY, '%Y-%m-%d')
+						AND         DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') &lt;= DATE_FORMAT(LAST_DAY(NOW()), '%Y-%m-%d')
+						GROUP BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d')
+						ORDER BY    DATE_FORMAT(LOGIN_DTTM, '%Y-%m-%d') ASC
+		            ) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectTodayBbsCount" resultType="int">
+		SELECT 	COUNT(BBS_ID)
+		FROM 	COM_BBS
+		WHERE 	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+		AND		IFNULL(DEL_YN, 'N') != 'Y'
+	</select>
+	
+	<select id="selectTotalBbsCount" resultType="int">
+		SELECT 	COUNT(BBS_ID)
+		FROM 	COM_BBS
+		WHERE	IFNULL(DEL_YN, 'N') != 'Y'
+	</select>
+	
+</mapper>

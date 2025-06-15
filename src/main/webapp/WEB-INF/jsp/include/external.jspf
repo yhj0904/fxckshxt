@@ -1,0 +1,11 @@
+<%@ include file="/WEB-INF/jsp/include/context.jspf" %>
+<%@ page import="kr.co.nanwe.external.service.ExternalService" %>
+<%@ page import="kr.co.nanwe.cmmn.util.DateUtil" %>
+<%@ page import="kr.co.nanwe.cmmn.util.CalendarUtil" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%
+ExternalService externalService = (ExternalService) webApplicationContext.getBean("externalService");
+%>

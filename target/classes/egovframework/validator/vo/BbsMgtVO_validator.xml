@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<form-validation>
+	<formset>
+		<form name="bbsMgtVO">
+			<!-- 필수값 체크 -->
+			<field property="code" depends="required">
+				<arg0 key="bbsMgtVO.code" />
+			</field>
+			<field property="title" depends="required">
+				<arg0 key="bbsMgtVO.title" />
+			</field>
+			<field property="skinCd" depends="required">
+				<arg0 key="bbsMgtVO.skinCd" />
+			</field>
+			<!-- 숫자인지 체크 -->
+			<field property="pageCnt" depends="isNum">
+				<arg0 key="bbsMgtVO.pageCnt" />
+			</field>
+			<field property="rowCnt" depends="isNum">
+				<arg0 key="bbsMgtVO.rowCnt" />
+			</field>
+			<field property="fileCnt" depends="isNum">
+				<arg0 key="bbsMgtVO.fileCnt" />
+			</field>
+			<field property="noticeRowCnt" depends="isNum">
+				<arg0 key="bbsMgtVO.noticeRowCnt" />
+			</field>			
+		</form>
+	</formset>
+</form-validation>

@@ -1,0 +1,155 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<span class="board_total_count"><spring:message code="board.total"/> <b><c:out value='${paging.totalCount}'/></b><spring:message code="board.row"/></span>
+<% //게시글 유형 %>
+<c:if test='${bbsMgtVO.cateYn eq "Y" and !empty bbsMgtVO.categoryList }'>
+	<div class="table_category">
+		<ul>
+			<li <c:if test="${sCate eq 'ALL' }">class="active"</c:if>><a href="javascript:fn_changeCategory('ALL');"><spring:message code="search.all"/></a></li>
+			<c:forEach var="cate" items="${bbsMgtVO.categoryList }" varStatus="i">
+				<li <c:if test="${sCate eq cate}">class="active"</c:if>><a href="javascript:fn_changeCategory('<c:out value='${cate }'/>');"><c:out value='${cate }'/></a></li>
+			</c:forEach>
+		</ul>
+	</div>
+</c:if>
+<% //게시글 유형 %>
+<div class="scroll">
+<table class="list_table2"> 
+	<colgroup>
+		<c:if test='${bbsMgtVO.adminUser}'>
+			<col class="mobile" style="width: 8%;"/> <!-- CHECKBOX -->
+		</c:if>
+		<col class="mobile" style="width: 8%;"/> <!-- NO -->
+		<col style="width: auto;"/> <!-- 제목 -->
+		<col class="mobile" style="width: 17%"/> <!-- 작성자 -->
+		<col class="mobile" style="width: 15%"/> <!--  -->
+		<col class="mobile" style="width: 9%;"/> <!-- 조회수 -->
+	</colgroup>
+	<thead class="mobile">
+		<tr>
+			<c:if test='${bbsMgtVO.adminUser}'>
+				<th><label><input type="checkbox" id="checkAllRow" onclick="fn_checkAllRow();"><span class="none"><spring:message code="board.checkAll" /></span></label></th>
+			</c:if>
+			<th><spring:message code="board.no"/></th>
+			<th><spring:message code="bbsVO.title"/></th>
+			<th><spring:message code="bbsVO.writer"/></th>
+			<th><spring:message code="bbsVO.inptDttm"/></th>
+			<th><spring:message code="bbsVO.viewCnt"/></th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:if test='${bbsMgtVO.noticeYn eq "Y" and !empty noticeList }'>
+			<c:forEach var="item" items="${noticeList }" varStatus="i">
+				<tr class="notice">
+					<c:if test='${bbsMgtVO.adminUser}'>
+						<td class="mobile">&nbsp;</td>
+					</c:if>
+					<td class="noti"><spring:message code="board.notice" /></td>
+					<td class="subj">
+						<div class="tit">
+							<%-- <a class="link" href="javascript:fn_detailView('<c:out value="${item.bbsId }"/>');" title="<spring:message code="board.detail"/>"> --%>
+							<a class="link" href="/board/<c:out value='${fn:toLowerCase(sCode)}/view.do?sId=${item.bbsId }'/>" title="<spring:message code="board.detail"/>">
+								<c:if test='${bbsMgtVO.cateYn eq "Y" and item.category ne null and item.category ne ""}'>
+									<strong>[<c:out value="${item.category}"/>]</strong>
+								</c:if>
+								<c:out value="${item.title}" escapeXml="false" />
+							</a>
+							<c:if test='${item.secret eq "Y"}'>
+								<span class="ico_secret"><span class="none"><spring:message code="board.secret" /></span></span>
+							</c:if>
+						</div>
+					</td>
+					<td>
+						<c:choose>
+							<c:when test='${bbsMgtVO.nonameYn eq "Y" }'>
+								<spring:message code="board.noname" />
+							</c:when>
+							<c:otherwise>
+								<c:out value="${item.writer}"/>
+							</c:otherwise>
+						</c:choose>
+					</td>	
+					<td><c:out value="${fn:substring(item.inptDttm, 0, 10)}"/></td>
+					<td><c:out value="${item.viewCnt}"/></td>
+				</tr>
+			</c:forEach>
+		</c:if>
+		<c:forEach var="item" items="${list }" varStatus="i">
+			<tr <c:if test='${bbsMgtVO.adminUser}'>class="chk"</c:if>>
+				<c:if test='${bbsMgtVO.adminUser}'>
+					<td class="chk-box">
+						<c:choose>
+							<c:when test='${item.delYn eq "Y" }'>
+								&nbsp;
+							</c:when>
+							<c:otherwise>
+								<label><input type="checkbox" name="checkRow" value="<c:out value="${item.bbsId }"/>" onclick="fn_checkRow();"><span class="none"><spring:message code="board.check" /></span></label>
+							</c:otherwise>
+						</c:choose>						
+					</td>
+				</c:if>
+				<td class="mobile"><c:out value="${(paging.totalCount - (paging.currentPage -1) * paging.pageSize) - i.index}"/></td>
+				<td class="subj">
+					<div class="tit" data-depth="<c:out value="${item.bbsDepth }"/>">
+						<c:if test="${item.bbsDepth > 1}">
+							<span class="ico_reply"></span>
+						</c:if>
+						<c:choose>
+							<c:when test='${item.delYn eq "Y" }'>
+								<spring:message code="board.deleteboard" />
+							</c:when>
+							<c:otherwise>
+								<%-- <a class="link" href="javascript:fn_detailView('<c:out value="${item.bbsId }"/>');" title="<spring:message code="board.detail"/>"> --%>
+								<a class="link" href="/board/<c:out value='${fn:toLowerCase(sCode)}/view.do?sId=${item.bbsId }'/>" title="<spring:message code="board.detail"/>">
+									<c:if test='${bbsMgtVO.cateYn eq "Y" and item.category ne null and item.category ne ""}'>
+										<strong>[<c:out value="${item.category}"/>]</strong>
+									</c:if>
+									<c:out value="${item.title}" escapeXml="false" />
+								</a>
+								<c:if test='${item.secret eq "Y"}'>
+									<span class="ico_secret"><span class="none"><spring:message code="board.secret" /></span></span>
+								</c:if>
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</td>
+				<td>
+					<c:choose>
+						<c:when test='${bbsMgtVO.nonameYn eq "Y" }'>
+							<spring:message code="board.noname" />
+						</c:when>
+						<c:otherwise>
+							<c:out value="${item.writer}"/>
+						</c:otherwise>
+					</c:choose>
+				</td>	
+				<td><c:out value='${fn:substring(item.inptDttm, 0, 10)}'/></td>
+				<td><c:out value="${item.viewCnt}"/></td>
+			
+		</c:forEach>
+		<c:if test="${empty list}">
+			<tr>
+				<c:choose>
+					<c:when test="${bbsMgtVO.adminUser}">
+						<td class="no_data" colspan="6"><spring:message code="board.noData" /></td>
+					</c:when>
+					<c:otherwise>
+						<td class="no_data" colspan="5"><spring:message code="board.noData" /></td>	
+					</c:otherwise>
+				</c:choose>
+			</tr>
+		</c:if>
+	</tbody>
+</table>
+</div>
+   	
+<div class="btn_wrap">
+	<ul class="list">
+		<c:if test='${bbsMgtVO.adminUser or bbsMgtVO.regiAuthYn}'>
+			<li><a class="button register_btn" href="javascript:fn_registerView();"><spring:message code="button.register" /></a></li>
+		</c:if>
+		<c:if test='${bbsMgtVO.adminUser}'>
+			<li><a class="button remove_btn" href="javascript:fn_removeCheckedRow();"><spring:message code="button.checkRemove" /></a></li>
+		</c:if>
+	</ul>
+</div>

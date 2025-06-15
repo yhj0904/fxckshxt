@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.sch.service.impl.SchMapper">
+	
+	<select id="selectSchTotCnt" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(SCH_ID)
+		FROM 	COM_SCH
+		WHERE	SCH_CD = #{schCd}
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "writer"'>
+					AND WRITER LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "inptId"'>
+					AND INPT_ID LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='category != null and category !=""'>
+			AND CATEGORY = #{category}
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<select id="selectSchList" parameterType="map" resultType="schVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+							  SCH_ID
+							, SCH_CD
+							, TITLE
+							, CONTENTS
+							, START_DTTM
+							, END_DTTM
+							, WRITER
+							, CATEGORY
+							, SCH_SEQ
+							, VIEW_CNT
+							, SCH_INFO01
+							, SCH_INFO02
+							, SCH_INFO03
+							, SCH_INFO04
+							, SCH_INFO05
+							, SCH_INFO06
+							, SCH_INFO07
+							, SCH_INFO08
+							, SCH_INFO09
+							, SCH_INFO10
+							, INPT_ID
+							, INPT_IP
+							, INPT_DTTM
+							, MODI_ID
+							, MODI_IP
+							, MODI_DTTM
+		FROM 				COM_SCH
+		WHERE				SCH_CD = #{schCd}
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "writer"'>
+					AND WRITER LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "inptId"'>
+					AND INPT_ID LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='category != null and category !=""'>
+			AND CATEGORY = #{category}
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+		ORDER BY START_DTTM ASC, END_DTTM ASC, SCH_SEQ ASC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectSchListByCalendar" parameterType="map" resultType="schVO">
+		SELECT
+							  SCH_ID
+							, SCH_CD
+							, TITLE
+							, CONTENTS
+							, START_DTTM
+							, END_DTTM
+							, WRITER
+							, CATEGORY
+							, SCH_SEQ
+							, VIEW_CNT
+							, SCH_INFO01
+							, SCH_INFO02
+							, SCH_INFO03
+							, SCH_INFO04
+							, SCH_INFO05
+							, SCH_INFO06
+							, SCH_INFO07
+							, SCH_INFO08
+							, SCH_INFO09
+							, SCH_INFO10
+							, TO_CHAR(TO_DATE(START_DTTM, 'YYYYMMDD'), 'YYYY') AS START_YEAR
+							, TO_CHAR(TO_DATE(START_DTTM, 'YYYYMMDD'), 'FMMM') AS START_MONTH
+							, TO_CHAR(TO_DATE(START_DTTM, 'YYYYMMDD'), 'FMDD') AS START_DAY
+							, TO_CHAR(TO_DATE(END_DTTM, 'YYYYMMDD'), 'YYYY') AS END_YEAR
+							, TO_CHAR(TO_DATE(END_DTTM, 'YYYYMMDD'), 'FMMM') AS END_MONTH
+							, TO_CHAR(TO_DATE(END_DTTM, 'YYYYMMDD'), 'FMDD') AS END_DAY
+		FROM 				COM_SCH
+		WHERE				SCH_CD = #{params.schCd}
+		<choose>
+			<when test='params.typeCd == "year"'>
+				AND			START_DTTM &gt;= #{calendar.startDate}
+				AND			START_DTTM &lt;= #{calendar.endDate}
+			</when>
+			<when test='params.typeCd == "month"'>
+				AND			START_DTTM &lt;= #{calendar.date}
+				AND			END_DTTM &gt;= #{calendar.date}
+			</when>
+			<when test='params.typeCd == "week"'>
+				AND			START_DTTM &lt;= #{calendar.date}
+				AND			END_DTTM &gt;= #{calendar.date}
+			</when>
+			<when test='params.typeCd == "day"'>
+				AND			START_DTTM &lt;= #{calendar.sDate}
+				AND			END_DTTM &gt;= #{calendar.sDate}
+			</when>
+		</choose>
+		<if test='params.searchValue != null and params.searchValue !=""'>
+			<choose>
+				<when test='params.searchOption == "title"'>
+					AND TITLE LIKE '%'||#{params.searchValue}||'%'
+				</when>
+				<when test='params.searchOption == "writer"'>
+					AND WRITER LIKE '%'||#{params.searchValue}||'%'
+				</when>
+				<when test='params.searchOption == "inptId"'>
+					AND INPT_ID LIKE '%'||#{params.searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='params.category != null and params.category !=""'>
+			AND CATEGORY = #{params.category}
+		</if>
+		ORDER BY START_DTTM ASC, END_DTTM ASC, SCH_SEQ ASC
+	</select>
+	
+	<select id="selectSch" parameterType="map" resultType="schVO">
+		SELECT
+					  SCH_ID
+					, SCH_CD
+					, TITLE
+					, CONTENTS
+					, START_DTTM
+					, END_DTTM
+					, WRITER
+					, PW
+					, CATEGORY
+					, SCH_SEQ
+					, VIEW_CNT
+					, SCH_INFO01
+					, SCH_INFO02
+					, SCH_INFO03
+					, SCH_INFO04
+					, SCH_INFO05
+					, SCH_INFO06
+					, SCH_INFO07
+					, SCH_INFO08
+					, SCH_INFO09
+					, SCH_INFO10
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_SCH
+		WHERE		SCH_CD = #{schCd}
+		AND			SCH_ID = #{schId}
+	</select>
+	
+	<insert id="insertSch" parameterType="schVO">
+		<selectKey resultType="string" keyProperty="schId" order="BEFORE">
+			SELECT '${schCd}_'||LPAD(NVL(MAX(TO_NUMBER(REPLACE(SCH_ID, '${schCd}_', ''))), 0)+1, 10, 0) FROM COM_SCH WHERE SCH_CD = #{schCd}
+		</selectKey>
+		INSERT
+		INTO 	COM_SCH
+		(
+				  SCH_ID
+				, SCH_CD
+				, TITLE
+				, CONTENTS
+				, START_DTTM
+				, END_DTTM
+				, WRITER
+				, PW
+				, CATEGORY
+				, SCH_SEQ
+				, VIEW_CNT
+				, SCH_INFO01
+				, SCH_INFO02
+				, SCH_INFO03
+				, SCH_INFO04
+				, SCH_INFO05
+				, SCH_INFO06
+				, SCH_INFO07
+				, SCH_INFO08
+				, SCH_INFO09
+				, SCH_INFO10
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{schId}
+				, #{schCd}
+				, #{title}
+				, #{contents}
+				, #{startDttm}
+				, #{endDttm}
+				, #{writer}
+				, #{pw}
+				, #{category}
+				, (SELECT NVL(MAX(SCH_SEQ), 0) + 1 FROM COM_SCH WHERE SCH_CD = #{schCd})
+				, #{viewCnt}
+				, #{schInfo01}
+				, #{schInfo02}
+				, #{schInfo03}
+				, #{schInfo04}
+				, #{schInfo05}
+				, #{schInfo06}
+				, #{schInfo07}
+				, #{schInfo08}
+				, #{schInfo09}
+				, #{schInfo10}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+		)
+	</insert>
+	
+	<update id="updateSch" parameterType="schVO">
+		UPDATE
+					COM_SCH
+		SET
+					  TITLE = #{title}
+					, CONTENTS = #{contents}
+					, START_DTTM = #{startDttm}
+					, END_DTTM = #{endDttm}
+					, MODI_ID = #{modiId}
+					, MODI_IP = #{modiIp}
+					, MODI_DTTM = SYSDATE
+		WHERE		SCH_CD = #{schCd}
+		AND			SCH_ID = #{schId}
+	</update>
+		
+	<delete id="deleteSch" parameterType="map">
+		DELETE 
+		FROM		COM_SCH
+		WHERE		SCH_CD = #{schCd}
+		AND			SCH_ID = #{schId}
+	</delete>
+	
+	<update id="updateSchViewCnt" parameterType="map">
+		UPDATE
+					COM_SCH
+		SET
+					VIEW_CNT = VIEW_CNT + 1
+		WHERE		SCH_CD = #{schCd}
+		AND			SCH_ID = #{schId}
+	</update>
+	
+	<select id="selectRecentSchListByParam" parameterType="map" resultType="schVO">
+		SELECT 
+				  PAGING.*
+		FROM	
+		( 
+			SELECT
+						  A.SCH_ID
+						, A.SCH_CD
+						, B.TITLE AS SCH_TITLE
+						, A.TITLE
+						, A.CONTENTS
+						, TO_CHAR(TO_DATE(A.START_DTTM, 'YYYYMMDD'), 'YYYY-MM-DD') START_DTTM
+						, TO_CHAR(TO_DATE(A.END_DTTM, 'YYYYMMDD'), 'YYYY-MM-DD') END_DTTM
+						, A.WRITER
+						, A.CATEGORY
+						, A.SCH_SEQ
+						, A.VIEW_CNT
+						, A.SCH_INFO01
+						, A.SCH_INFO02
+						, A.SCH_INFO03
+						, A.SCH_INFO04
+						, A.SCH_INFO05
+						, A.SCH_INFO06
+						, A.SCH_INFO07
+						, A.SCH_INFO08
+						, A.SCH_INFO09
+						, A.SCH_INFO10
+						, A.INPT_ID
+						, A.INPT_IP
+						, A.INPT_DTTM
+			FROM		COM_SCH A, COM_SCH_MGT B
+			WHERE		A.SCH_CD = B.CODE(+)
+			AND			A.SCH_CD = #{schCd}
+			AND			A.START_DTTM &lt;= TO_CHAR(SYSDATE, 'YYYYMMDD')
+			AND			A.END_DTTM &gt;= TO_CHAR(SYSDATE, 'YYYYMMDD')
+			<if test='schInfo01 != null and !"".equals(schInfo01)'>
+				AND		A.SCH_INFO01 = #{schInfo01}
+			</if>
+			<if test='schInfo02 != null and !"".equals(schInfo02)'>
+				AND		A.SCH_INFO02 = #{schInfo02}
+			</if>
+			<if test='schInfo03 != null and !"".equals(schInfo03)'>
+				AND		A.SCH_INFO03 = #{schInfo03}
+			</if>
+			<if test='schInfo04 != null and !"".equals(schInfo04)'>
+				AND		A.SCH_INFO04 = #{schInfo04}
+			</if>
+			<if test='schInfo05 != null and !"".equals(schInfo05)'>
+				AND		A.SCH_INFO05 = #{schInfo05}
+			</if>
+			<if test='schInfo06 != null and !"".equals(schInfo06)'>
+				AND		A.SCH_INFO06 = #{schInfo06}
+			</if>
+			<if test='schInfo07 != null and !"".equals(schInfo07)'>
+				AND		A.SCH_INFO07 = #{schInfo07}
+			</if>
+			<if test='schInfo08 != null and !"".equals(schInfo08)'>
+				AND		A.SCH_INFO08 = #{schInfo08}
+			</if>
+			<if test='schInfo09 != null and !"".equals(schInfo09)'>
+				AND		A.SCH_INFO09 = #{schInfo09}
+			</if>
+			<if test='schInfo10 != null and !"".equals(schInfo10)'>
+				AND		A.SCH_INFO10 = #{schInfo10}
+			</if>
+			ORDER BY	A.START_DTTM ASC, A.END_DTTM ASC, A.INPT_DTTM ASC
+				
+		) PAGING
+		<choose>
+			<when test='pagePerRow != null and !"".equals(pagePerRow) and pagePerRow != 0'>
+				WHERE ROWNUM &lt;= #{pagePerRow}
+			</when>
+			<otherwise>
+				WHERE ROWNUM &lt;= 10
+			</otherwise>
+		</choose>
+	</select>
+	
+</mapper>

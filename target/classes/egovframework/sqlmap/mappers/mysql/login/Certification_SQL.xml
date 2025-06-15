@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.login.service.impl.CertificationMapper">
+	
+	
+	<insert id="insertCertification" parameterType="certificationVO">
+		<selectKey resultType="string" keyProperty="certUid" order="BEFORE">
+			SELECT IFNULL(MAX(ABS(A.CERT_UID)), 0) + 1 FROM COM_CERT_LOG A
+		</selectKey>
+		INSERT
+		INTO	 COM_CERT_LOG
+		(
+				  CERT_UID
+				, CERT_TYPE
+				, CERT_KEY
+				, CERT_RESULT
+				, CERT_TRGT
+				, CERT_DTTM
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{certUid}
+				, #{certType}
+				, #{certKey}
+				, #{certResult}
+				, #{certTrgt}
+				, #{certDttm}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<update id="updateCertification" parameterType="certificationVO">
+		UPDATE	COM_CERT_LOG
+		SET		
+				  CERT_RESULT 	= #{certResult}
+				, CERT_DTTM 	= NOW()
+		WHERE	CERT_UID = #{certUid}
+	</update>
+	
+	<select id="selectCertificationSecond" parameterType="certificationVO" resultType="int">
+		SELECT
+					CASE
+						WHEN CNT > 5
+						THEN
+								CASE
+									WHEN ROUND((NOW()-MAX_DTTM)*24*60*60) > #{certTime} THEN 0
+									ELSE #{certTime} - ROUND((NOW()-MAX_DTTM)*24*60*60)
+								END
+						ELSE 0
+					END AS SEC
+		FROM (
+					SELECT 	COUNT(CERT_UID) AS CNT, MAX(INPT_DTTM) AS MAX_DTTM
+					FROM 	COM_CERT_LOG
+					WHERE 	CERT_RESULT = 'N'
+					AND 	CERT_TYPE = #{certification.certType}
+					AND 	CERT_TRGT = #{certification.certTrgt}
+					AND 	INPT_ID = #{certification.inptId}
+					AND 	INPT_IP = #{certification.inptIp}
+					AND 	INPT_DTTM > (
+											SELECT 	IFNULL(MAX(INPT_DTTM), STR_TO_DATE(DATE_FORMAT(NOW(), '%Y%m%d'), '%Y%m%d'))
+											FROM 	COM_CERT_LOG
+											WHERE 	CERT_RESULT = 'Y'
+											AND 	CERT_TYPE = #{certification.certType}
+											AND 	CERT_TRGT = #{certification.certTrgt}
+											AND 	INPT_ID = #{certification.inptId}
+											AND 	INPT_IP = #{certification.inptIp}
+										)
+		) A
+	</select>
+	
+</mapper>

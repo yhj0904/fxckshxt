@@ -1,0 +1,12 @@
+<%@ page import="kr.co.nanwe.cmmn.util.SessionUtil" %>
+<%@ page import="kr.co.nanwe.login.service.LoginVO" %>
+<%
+	boolean GV_IS_ADMIN = SessionUtil.isAdmin();
+	pageContext.setAttribute("GV_IS_ADMIN", GV_IS_ADMIN);
+	LoginVO LOGIN_USER = SessionUtil.getLoginUser();
+	boolean GV_IS_LOGIN = false;
+	if(LOGIN_USER != null){
+		GV_IS_LOGIN = true;
+	}
+	pageContext.setAttribute("GV_IS_LOGIN", GV_IS_LOGIN);
+%>

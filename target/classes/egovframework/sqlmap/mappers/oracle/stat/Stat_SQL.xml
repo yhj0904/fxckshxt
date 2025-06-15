@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.stat.service.impl.StatMapper">
+	
+	<select id="selectTodayLoginCount" resultType="int">
+		SELECT 	COUNT(DISTINCT LOGIN_ID||LOGIN_IP)
+		FROM 	COM_LOGIN_LOG
+		WHERE 	LOGIN_SUCCESS = 'Y'
+		AND 	TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	</select>
+	
+	<select id="selectWeeklyLoginCount" resultType="HashMap">
+		SELECT	    
+		                  A.CUR_DATE
+		                , NVL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+		                SELECT TO_CHAR(SYSDATE - (LEVEL - 1), 'YYYY-MM-DD') AS CUR_DATE 
+		                FROM DUAL 
+		                CONNECT BY LEVEL &lt;= 7
+		            ) A
+		LEFT JOIN   (
+		               SELECT	    
+		                              TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') AS LOGIN_DATE
+		                            , COUNT(DISTINCT LOGIN_ID||LOGIN_IP) AS LOGIN_COUNT
+		                FROM        COM_LOGIN_LOG
+		                WHERE       LOGIN_SUCCESS = 'Y'
+		                AND         TO_CHAR(SYSDATE - 6, 'YYYY-MM-DD') &lt;= TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD')
+		                GROUP BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD')
+		                ORDER BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') DESC
+		            ) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectMonthlyCount" resultType="HashMap">
+		SELECT	    
+		                  A.CUR_DATE
+		                , NVL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+		                SELECT 		TO_CHAR(SYSDATE - (LEVEL - 1), 'YYYY-MM-DD') AS CUR_DATE 
+		                FROM	 	DUAL 
+		                CONNECT BY	LEVEL &lt;= 7
+		            ) A
+		LEFT JOIN   (
+		               SELECT	    
+		                              TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') AS LOGIN_DATE
+		                            , COUNT(DISTINCT LOGIN_ID||LOGIN_IP) AS LOGIN_COUNT
+		               FROM        COM_LOGIN_LOG
+		               WHERE       LOGIN_SUCCESS = 'Y'
+		               AND         TO_CHAR(SYSDATE - 6, 'YYYY-MM-DD') &lt;= TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD')
+		               GROUP BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD')
+		               ORDER BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') DESC
+		            ) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectMonthlyLoginCount" resultType="HashMap">
+		SELECT	    
+		                  SUBSTR(A.CUR_DATE, 9, 10) AS CUR_DATE
+		                , NVL(B.LOGIN_COUNT, 0) AS LOGIN_COUNT
+		FROM	    (
+		                SELECT 		TO_CHAR(ADD_MONTHS(LAST_DAY(SYSDATE)+1,-1) + (LEVEL-1),'YYYY-MM-DD') AS CUR_DATE
+						FROM 		DUAL 
+						CONNECT BY	LEVEL &lt;= (LAST_DAY(SYSDATE) - ADD_MONTHS(LAST_DAY(SYSDATE)+1,-1) + 1)
+		            ) A
+		LEFT JOIN   (
+		             	SELECT	    
+						              TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') AS LOGIN_DATE
+						            , COUNT(DISTINCT LOGIN_ID||LOGIN_IP) AS LOGIN_COUNT
+						FROM        COM_LOGIN_LOG
+						WHERE       LOGIN_SUCCESS = 'Y'
+						AND         TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') &gt;= TO_CHAR(ADD_MONTHS(LAST_DAY(SYSDATE)+1,-1), 'YYYY-MM-DD')
+						AND         TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') &lt;= TO_CHAR(LAST_DAY(SYSDATE), 'YYYY-MM-DD')
+						GROUP BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD')
+						ORDER BY    TO_CHAR(LOGIN_DTTM, 'YYYY-MM-DD') ASC
+		            ) B
+		ON          A.CUR_DATE = B.LOGIN_DATE
+		ORDER BY    A.CUR_DATE ASC
+	</select>
+	
+	<select id="selectTodayBbsCount" resultType="int">
+		SELECT 	COUNT(BBS_ID)
+		FROM 	COM_BBS
+		WHERE 	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND		NVL(DEL_YN, 'N') != 'Y'
+	</select>
+	
+	<select id="selectTotalBbsCount" resultType="int">
+		SELECT 	COUNT(BBS_ID)
+		FROM 	COM_BBS
+		WHERE	NVL(DEL_YN, 'N') != 'Y'
+	</select>
+	
+</mapper>

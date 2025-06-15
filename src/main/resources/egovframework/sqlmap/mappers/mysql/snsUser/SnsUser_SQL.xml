@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.user.service.impl.SnsUserMapper">
+	
+	<select id="checkSnsUserExist" parameterType="userVO" resultType="int">
+		SELECT 	COUNT(*)
+		FROM	COM_SNS_USER
+		WHERE	SNS_TYPE = #{snsType}
+		AND		SNS_ID = #{snsId}
+	</select>
+	
+	<select id="selectLoginSnsUser" parameterType="userVO" resultType="loginVO">
+		SELECT 
+				  A.USER_ID			AS LOGIN_ID
+				, A.USER_NM			AS LOGIN_NM
+				, A.TEL_NO		 	AS TEL_NO
+				, A.MBPH_NO		 	AS MBPH_NO
+				, A.EMAIL		 	AS EMAIL
+				, A.POST_NO			AS POST_NO
+				, A.ADDR			AS ADDR
+				, A.DETL_ADDR		AS DETL_ADDR 
+				, A.DEPT_CD			AS DEPT_CD
+				, A.DEPT_NM			AS DEPT_NM
+				, A.USE_YN		 	AS LOGIN_YN
+				, A.AUTH_CD			AS STAT_DVCD
+				, B.SNS_TYPE		AS SNS_TYPE
+				, B.SNS_ID			AS SNS_ID
+		FROM 	COM_USER A
+		JOIN	COM_SNS_USER B
+		ON		A.USER_ID = B.USER_ID
+		WHERE	A.USER_ID = #{userId}
+		AND		B.SNS_TYPE = #{snsType}
+		AND		B.SNS_ID = #{snsId}
+		AND		IFNULL(A.DEL_YN, 'N') != 'Y'
+	</select>
+	
+	<insert id="insertSnsUser" parameterType="userVO">
+		INSERT
+		INTO 	COM_SNS_USER
+		(
+				  USER_ID
+				, SNS_TYPE
+				, SNS_ID
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{userId}
+				, #{snsType}
+				, #{snsId}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.site.service.impl.DomainMapper">
+	
+	<select id="selectDomainExist" parameterType="string" resultType="int">
+		SELECT		COUNT(DOMAIN)
+		FROM 		COM_DOMAIN
+		WHERE		DOMAIN = #{domain}
+	</select>
+	
+	<insert id="insertDomain" parameterType="domainVO">
+		INSERT
+		INTO 	COM_DOMAIN
+		(
+				  SITE_CD
+				, DOMAIN
+				, NOTE
+				, DEFAULT_YN
+				, USE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{siteCd}
+				, #{domain}
+				, #{note}
+				, #{defaultYn}
+				, #{useYn}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<select id="selectDomainList" parameterType="string" resultType="domainVO">
+		SELECT		  SITE_CD
+					, DOMAIN
+					, NOTE
+					, DEFAULT_YN
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_DOMAIN
+		WHERE		SITE_CD = #{siteCd}
+        ORDER BY    DEFAULT_YN DESC, USE_YN DESC
+	</select>
+	
+	<delete id="deleteDomainBySiteCd" parameterType="string">
+		DELETE
+		FROM	COM_DOMAIN
+		WHERE	SITE_CD = #{siteCd}
+	</delete>
+	
+</mapper>

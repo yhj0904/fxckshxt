@@ -1,0 +1,16 @@
+@charset "utf-8";
+
+.photo_list {}
+.photo_list>ul {overflow:hidden;}
+.photo_list>ul>li {position:relative; float:left;width:calc(25% - 20px);margin:10px;padding:10px;box-sizing:border-box;border:1px solid #e8e8e8; background-color:#fff;}
+.photo_list>ul>li.no_data {width:100%;}
+.photo_list>ul>li a {display:inline-block;}
+.photo_list>ul>li .item_check {width:100%; height:15px;}
+.photo_list>ul>li .item_photo {width:100%; display:table; }
+.photo_list>ul>li .item_photo a {display:table-cell; text-align:center; height:200px; line-height:200px; vertical-align:middle;}
+.photo_list>ul>li .item_photo img {max-height:200px;}
+.photo_list>ul>li .item_cont {}
+.photo_list>ul>li .item_cont .tit {width:100%; height:50px;}
+.photo_list>ul>li .item_cont .tit a {width:100%; word-break: break-all; overflow: hidden; text-overflow: ellipsis;  white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+.photo_list>ul>li .item_cont .writer{float:left; width:50%; color:#333;}
+.photo_list>ul>li .item_cont .date{float:right; width:50%; color:#333; text-align:right;}

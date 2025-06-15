@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.menu.service.impl.MenuBookmarkMapper">
+	
+	<select id="selectMenuBookmarkList" parameterType="map" resultType="menuBookmarkVO">
+		SELECT
+					  A.MENU_CD
+					, A.MENU_ID
+					, A.SORT_ORD
+					, A.USER_ID
+					, A.INPT_ID
+					, A.INPT_IP
+					, A.INPT_DTTM
+					, CASE
+						  WHEN (IFNULL(B.MENU_ENG_NM, 'NULL') != 'NULL' AND 'ko' != '${language}') THEN B.MENU_ENG_NM
+				          ELSE B.MENU_NM
+			          END AS MENU_NM
+					, B.MENU_LINK
+					, B.PROG_YN
+					, B.PROG_CD
+					, B.PROG_PATH
+					, B.PROG_PARAM
+					, B.USE_SSO
+		FROM		COM_MENU_BOOKMARK A
+		LEFT JOIN 	COM_MENU B
+		ON			(A.MENU_CD = B.MENU_CD AND A.MENU_ID = B.MENU_ID)
+		WHERE		B.USE_YN = 'Y'
+		AND			B.VIEW_YN = 'Y'
+		AND			A.USER_ID = #{userId}
+	</select>
+	
+	<select id="selectMenuBookmarkListByForm" parameterType="map" resultType="menuBookmarkVO">
+		WITH RECURSIVE MENU AS 
+		(
+			SELECT
+					A.*
+					, (SELECT COUNT(S.MENU_ID) FROM COM_MENU S WHERE S.HI_MENU_ID = A.MENU_ID AND S.USE_YN = 'Y' AND S.VIEW_YN = 'Y') AS CHILD_CNT
+					, (SELECT COUNT(S1.MENU_ID) FROM COM_MENU_BOOKMARK S1 WHERE S1.MENU_CD = A.MENU_CD AND S1.MENU_ID = A.MENU_ID AND S1.USER_ID = #{userId}) AS BOOK_CHECK
+					, CONCAT(CAST((LPAD(IFNULL(A.SORT_ORD, 0), 6, '0')) AS CHAR(500)), A.MENU_ID) SORT
+			FROM 	COM_MENU A	
+			WHERE	(A.HI_MENU_ID IS NULL OR A.HI_MENU_ID = '')
+			AND 	A.MENU_CD = #{menuCd}
+			AND 	IFNULL(A.USE_YN, 'N') = 'Y'
+			AND 	IFNULL(A.VIEW_YN, 'N') = 'Y'
+			<if test="authDvcd != null and userDvcd != null and workDvcd != null and statDvcd != null">
+			AND		(
+						SELECT 	COUNT(MA.AUTH_CD) 
+						FROM 	COM_MENU_AUTH MA 
+						WHERE 	MA.MENU_CD = #{menuCd}
+						AND 	MA.MENU_ID = A.MENU_ID
+						AND		SFN_IS_AUTH_MAP(MA.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+					) > 0
+			</if>
+			
+			UNION ALL
+			
+			SELECT	B.*
+					, (SELECT COUNT(S.MENU_ID) FROM COM_MENU S WHERE S.HI_MENU_ID = B.MENU_ID AND S.USE_YN = 'Y' AND S.VIEW_YN = 'Y') AS CHILD_CNT
+					, (SELECT COUNT(S1.MENU_ID) FROM COM_MENU_BOOKMARK S1 WHERE S1.MENU_CD = B.MENU_CD AND S1.MENU_ID = B.MENU_ID AND S1.USER_ID = #{userId}) AS BOOK_CHECK
+		            , CONCAT(REC.SORT, '-', CONCAT(CAST((LPAD(IFNULL(B.SORT_ORD, 0), 6, '0')) AS CHAR(500)), B.MENU_ID)) SORT
+			FROM	COM_MENU B
+			INNER JOIN MENU REC 
+			ON 		B.HI_MENU_ID = REC.MENU_ID		
+			WHERE	1=1
+			AND 	B.MENU_CD = #{menuCd}
+			AND 	IFNULL(B.USE_YN, 'N') = 'Y'
+			AND 	IFNULL(B.VIEW_YN, 'N') = 'Y'
+			<if test="authDvcd != null and userDvcd != null and workDvcd != null and statDvcd != null">
+			AND		(
+						SELECT 	COUNT(MA.AUTH_CD) 
+						FROM 	COM_MENU_AUTH MA 
+						WHERE 	MA.MENU_CD = #{menuCd}
+						AND 	MA.MENU_ID = B.MENU_ID
+						AND		SFN_IS_AUTH_MAP(MA.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+					) > 0
+			</if>
+		)
+		SELECT
+							  A.MENU_CD
+							, A.MENU_ID
+							, A.HI_MENU_ID
+							, CASE
+								  WHEN (IFNULL(A.MENU_ENG_NM, 'NULL') != 'NULL' AND 'ko' != '${language}') THEN A.MENU_ENG_NM
+						          ELSE A.MENU_NM
+					          END AS MENU_NM
+							, A.MENU_LVL
+							, A.MENU_LINK
+							, A.PROG_YN
+							, A.PROG_CD
+							, A.PROG_PATH
+							, A.PROG_PARAM
+							, A.SORT_ORD
+							, A.CHILD_CNT
+							, A.BOOK_CHECK
+							, A.USE_SSO
+		FROM  MENU A
+		ORDER BY A.SORT
+	</select>
+	
+	<insert id="insertMenuBookmark" parameterType="menuBookmarkVO">
+		INSERT
+		INTO 	COM_MENU_BOOKMARK
+		(
+				  MENU_CD
+				, MENU_ID
+				, SORT_ORD
+				, USER_ID
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  'MAIN'
+				, #{menuId}
+				, #{sortOrd}
+				, #{userId}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteMenuBookmarkByMenuId" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_BOOKMARK
+		WHERE 	MENU_ID = #{menuId}
+	</delete>
+	
+	<delete id="deleteMenuBookmarkByUserId" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_BOOKMARK
+		WHERE	USER_ID = #{userId}
+	</delete>
+	
+	<delete id="deleteMenuBookmarkByMenuCd" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_BOOKMARK
+		WHERE	MENU_CD = #{menuCd}
+	</delete>
+	
+</mapper>

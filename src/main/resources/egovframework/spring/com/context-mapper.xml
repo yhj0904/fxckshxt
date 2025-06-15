@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<util:properties id="dbProp" location="classpath:/egovframework/prop/dbconfig.properties"/>
+	<context:property-placeholder properties-ref="dbProp"/>
+
+	<!-- SQL SESSION -->
+	<bean id="sqlSession" class="kr.co.nanwe.cmmn.bean.ComSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource-default" />
+		<property name="configLocation" value="classpath:/egovframework/sqlmap/sql-mapper-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:/egovframework/sqlmap/mappers/${db.type}/**/*.xml</value>
+				<value>classpath:/egovframework/mapper/let/cmm/fms/EgovFile_SQL_${db.type}.xml</value>
+			</list>
+		</property>
+		<property name="plugins">  
+			<array>
+				<bean class="kr.co.nanwe.log.interceptor.SqlAddParamInterceptor" />
+				<bean class="kr.co.nanwe.log.interceptor.SqlLogInterceptor" /> 
+			</array>  
+        </property>
+	</bean>
+	
+	<bean class="org.egovframe.rte.psl.dataaccess.mapper.MapperConfigurer">
+		<property name="basePackage" value="kr.co.nanwe,egovframework.com.cmm.service.impl" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSession" />
+	</bean>
+	
+</beans> 

@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.bbs.service.impl.BbsMgtMapper">
+	
+	<select id="selectBbsMgtTotCnt" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(CODE)
+		FROM 	COM_BBS_MGT
+		WHERE	1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "code"'>
+					AND CODE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>		
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<select id="selectBbsMgtList" parameterType="map" resultType="bbsMgtVO">
+		<include refid="paging.preSql"></include>
+		SELECT 
+					  CODE
+					, TITLE
+					, HEADER
+					, FOOTER
+					, SKIN_CD
+					, PAGE_CNT
+					, ROW_CNT
+					, FILE_YN
+					, FILE_CNT
+					, FILE_SIZE
+					, FILE_EXT
+					, CATE_YN
+					, CATEGORY
+					, REPLY_YN
+					, CMNT_YN
+					, EDITOR_YN
+					, EDITOR_FILE_YN
+					, NOTICE_YN
+					, NOTICE_ROW_CNT
+					, SECRET_YN
+					, NONAME_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_BBS_MGT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "code"'>
+					AND CODE LIKE '%'||#{searchValue}||'%'
+				</when>
+				<when test='searchOption == "title"'>
+					AND TITLE LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	TO_CHAR(INPT_DTTM, 'YYYY-MM-DD') &lt;= #{endDate}
+		</if>
+		ORDER BY	INPT_DTTM DESC, CODE ASC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectBbsMgt" parameterType="string" resultType="bbsMgtVO">
+		SELECT 
+					  A.CODE
+					, A.TITLE
+					, A.HEADER
+					, A.FOOTER
+					, A.SKIN_CD
+					, LOWER(B.CD_ENG_ABBR_NM) AS SKIN_CD_VAL
+					, A.PAGE_CNT
+					, A.ROW_CNT
+					, A.FILE_YN
+					, A.FILE_CNT
+					, A.FILE_SIZE
+					, A.FILE_EXT
+					, A.CATE_YN
+					, A.CATEGORY
+					, A.REPLY_YN
+					, A.CMNT_YN
+					, A.EDITOR_YN
+					, A.EDITOR_FILE_YN
+					, A.NOTICE_YN
+					, A.NOTICE_ROW_CNT
+					, A.SECRET_YN
+					, A.NONAME_YN
+					, A.SUPPL_YN
+					, A.SUPPL01_YN
+					, A.SUPPL02_YN
+					, A.SUPPL03_YN
+					, A.SUPPL04_YN
+					, A.SUPPL05_YN
+					, A.SUPPL06_YN
+					, A.SUPPL07_YN
+					, A.SUPPL08_YN
+					, A.SUPPL09_YN
+					, A.SUPPL10_YN
+					, A.SUPPL01_TITLE
+					, A.SUPPL02_TITLE
+					, A.SUPPL03_TITLE
+					, A.SUPPL04_TITLE
+					, A.SUPPL05_TITLE
+					, A.SUPPL06_TITLE
+					, A.SUPPL07_TITLE
+					, A.SUPPL08_TITLE
+					, A.SUPPL09_TITLE
+					, A.SUPPL10_TITLE
+					, A.INPT_ID
+					, A.INPT_IP
+					, A.INPT_DTTM
+					, A.MODI_ID
+					, A.MODI_IP
+					, A.MODI_DTTM
+		FROM 		COM_BBS_MGT A, COM_COMM_CD B
+		WHERE		A.SKIN_CD = B.CD (+)
+		AND			A.CODE = #{code}
+	</select>
+	
+	<insert id="insertBbsMgt" parameterType="bbsMgtVO">
+		INSERT
+		INTO 	COM_BBS_MGT
+		(
+				  CODE
+				, TITLE
+				, HEADER
+				, FOOTER
+				, SKIN_CD
+				, PAGE_CNT
+				, ROW_CNT
+				, FILE_YN
+				, FILE_CNT
+				, FILE_SIZE
+				, FILE_EXT
+				, CATE_YN
+				, CATEGORY
+				, REPLY_YN
+				, CMNT_YN
+				, EDITOR_YN
+				, EDITOR_FILE_YN
+				, NOTICE_YN
+				, NOTICE_ROW_CNT
+				, SECRET_YN
+				, NONAME_YN
+				, SUPPL_YN
+				, SUPPL01_YN
+				, SUPPL02_YN
+				, SUPPL03_YN
+				, SUPPL04_YN
+				, SUPPL05_YN
+				, SUPPL06_YN
+				, SUPPL07_YN
+				, SUPPL08_YN
+				, SUPPL09_YN
+				, SUPPL10_YN
+				, SUPPL01_TITLE
+				, SUPPL02_TITLE
+				, SUPPL03_TITLE
+				, SUPPL04_TITLE
+				, SUPPL05_TITLE
+				, SUPPL06_TITLE
+				, SUPPL07_TITLE
+				, SUPPL08_TITLE
+				, SUPPL09_TITLE
+				, SUPPL10_TITLE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{code}
+				, #{title}
+				, #{header}
+				, #{footer}
+				, #{skinCd}
+				, #{pageCnt}
+				, #{rowCnt}
+				, #{fileYn}
+				, #{fileCnt}
+				, #{fileSize}
+				, #{fileExt}
+				, #{cateYn}
+				, #{category}
+				, #{replyYn}
+				, #{cmntYn}
+				, #{editorYn}
+				, #{editorFileYn}
+				, #{noticeYn}
+				, #{noticeRowCnt}
+				, #{secretYn}
+				, #{nonameYn}
+				, #{supplYn}
+				, #{suppl01Yn}
+				, #{suppl02Yn}
+				, #{suppl03Yn}
+				, #{suppl04Yn}
+				, #{suppl05Yn}
+				, #{suppl06Yn}
+				, #{suppl07Yn}
+				, #{suppl08Yn}
+				, #{suppl09Yn}
+				, #{suppl10Yn}
+				, #{suppl01Title}
+				, #{suppl02Title}
+				, #{suppl03Title}
+				, #{suppl04Title}
+				, #{suppl05Title}
+				, #{suppl06Title}
+				, #{suppl07Title}
+				, #{suppl08Title}
+				, #{suppl09Title}
+				, #{suppl10Title}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{modiId}
+				, #{modiIp}
+				, SYSDATE
+		)
+	</insert>
+	
+	<update id="updateBbsMgt" parameterType="bbsMgtVO">
+		UPDATE
+				COM_BBS_MGT
+		SET
+				  TITLE 			= #{title}
+				, HEADER 			= #{header}
+				, FOOTER 			= #{footer}
+				, SKIN_CD 			= #{skinCd}
+				, PAGE_CNT 			= #{pageCnt}
+				, ROW_CNT 			= #{rowCnt}
+				, FILE_YN 			= #{fileYn}
+				, FILE_CNT 			= #{fileCnt}
+				, FILE_SIZE 		= #{fileSize}
+				, FILE_EXT 			= #{fileExt}
+				, CATE_YN 			= #{cateYn}
+				, CATEGORY 			= #{category}
+				, REPLY_YN 			= #{replyYn}
+				, CMNT_YN 			= #{cmntYn}
+				, EDITOR_YN 		= #{editorYn}
+				, EDITOR_FILE_YN 	= #{editorFileYn}
+				, NOTICE_YN 		= #{noticeYn}
+				, NOTICE_ROW_CNT 	= #{noticeRowCnt}
+				, SECRET_YN 		= #{secretYn}
+				, NONAME_YN 		= #{nonameYn}
+				, SUPPL_YN 			= #{supplYn}
+				, SUPPL01_YN 		= #{suppl01Yn}
+				, SUPPL02_YN 		= #{suppl02Yn}
+				, SUPPL03_YN 		= #{suppl03Yn}
+				, SUPPL04_YN 		= #{suppl04Yn}
+				, SUPPL05_YN 		= #{suppl05Yn}
+				, SUPPL06_YN 		= #{suppl06Yn}
+				, SUPPL07_YN 		= #{suppl07Yn}
+				, SUPPL08_YN 		= #{suppl08Yn}
+				, SUPPL09_YN 		= #{suppl09Yn}
+				, SUPPL10_YN 		= #{suppl10Yn}
+				, SUPPL01_TITLE 	= #{suppl01Title}
+				, SUPPL02_TITLE 	= #{suppl02Title}
+				, SUPPL03_TITLE 	= #{suppl03Title}
+				, SUPPL04_TITLE 	= #{suppl04Title}
+				, SUPPL05_TITLE 	= #{suppl05Title}
+				, SUPPL06_TITLE 	= #{suppl06Title}
+				, SUPPL07_TITLE 	= #{suppl07Title}
+				, SUPPL08_TITLE 	= #{suppl08Title}
+				, SUPPL09_TITLE 	= #{suppl09Title}
+				, SUPPL10_TITLE 	= #{suppl10Title}
+				, MODI_ID 			= #{modiId}
+				, MODI_IP 			= #{modiIp}
+				, MODI_DTTM 		= SYSDATE
+		WHERE 	CODE = #{code}
+	</update>
+	
+	<delete id="deleteBbsMgt" parameterType="string">
+		DELETE 
+		FROM	COM_BBS_MGT
+		WHERE 	CODE = #{code}
+	</delete>
+	
+	<select id="selectBbsMgtCodeExist" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(CODE)
+		FROM 	COM_BBS_MGT
+		WHERE	CODE = #{code}
+	</select>
+	
+	<delete id="deleteBbsByBbsCd" parameterType="string">
+		DELETE 
+		FROM	COM_BBS
+		WHERE 	BBS_CD = #{code}
+	</delete>
+	
+	<delete id="deleteBbsAuthByBbsCd" parameterType="string">
+		DELETE 
+		FROM	COM_BBS_AUTH
+		WHERE 	BBS_CD = #{code}
+	</delete>
+	
+	<select id="selectBbsAuthListByAction" parameterType="map" resultType="bbsAuthVO">
+		SELECT 
+					  BBS_CD
+					, AUTH_CD
+					, USER_ID
+		FROM 		COM_BBS_AUTH
+		WHERE		BBS_CD = #{code}
+		<choose>
+			<when test='action.equals("LIST")'>
+				AND LIST_AUTH = 'Y'
+			</when>
+			<when test='action.equals("VIEW")'>
+				AND VIEW_AUTH = 'Y'
+			</when>
+			<when test='action.equals("REGI")'>
+				AND REGI_AUTH = 'Y'
+			</when>
+			<when test='action.equals("REPLY")'>
+				AND REPLY_AUTH = 'Y'
+			</when>
+			<when test='action.equals("CMNT")'>
+				AND CMNT_AUTH = 'Y'
+			</when>
+			<otherwise>
+				AND LIST_AUTH = 'Y'
+				AND VIEW_AUTH = 'Y'
+				AND REGI_AUTH = 'Y'
+				AND REPLY_AUTH = 'Y'
+				AND CMNT_AUTH = 'Y'
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="selectBbsAuth" parameterType="map" resultType="bbsAuthVO">
+		SELECT
+		          MAX(BBS_CD)		AS BBS_CD
+				, MAX(LIST_AUTH)	AS LIST_AUTH
+				, MAX(VIEW_AUTH)	AS VIEW_AUTH
+				, MAX(REGI_AUTH)	AS REGI_AUTH
+				, MAX(REPLY_AUTH)	AS REPLY_AUTH
+				, MAX(CMNT_AUTH)	AS CMNT_AUTH
+		FROM 
+		(
+				SELECT 
+							  A.BBS_CD
+							, A.AUTH_CD
+							, A.USER_ID
+							, A.LIST_AUTH
+							, A.VIEW_AUTH
+							, A.REGI_AUTH
+							, A.REPLY_AUTH
+							, A.CMNT_AUTH
+				FROM 		COM_BBS_AUTH A
+				WHERE		A.BBS_CD = #{bbsCd}
+				AND			SFN_IS_AUTH_MAP(A.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+		)
+	</select>
+	
+	<update id="updateBbsAuth" parameterType="bbsAuthVO">		
+		INSERT
+		INTO 	COM_BBS_AUTH
+		(
+				  BBS_CD
+				, AUTH_CD
+				, USER_ID
+				, LIST_AUTH
+				, VIEW_AUTH
+				, REGI_AUTH
+				, REPLY_AUTH
+				, CMNT_AUTH
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{bbsCd}
+				, #{authCd}
+				, #{userId}
+				, NVL(#{listAuth}, 'N')
+				, NVL(#{viewAuth}, 'N')
+				, NVL(#{regiAuth}, 'N')
+				, NVL(#{replyAuth}, 'N')
+				, NVL(#{cmntAuth}, 'N')
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{modiId}
+				, #{modiIp}
+				, SYSDATE
+		)
+	</update>
+	
+	<update id="deleteBbsAuth" parameterType="bbsAuthVO">		
+		DECLARE 
+			CNT NUMBER;
+		BEGIN 				
+			
+			UPDATE
+					COM_BBS_AUTH
+			SET
+			<choose>
+				<when test='action.equals("LIST")'>
+					LIST_AUTH = 'N'
+				</when>
+				<when test='action.equals("VIEW")'>
+					VIEW_AUTH = 'N'
+				</when>
+				<when test='action.equals("REGI")'>
+					REGI_AUTH = 'N'
+				</when>
+				<when test='action.equals("REPLY")'>
+					REPLY_AUTH = 'N'
+				</when>
+				<when test='action.equals("CMNT")'>
+					CMNT_AUTH = 'N'
+				</when>
+				<otherwise>
+					LIST_AUTH = 'N'
+					, VIEW_AUTH = 'N'
+					, REGI_AUTH = 'N'
+					, REPLY_AUTH = 'N'
+					, CMNT_AUTH = 'N'
+				</otherwise>
+			</choose>
+			WHERE BBS_CD = #{bbsCd}
+			AND	AUTH_CD = #{authCd};
+			
+			SELECT COUNT(BBS_CD) AS CNT
+			INTO CNT
+			FROM COM_BBS_AUTH
+			WHERE BBS_CD = #{bbsCd}
+			AND	AUTH_CD = #{authCd}
+			AND LIST_AUTH = 'N'
+			AND VIEW_AUTH = 'N'
+			AND REGI_AUTH = 'N'
+			AND REPLY_AUTH = 'N'
+			AND CMNT_AUTH = 'N';
+			
+			IF CNT > 0 THEN						
+		    	DELETE FROM COM_BBS_AUTH WHERE BBS_CD = #{bbsCd} AND AUTH_CD = #{authCd};
+		    END IF;				    
+		END;
+	</update>
+	
+	<update id="resetBbsAuthByBbsCd" parameterType="string">
+		UPDATE
+				COM_BBS_AUTH
+		SET
+				LIST_AUTH = 'N'
+				, VIEW_AUTH = 'N'
+				, REGI_AUTH = 'N'
+				, REPLY_AUTH = 'N'
+				, CMNT_AUTH = 'N'
+		WHERE BBS_CD = #{code}
+	</update>
+	
+	<delete id="deleteBbsAuthByNoAuth" parameterType="string">
+		DELETE
+		FROM	COM_BBS_AUTH
+		WHERE 	BBS_CD = #{code}
+		AND 	LIST_AUTH = 'N'
+		AND 	VIEW_AUTH = 'N'
+		AND 	REGI_AUTH = 'N'
+		AND 	REPLY_AUTH = 'N'
+		AND 	CMNT_AUTH = 'N'
+	</delete>
+	
+	<delete id="deleteBbsAuthByAuthCd" parameterType="string">
+		DELETE
+		FROM	COM_BBS_AUTH
+		WHERE 	AUTH_CD = #{authCd}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,8 @@
+<%@ include file="/WEB-INF/jsp/include/context.jspf" %>
+<%@ page import="kr.co.nanwe.banner.service.BannerService" %>
+<%@ page import="kr.co.nanwe.banner.service.BannerVO" %>
+<%@ page import="kr.co.nanwe.file.service.ViewFileVO" %>
+<%@ page import="java.util.List" %>
+<%
+BannerService bannerService = (BannerService) webApplicationContext.getBean("bannerService");
+%>

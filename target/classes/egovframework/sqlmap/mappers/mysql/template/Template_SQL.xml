@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.template.service.impl.TemplateMapper">
+
+	<select id="selectTemplateUseList" parameterType="map" resultType="templateMgtVO">
+		SELECT
+					  TEMPLATE_CD
+					, TEMPLATE_NM
+		FROM 		COM_TEMPLATE_MGT
+		WHERE		USE_YN = 'Y'
+		ORDER BY	TEMPLATE_CD ASC
+	</select>
+		
+	<select id="selectTemplateTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(TEMPLATE_CD)
+		FROM 		COM_TEMPLATE_MGT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "templateCd"'>
+					AND TEMPLATE_CD LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "templateNm"'>
+					AND TEMPLATE_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="selectTemplateList" parameterType="map" resultType="templateMgtVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  TEMPLATE_CD
+					, TEMPLATE_NM
+					, NOTE
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_TEMPLATE_MGT
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "templateCd"'>
+					AND TEMPLATE_CD LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "templateNm"'>
+					AND TEMPLATE_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY	INPT_DTTM DESC, TEMPLATE_CD ASC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectTemplate" parameterType="string" resultType="templateMgtVO">
+		SELECT
+					  TEMPLATE_CD
+					, TEMPLATE_NM
+					, NOTE
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_TEMPLATE_MGT
+		WHERE		TEMPLATE_CD = #{templateCd}
+	</select>
+	
+	<insert id="insertTemplate" parameterType="templateMgtVO">
+		INSERT
+		INTO 	COM_TEMPLATE_MGT
+		(
+				  TEMPLATE_CD
+				, TEMPLATE_NM
+				, NOTE
+				, USE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+		) VALUES (
+				  #{templateCd}
+				, #{templateNm}
+				, #{note}
+				, #{useYn}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<update id="updateTemplate" parameterType="templateMgtVO">
+		UPDATE	COM_TEMPLATE_MGT
+		SET
+				  
+				  TEMPLATE_NM = #{templateNm}
+				, NOTE = #{note}
+				, USE_YN = #{useYn}
+				, MODI_ID = #{modiId}
+				, MODI_IP = #{modiIp}
+				, MODI_DTTM = NOW()
+		WHERE 	TEMPLATE_CD = #{templateCd}
+	</update>
+	
+	<delete id="deleteTemplate" parameterType="string">
+		DELETE	
+		FROM	COM_TEMPLATE_MGT
+		WHERE 	TEMPLATE_CD = #{templateCd}	
+	</delete>
+		
+	<select id="selectTemplateCdExist" parameterType="string" resultType="int">
+		SELECT	COUNT(TEMPLATE_CD)
+		FROM 	COM_TEMPLATE_MGT
+		WHERE	TEMPLATE_CD = #{templateCd}
+	</select>
+	
+	<select id="selectTemplateCodeTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(TEMPLATE_CD)
+		FROM 		COM_TEMPLATE_CODE
+		WHERE		TEMPLATE_CD = #{templateCd}
+	</select>
+	
+	<select id="selectTemplateCodeList" parameterType="map" resultType="templateCodeVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  TEMPLATE_CD
+					, SEQ
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_TEMPLATE_CODE
+		WHERE		TEMPLATE_CD = #{templateCd}
+		ORDER BY	INPT_DTTM DESC, SEQ DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectTemplateCode" parameterType="map" resultType="templateCodeVO">
+		SELECT
+					  TEMPLATE_CD
+					, SEQ
+					, CONVERT(MAIN_CODE USING UTF8) AS MAIN_CODE
+					, CONVERT(SUB_CODE USING UTF8) AS SUB_CODE
+					, CONVERT(LOGIN_CODE USING UTF8) AS LOGIN_CODE
+					, CONVERT(EMPTY_CODE USING UTF8) AS EMPTY_CODE
+					, CONVERT(POP_CODE USING UTF8) AS POP_CODE
+					, CONVERT(LAYOUT_HEADER USING UTF8) AS LAYOUT_HEADER
+					, CONVERT(LAYOUT_FOOTER USING UTF8) AS LAYOUT_FOOTER
+					, CONVERT(LAYOUT_GNB USING UTF8) AS LAYOUT_GNB
+					, CONVERT(MAIN_CSS USING UTF8) AS MAIN_CSS 
+					, CONVERT(SUB_CSS USING UTF8) AS SUB_CSS 
+					, CONVERT(LOGIN_CSS USING UTF8) AS LOGIN_CSS 
+					, CONVERT(EMPTY_CSS USING UTF8) AS EMPTY_CSS 
+					, CONVERT(POP_CSS USING UTF8) AS POP_CSS 
+					, CONVERT(LAYOUT_CSS USING UTF8) AS LAYOUT_CSS 
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_TEMPLATE_CODE
+		WHERE		TEMPLATE_CD = #{templateCd}
+		AND			SEQ = #{seq}
+	</select>
+	
+	
+	<insert id="insertTemplateCode" parameterType="templateCodeVO">
+		INSERT
+		INTO 	COM_TEMPLATE_CODE
+		(
+				  TEMPLATE_CD
+				, SEQ
+				, MAIN_CODE
+				, SUB_CODE
+				, LOGIN_CODE
+				, EMPTY_CODE
+				, POP_CODE
+				, LAYOUT_HEADER
+				, LAYOUT_FOOTER
+				, LAYOUT_GNB
+				, MAIN_CSS
+				, SUB_CSS
+				, LOGIN_CSS
+				, EMPTY_CSS
+				, POP_CSS
+				, LAYOUT_CSS
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{templateCd}
+				, (SELECT IFNULL(MAX(A.SEQ), 0) +1 FROM COM_TEMPLATE_CODE A WHERE A.TEMPLATE_CD = #{templateCd})
+				, #{mainCode}
+				, #{subCode}
+				, #{loginCode}
+				, #{emptyCode}
+				, #{popCode}
+				, #{layoutHeader}
+				, #{layoutFooter}
+				, #{layoutGnb}
+				, #{mainCss}
+				, #{subCss}
+				, #{loginCss}
+				, #{emptyCss}
+				, #{popCss}
+				, #{layoutCss}
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteTemplateCode" parameterType="map">
+		DELETE	
+		FROM	COM_TEMPLATE_CODE
+		WHERE	TEMPLATE_CD = #{templateCd}
+		AND		SEQ = #{seq}
+	</delete>
+	
+	<delete id="deleteTemplateCodeByTemplateCd" parameterType="string">
+		DELETE	
+		FROM	COM_TEMPLATE_CODE
+		WHERE 	TEMPLATE_CD = #{templateCd}	
+	</delete>
+	
+	<select id="checkSiteUseTemplate" parameterType="string" resultType="int">
+		SELECT	COUNT(SITE_CD)
+		FROM	COM_SITE
+		WHERE	TEMPLATE_CD = #{templateCd}
+	</select>
+	
+</mapper>

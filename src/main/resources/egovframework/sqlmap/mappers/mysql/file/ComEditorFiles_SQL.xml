@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.file.service.impl.ComEditorFilesMapper">
+	
+	<insert id="insertComEditorFiles" parameterType="comEditorFilesVO" useGeneratedKeys="true" keyProperty="fileNo">
+		INSERT
+		INTO 	COM_EDITOR_FILES
+		(
+				  PARENT_CD
+				, PARENT_UID
+				, ORG_NAME
+				, FILE_NAME
+				, FILE_PATH
+				, FILE_EXT
+				, FILE_TYPE
+				, FILE_MIME
+				, FILE_SIZE
+				, INPT_DTTM
+				, SUPPL_INFO1
+				, SUPPL_INFO2
+				, SUPPL_INFO3
+				, SUPPL_INFO4
+				, SUPPL_INFO5
+		) VALUES (
+				  ''
+				, ''
+				, #{orgName}
+				, #{fileName}
+				, #{filePath}
+				, #{fileExt}
+				, #{fileType}
+				, #{fileMime}
+				, #{fileSize}
+				, NOW()
+				, #{supplInfo1}
+				, #{supplInfo2}
+				, #{supplInfo3}
+				, #{supplInfo4}
+				, #{supplInfo5}
+		)
+	</insert>
+	
+	<update id="updateComEditorFiles" parameterType="map">
+		UPDATE
+				COM_EDITOR_FILES
+		SET
+				  PARENT_CD		= #{parentCd}
+				, PARENT_UID	= #{parentUid}
+		WHERE	FILE_NO = #{fileNo}
+	</update>
+	
+	<select id="selectComEditorFilesByParent" parameterType="map" resultType="comEditorFilesVO">
+		SELECT 
+				* 
+		FROM 	COM_EDITOR_FILES
+		WHERE	PARENT_CD = #{parentCd}
+		AND		PARENT_UID = #{parentUid}		
+	</select>
+	
+	<select id="selectComEditorFilesByNoParent" resultType="comEditorFilesVO">
+		SELECT 
+				* 
+		FROM 	COM_EDITOR_FILES
+		WHERE	(PARENT_CD IS NULL OR PARENT_CD = '')
+		AND		(PARENT_UID IS NULL OR PARENT_UID = '')
+	</select>
+	
+	<delete id="deleteComEditorFiles" parameterType="int">
+		DELETE
+		FROM	COM_EDITOR_FILES
+		WHERE	FILE_NO = #{fileNo}
+	</delete>
+	
+	<delete id="deleteComEditorFilesByNoParent">
+		DELETE
+		FROM	COM_EDITOR_FILES
+		WHERE	(PARENT_CD IS NULL OR PARENT_CD = '')
+		AND		(PARENT_UID IS NULL OR PARENT_UID = '')
+	</delete>
+	
+	<update id="updateComEditorFilesByBbs" parameterType="map">
+		UPDATE
+				COM_EDITOR_FILES
+		SET
+				  PARENT_CD		= #{parentCd}
+				, PARENT_UID	= #{parentUid}
+				, SUPPL_INFO1	= #{bbsCd}
+		WHERE	FILE_NO = #{fileNo}
+	</update>
+	
+	<update id="resetComEditorFilesByBbsCd" parameterType="map">
+		UPDATE
+				COM_EDITOR_FILES
+		SET
+				  PARENT_CD		= ''
+				, PARENT_UID	= ''
+				, SUPPL_INFO1	= ''
+		WHERE	PARENT_CD		= #{parentCd}
+		AND		SUPPL_INFO1		= #{bbsCd}
+	</update>
+	
+</mapper>

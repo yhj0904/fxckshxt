@@ -1,0 +1,53 @@
+@charset "UTF-8";
+
+.mypage_title{font-size: 24px; font-weight: bold;}
+
+
+
+
+
+/** MOBILE */
+
+@media (max-width: 545px) {
+	.mypage_table th {
+	    width: 31%;
+	    word-break: break-all;
+	}
+	
+	.mypage_table td {
+	    word-break: keep-all;
+	}
+	
+	.mypage_table th
+	, .mypage_table td {
+		padding: 1.5rem 1rem;
+	}
+	
+	.mypage_table td ul.colg-list{
+		flex-wrap: wrap;
+		width: 100%;
+	}
+	
+	.mypage_table td ul.colg-list li{
+		width: 100%;
+	}
+
+	.mypage_table input[type="text"]
+	, .mypage_table input[type="password"]
+	, .mypage_table input[type="number"]
+	, .mypage_table input[type="search"]{
+		width: 100%;
+	}
+}
+
+@media (max-width: 470px) {
+	.mypage_table label.radio {
+		width: 100%;
+	}
+	
+	.mypage_table label.radio + label.radio {
+	    margin-left: 0px;
+	}
+}
+
+/** //MOBILE */

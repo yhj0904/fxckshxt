@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.join.service.impl.TermsMapper">
+
+	<select id="selectTermsTotCnt" parameterType="map" resultType="int">
+		SELECT
+					COUNT(TERMS_ID)
+		FROM 		COM_TERMS
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "termsNm"'>
+					AND TERMS_NM LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="selectTermsList" parameterType="map" resultType="termsVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  TERMS_DVCD
+					, TERMS_ID
+					, TERMS_NM
+					, TERMS_CONT
+					, TERMS_DTTM
+					, NECESSARY_YN
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+		FROM 		COM_TERMS
+		WHERE		1=1
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "termsNm"'>
+					AND TERMS_NM LIKE '%'||#{searchValue}||'%'
+				</when>
+			</choose>
+		</if>
+		ORDER BY	INPT_DTTM DESC, TERMS_ID DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectTerms" parameterType="string" resultType="termsVO">
+		SELECT
+					  TERMS_DVCD
+					, TERMS_ID
+					, TERMS_NM
+					, TERMS_CONT
+					, TERMS_DTTM
+					, NECESSARY_YN
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+					, TERMS_ORD
+		FROM 		COM_TERMS
+		WHERE		TERMS_ID = #{termsId}
+	</select>
+	
+	<insert id="insertTerms" parameterType="termsVO">
+		<selectKey resultType="string" keyProperty="termsId" order="BEFORE">
+			SELECT 'TERM'||LPAD(NVL(MAX(TO_NUMBER(REPLACE(TERMS_ID, 'TERM', ''))), 0)+1, 10, 0) FROM COM_TERMS
+		</selectKey>
+		INSERT
+		INTO 	COM_TERMS
+		(
+				  TERMS_DVCD
+				, TERMS_ID
+				, TERMS_NM
+				, TERMS_CONT
+				, TERMS_DTTM
+				, NECESSARY_YN
+				, USE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, TERMS_ORD
+		) VALUES (
+				  #{termsDvcd}
+				, #{termsId}
+				, #{termsNm}
+				, #{termsCont}
+				, #{termsDttm}
+				, #{necessaryYn}
+				, #{useYn}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+				, #{termsOrd}
+		)
+	</insert>
+	
+	<update id="updateTerms" parameterType="termsVO">
+		UPDATE
+				COM_TERMS
+		SET
+				  TERMS_NM = #{termsNm}
+				, TERMS_CONT = #{termsCont}
+				, TERMS_DTTM = #{termsDttm}
+				, NECESSARY_YN = #{necessaryYn}
+				, USE_YN = #{useYn}
+				, MODI_ID = #{modiId}
+				, MODI_IP = #{modiIp}
+				, MODI_DTTM = SYSDATE
+				, TERMS_ORD = #{termsOrd}
+		WHERE	TERMS_ID = #{termsId}
+	</update>
+		
+	<delete id="deleteTerms" parameterType="string">
+		DELETE 
+		FROM	COM_TERMS
+		WHERE 	TERMS_ID = #{termsId}
+	</delete>
+	
+	<select id="selectTermsUserList" parameterType="string" resultType="termsUserVO">
+		SELECT
+					  TERMS_DVCD
+					, TERMS_ID
+					, USER_TYPE
+					, USER_ID
+					, USER_NM
+					, AGREE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+		FROM 		COM_TERMS_USER
+		WHERE		TERMS_ID = #{termsId}
+		ORDER BY	INPT_DTTM ASC
+	</select>
+	
+	<delete id="deleteTermsUserList" parameterType="string">
+		DELETE 
+		FROM	COM_TERMS_USER
+		WHERE 	TERMS_ID = #{termsId}
+	</delete>		
+	
+	<delete id="deleteTermsUser" parameterType="map">
+		DELETE 
+		FROM	COM_TERMS_USER
+		WHERE 	USER_TYPE = #{userType}
+		AND 	USER_ID = #{userId}
+	</delete>
+	
+	<select id="selectTermsListByUse" resultType="termsVO">
+		SELECT
+		              A.TERMS_DVCD
+		            , A.TERMS_ID
+		            , A.TERMS_NM
+		            , A.TERMS_CONT
+		            , A.TERMS_DTTM
+		            , A.NECESSARY_YN
+		FROM 		COM_TERMS A
+		WHERE		A.USE_YN = 'Y'
+		AND         A.TERMS_ID = (
+		                            SELECT	MAX(TERMS_ID) KEEP(DENSE_RANK FIRST ORDER BY TERMS_DTTM DESC)
+		                            FROM	COM_TERMS
+		                            WHERE	TERMS_DVCD = A.TERMS_DVCD
+		                            AND		USE_YN = 'Y'
+		                         )
+		ORDER BY	A.NECESSARY_YN DESC, A.TERMS_ORD ASC, A.TERMS_DTTM ASC, A.INPT_DTTM ASC
+	</select>
+	
+	<insert id="insertTermsUser" parameterType="termsUserVO">
+		INSERT
+		INTO 	COM_TERMS_USER
+		(
+				  TERMS_DVCD
+				, TERMS_ID
+				, USER_TYPE
+				, USER_ID
+				, USER_NM
+				, AGREE_YN
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{termsDvcd}
+				, #{termsId}
+				, #{userType}
+				, #{userId}
+				, #{userNm}
+				, #{agreeYn}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+		)
+	</insert>
+	
+</mapper>

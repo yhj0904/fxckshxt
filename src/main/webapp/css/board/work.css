@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+
+@media screen and (max-width: 550px){
+
+.detail_table {white-space: normal;}
+	
+.detail_table th{
+	display: block;
+	width: 100%;
+	text-align:center;
+}
+
+.detail_table th + th, .detail_table th + td, .detail_table td + td{
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+.detail_table td input{width: 100%;}
+div.email>input[type="text"]{width: 60%;}
+div.email{width: 100%;}
+
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<form-validation>
+	<formset>
+		<form name="authVO">
+			<!-- 필수값 체크 -->
+			<field property="authCd" depends="required">
+				<arg0 key="authVO.authCd" />
+			</field>
+			<field property="authNm" depends="required">
+				<arg0 key="authVO.authNm" />
+			</field>
+			<field property="useYn" depends="required">
+				<arg0 key="authVO.useYn" />
+			</field>
+		</form>
+	</formset>
+</form-validation>

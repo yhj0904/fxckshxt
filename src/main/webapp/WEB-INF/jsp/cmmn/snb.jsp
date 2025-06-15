@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<%
+/**
+ * @Class Name 	: snb.jsp
+ * @Description : SNB 영역
+ * @Modification Information
+ * @
+ * @ 수정일			수정자			수정내용
+ * @ --------------------------------------------------------------------------
+ * @ 2020.01.06		임문환			최초생성
+ * @ 2023.10.09		신한나			수정
+ */
+%>
+<div id="snb_wrap" class="snb_wrap">
+	<nav id="snb" class="snb">
+		<c:set var="GV_SNB_LEVEL" value="0"/>
+		<c:set var="ITEM_LEVEL" value="1"/>
+		<c:forEach var="GV_SNB_ITEM" items="${GV_MENU_INFO.sideMenu }" varStatus="i">
+		<c:choose>
+			<c:when test="${GV_SNB_ITEM.viewYn eq 'N' && GV_SNB_ITEM.useYn eq 'N'}"></c:when>
+			<c:when test="${GV_SNB_ITEM.viewYn eq 'N' && GV_SNB_ITEM.useYn eq 'Y' && GV_SNB_ITEM.menuLvl eq 2}"></c:when>
+			<c:otherwise>
+				<c:choose>
+				<c:when test="${i.index eq 0}"></c:when>
+				<c:when test="${i.index eq 1}">
+					<div class="top">
+						<h1>
+							<c:choose>
+								<c:when test="${fn:length(GV_SNB_ITEM.menuNm) > 5 and fn:contains(GV_SNB_ITEM.menuNm, ' ') and GV_SNB_ITEM.menuLvl eq 1}">
+									<c:forEach var="menu" items="${fn:split(GV_SNB_ITEM.menuNm, ' ')}" varStatus="i">
+										<c:out value="${menu }"/><c:if test="${!i.last }"><br/></c:if>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<c:out value='${GV_SNB_ITEM.menuNm }'/>
+								</c:otherwise>
+							</c:choose>
+						</h1>
+						<p class="top-sub-tit">WONKWANG<br>UNIVERSITY</p>
+					</div>
+					<c:out value='<ul data-level="1">' escapeXml="false"/>		
+				</c:when>
+				<c:otherwise>
+					<c:set var="ITEM_LEVEL" value="${GV_SNB_ITEM.menuLvl - 1}"/>
+					<c:choose>
+						<c:when test="${GV_SNB_LEVEL eq 0}">
+							<c:set var="GV_SNB_LEVEL" value="1"/>
+						</c:when>
+						<c:when test="${ITEM_LEVEL > GV_SNB_LEVEL}">
+							<c:out value='<ul data-level="${ITEM_LEVEL }">' escapeXml='false'/>
+						</c:when>
+						<c:when test="${ITEM_LEVEL < GV_SNB_LEVEL}">
+							<c:out value='</li>' escapeXml="false"/>
+							<c:forEach begin="${ITEM_LEVEL }" end="${GV_SNB_LEVEL - 1}" step="1">
+								<c:out value='</ul></li>' escapeXml="false"/>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<c:out value='</li>' escapeXml="false"/>
+						</c:otherwise>
+					</c:choose>
+					
+					<% /** //현재 LEVEL과 비교하여 리스트 태그 생성*/ %>
+					<c:out value='<li id="${GV_SNB_ITEM.menuId }">' escapeXml="false"/>
+					
+					<% /** 메뉴 링크 설정 */ %>
+					<c:set var="SNB_LINK" value="${GV_SNB_ITEM.menuLink }"/>
+					<c:choose>
+						<c:when test="${GV_SNB_ITEM.progYn eq 'Y' and GV_SNB_ITEM.progPath ne null and GV_SNB_ITEM.progPath ne ''}">
+							<c:choose>
+								<c:when test='${GV_SNB_ITEM.progCd eq "CONTENT"}'>
+									<c:set var="SNB_LINK" value="/content/${GV_SNB_ITEM.progParam }.do"/>
+								</c:when>
+								<c:when test='${GV_SNB_ITEM.progCd eq "BOARD"}'>
+									<c:set var="SNB_LINK" value="/board/${GV_SNB_ITEM.progParam }.do"/>							
+								</c:when>
+								<c:when test='${GV_SNB_ITEM.progCd eq "SCHEDULE"}'>
+									<c:set var="SNB_LINK" value="/schedule/${GV_SNB_ITEM.progParam }.do"/>							
+								</c:when>
+								<c:otherwise>
+									<c:set var="SNB_LINK" value="${GV_SNB_ITEM.progPath }"/>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:when test="${GV_SNB_ITEM.menuLink ne null and GV_SNB_ITEM.menuLink ne ''}">
+							<c:choose>
+								<c:when test='${GV_SNB_ITEM.useSso eq "Y" }'>
+									<c:set var="SNB_LINK" value="javascript:gf_goSsoUrl('${GV_SNB_ITEM.menuLink }');"/>
+								</c:when>
+								<c:otherwise>
+									<c:set var="SNB_LINK" value="${GV_SNB_ITEM.menuLink }"/>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:otherwise>
+							<c:set var="SNB_LINK" value="#none"/>
+						</c:otherwise>
+					</c:choose>
+					<a href="<c:out value="${SNB_LINK }"/>"  class="<c:if test='${GV_SNB_ITEM.childCnt > 0}'>parents </c:if><c:if test='${GV_SNB_ITEM.activeYn eq "Y" }'>active</c:if>">
+						<c:if test='${GV_SNB_ITEM.iconSrc ne null and GV_SNB_ITEM.iconSrc ne "" }'><img src="<c:out value="${GV_SNB_ITEM.iconSrc }"/>" alt=""/></c:if>			
+						<span><c:out value="${GV_SNB_ITEM.menuNm }"/></span>
+					</a>					
+					<c:set var="GV_SNB_LEVEL" value="${ITEM_LEVEL}"/>
+				</c:otherwise>
+			</c:choose>
+			</c:otherwise>
+		</c:choose>
+			<c:if test="${i.last}">
+				<c:out value='</li>' escapeXml="false"/>
+				<c:if test="${GV_SNB_LEVEL > 1 }">
+					<c:forEach begin="1" end="${GV_SNB_LEVEL - 1}" step="1">
+						<c:out value="</ul></li>" escapeXml="false"/>
+					</c:forEach>
+				</c:if>
+				<c:out value='</ul>' escapeXml="false"/>
+			</c:if>
+		</c:forEach>
+	</nav>
+	<script>
+		var SNB;
+		
+		//현재 메뉴 경로 id
+		var menuList = [<c:forEach var="item" items="${GV_MENU_INFO.menuPath}" varStatus="i" begin="1">
+		<c:if test="${i.index ne 0 and i.index ne 1}">,</c:if>'<c:out value='${item.menuId }' escapeXml="false"/>'</c:forEach>];
+		
+		
+		//전체 메뉴 HOVER , FOCUS
+		$(function() {			
+			SNB = $('#snb');			
+			SNB.find('>ul>li>a').on('mouseenter', function(e) {
+				e.preventDefault();
+				SNB.find('>ul>li ul:visible').parent('li').removeClass('on');
+				$(this).next('ul:hidden').parent('li').addClass('on');
+			}).focus(function() {
+				$(this).mouseover();
+			}).end().mouseleave(function() {
+				SNB.find('>ul>li ul').prev('a').parent().siblings().removeClass('on');
+			}).find('li').last().focusout(function() {
+				$(this).mouseleave();
+			});	
+			
+
+			if(!gf_isNull(menuList)){
+				menuList.forEach(function(item, index){
+					//인력풀등록 게시판일경우 서브메뉴 on
+					if("${GV_MENU_INFO.presentMenu.progCd }" == 'LABOR'){
+						//운영에맞게 변경필요
+						$("#MENU0308").addClass("on");
+					}else{
+						$("#"+item).addClass("on");
+					}
+				});
+			}
+		});
+		
+	</script>
+</div>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- 관리자 템플릿 -->
+	<definition name="systemMain" 	template="/WEB-INF/jsp/template/system/main.jsp"></definition>	
+	<definition name="systemSub" 	template="/WEB-INF/jsp/template/system/sub.jsp"></definition>
+	<definition name="systemPop" 	template="/WEB-INF/jsp/template/system/pop.jsp"></definition>
+	<definition name="systemLogin" template="/WEB-INF/jsp/template/system/login.jsp"></definition>
+	<definition name="systemEmpty" template="/WEB-INF/jsp/template/system/empty.jsp"></definition>
+	
+	<definition name="SYSTEM/*.main" extends="systemMain">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="SYSTEM/**/*.main" extends="systemMain">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+	
+	<definition name="SYSTEM/*.sub" extends="systemSub">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="SYSTEM/**/*.sub" extends="systemSub">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="SYSTEM/*.pop" extends="systemPop">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="SYSTEM/**/*.pop" extends="systemPop">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="SYSTEM/*.login" extends="systemLogin">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="SYSTEM/**/*.login" extends="systemLogin">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="SYSTEM/*.empty" extends="systemEmpty">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+    </definition>
+	<definition name="SYSTEM/**/*.empty" extends="systemEmpty">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+    </definition>
+    
+</tiles-definitions>

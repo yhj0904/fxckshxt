@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.menu.service.impl.MenuAuthMapper">
+	
+	<select id="selectMenuAuthListByMenuId" parameterType="string" resultType="menuAuthVO">
+		SELECT 
+				*
+		FROM	COM_MENU_AUTH
+		WHERE 	MENU_ID = #{menuId}
+	</select>
+	
+	<insert id="insertMenuAuth" parameterType="menuAuthVO">
+		INSERT
+		INTO 	COM_MENU_AUTH
+		(
+				  AUTH_CD
+				, MENU_CD
+				, MENU_ID
+				, NOTE
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+		) VALUES (
+				  #{authCd}
+				, #{menuCd}
+				, #{menuId}
+				, #{note}
+				, #{inptId}
+				, #{inptIp}
+				, SYSDATE
+		)	
+	</insert>
+
+	<delete id="deleteMenuAuthByMenuId" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_AUTH
+		WHERE 	MENU_ID = #{menuId}
+	</delete>
+	
+	<delete id="deleteMenuAuthByAuthCd" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_AUTH
+		WHERE 	AUTH_CD = #{authCd}
+	</delete>
+	
+	<delete id="deleteMenuAuthByMenuCd" parameterType="string">
+		DELETE 
+		FROM	COM_MENU_AUTH
+		WHERE 	MENU_CD = #{menuCd}
+	</delete>
+	
+	<select id="checkProgramAuth" parameterType="map" resultType="int">
+		SELECT 
+					COUNT(A.AUTH_CD)
+		FROM		COM_MENU_AUTH A, COM_MENU B
+		WHERE		A.MENU_ID = B.MENU_ID (+)
+		AND			A.MENU_CD = #{menuCd}
+		AND			B.PROG_CD = #{progCd}		
+		AND			SFN_IS_AUTH_MAP(A.AUTH_CD, #{authDvcd}, #{userDvcd}, #{workDvcd}, #{statDvcd}, #{deptCd}) = 'Y'
+		<if test='progParam != null and progParam != ""'>
+			AND		B.PROG_PARAM = #{progParam}
+		</if>
+	</select>
+	
+</mapper>

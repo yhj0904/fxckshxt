@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nanwe.user.service.impl.UserMapper">
+
+	<select id="selectUserTotCnt" parameterType="map" resultType="int">
+		SELECT 
+				COUNT(USER_ID)
+		FROM 	COM_USER
+		WHERE	1=1		
+		<choose>
+			<when test='delYn != null and delYn != ""'>
+				AND	IFNULL(DEL_YN, 'N') = #{delYn}
+			</when>
+			<otherwise>
+				AND	IFNULL(DEL_YN, 'N') != 'Y'
+			</otherwise>
+		</choose>
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "userId"'>
+					AND USER_ID LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "userNm"'>
+					AND USER_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>		
+		<if test='startDate != null and startDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<select id="selectUserList" parameterType="map" resultType="userVO">
+		<include refid="paging.preSql"></include>
+		SELECT
+					  USER_ID
+					, USER_NM
+					, USE_STT_DTTM
+					, USE_END_DTTM
+					, DEPT_CD
+					, DEPT_NM
+					, BIRTH
+					, POST_NO
+					, ADDR
+					, DETL_ADDR
+					, MBPH_NO
+					, TEL_NO
+					, EMAIL
+					, USE_YN
+					, INPT_ID
+					, INPT_IP
+					, INPT_DTTM
+					, MODI_ID
+					, MODI_IP
+					, MODI_DTTM
+					, DEL_YN
+					, DEL_ID
+					, DEL_IP
+					, DEL_DTTM
+					, AUTH_CD
+					, USER_TYPE_CD
+					, SFN_GET_CODENM(USER_TYPE_CD) AS USER_TYPE_CD_NM
+		FROM 		COM_USER
+		WHERE		1=1	
+		<choose>
+			<when test='delYn != null and delYn != ""'>
+				AND	IFNULL(DEL_YN, 'N') = #{delYn}
+			</when>
+			<otherwise>
+				AND	IFNULL(DEL_YN, 'N') != 'Y'
+			</otherwise>
+		</choose>
+		<if test='searchValue != null and searchValue !=""'>
+			<choose>
+				<when test='searchOption == "userId"'>
+					AND USER_ID LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+				<when test='searchOption == "userNm"'>
+					AND USER_NM LIKE CONCAT('%', #{searchValue} , '%')
+				</when>
+			</choose>
+		</if>
+		<if test='startDate != null and startDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &gt;= #{startDate}
+		</if>
+		<if test='endDate != null and endDate !=""'>
+			AND	DATE_FORMAT(INPT_DTTM, '%Y-%m-%d') &lt;= #{endDate}
+		</if>
+		ORDER BY	INPT_DTTM DESC
+		<include refid="paging.postSql"></include>
+	</select>
+	
+	<select id="selectUserListForExcel" parameterType="map" resultType="HashMap">
+		SELECT    L.GR_YEAR
+				, COLG_SCORE
+				, LICENSE
+				, LANG_SCORE
+				, EXT_ACT
+				, WH_JOB
+				, WH_COMPANY
+				, WH_LOCAL
+				, JOB_PREP_PLAN
+				, JOB_PREP_TIME
+				, WH_QUESTIONS
+				, WH_PROGRAM01
+				, WH_PROGRAM02
+		        , A.*
+		FROM (
+		SELECT
+		        CONVERT(@ROWNUM := @ROWNUM +1, CHAR) AS ROWNUM
+		        , U.USER_ID
+		        , U.USER_NM
+		        , U.USE_STT_DTTM
+		        , U.USE_END_DTTM
+		        , U.DEPT_CD
+		        , U.DEPT_NM
+		        , U.BIRTH
+		        , U.POST_NO
+		        , U.ADDR
+		        , U.DETL_ADDR
+		        , U.MBPH_NO
+		        , U.TEL_NO
+		        , U.EMAIL
+		        , U.USE_YN
+		        , U.INPT_ID
+		        , U.INPT_IP
+		        , U.INPT_DTTM
+		        , U.MODI_ID
+		        , U.MODI_IP
+		        , U.MODI_DTTM
+		        , U.DEL_YN
+		        , U.DEL_ID
+		        , U.DEL_IP
+		        , U.DEL_DTTM
+		        , U.AUTH_CD
+		        , U.USER_TYPE_CD
+		        , SFN_GET_CODENM(U.USER_TYPE_CD) AS USER_TYPE_CD_NM
+		        , CASE 
+		              WHEN    U.SEX = '1' THEN '남자'
+		              WHEN    U.SEX = '2' THEN '여자'
+		              ELSE    '-'
+		          END AS SEX_NM
+		        , SFN_GET_DEPTNM(U.COLG_CD) AS COLG_NM
+		        , U.GRADE
+		        , U.STD_NO
+		        , SFN_GET_CODENM(U.LOCAL) AS LOCAL
+		FROM    COM_USER U
+				CROSS JOIN (SELECT @ROWNUM := 0) TMP
+		WHERE   1=1  
+		ORDER BY U.INPT_DTTM DESC
+		) A
+		LEFT JOIN labr_mst L ON A.USER_ID = L.USER_ID
+		ORDER BY CAST(A.ROWNUM AS UNSIGNED) DESC;
+	</select>
+	
+	<select id="selectUser" parameterType="string" resultType="userVO">
+		SELECT
+				  A.USER_ID
+				, A.USER_NM
+				, A.USE_STT_DTTM
+				, A.USE_END_DTTM
+				, A.DEPT_CD
+				, A.DEPT_NM
+				, A.BIRTH
+				, A.POST_NO
+				, A.ADDR
+				, A.DETL_ADDR
+				, SFN_GET_PHN_NO(A.MBPH_NO) AS MBPH_NO
+				, A.TEL_NO
+				, A.EMAIL
+				, A.USE_YN
+				, A.NOTE
+				, A.INPT_ID
+				, A.INPT_IP
+				, A.INPT_DTTM
+				, A.MODI_ID
+				, A.MODI_IP
+				, A.MODI_DTTM
+				, A.DEL_YN
+				, A.DEL_ID
+				, A.DEL_IP
+				, A.DEL_DTTM
+				, A.FILE_NO
+				, A.AUTH_CD
+				, A.USER_TYPE_CD
+				, SFN_GET_CODENM(A.USER_TYPE_CD) AS USER_TYPE_CD_NM
+				, A.USER_TYPE_DET_CD
+				, SFN_GET_CODENM(A.USER_TYPE_DET_CD) AS USER_TYPE_DET_CD_NM
+				, A.STD_NO
+				, A.COLG_CD
+				, SFN_GET_DEPTNM(A.COLG_CD) AS COLG_NM
+				, A.GRADE
+				, A.SEX
+				, CASE 
+						WHEN	A.SEX = '1' THEN '남자'
+						WHEN	A.SEX = '2' THEN '여자'
+						ELSE 	'-'
+				  END AS SEX_NM
+				, A.LOCAL
+				, SFN_GET_CODENM(A.LOCAL) AS LOCAL_NM
+		FROM 	COM_USER A
+		WHERE	A.USER_ID = #{userId}
+	</select>
+	
+	<insert id="insertUser" parameterType="userVO">
+		INSERT
+		INTO 	COM_USER
+		(
+				  USER_ID
+				, USER_NM
+				, PASSWORD
+				, SALT_KEY
+				, DEPT_CD
+				, DEPT_NM
+				, BIRTH
+				, POST_NO
+				, ADDR
+				, DETL_ADDR
+				, MBPH_NO
+				, TEL_NO
+				, EMAIL
+				, USE_YN
+				, NOTE
+				
+				, USER_TYPE_CD
+				, USER_TYPE_DET_CD
+				, STD_NO
+				, COLG_CD
+				, GRADE
+				, SEX
+				, LOCAL
+				
+				, INPT_ID
+				, INPT_IP
+				, INPT_DTTM
+				, MODI_ID
+				, MODI_IP
+				, MODI_DTTM
+				, AUTH_CD
+		) VALUES (
+				  #{userId}
+				, #{userNm}
+				, #{password}
+				, #{saltKey}
+				, #{deptCd}
+				, #{deptNm}
+				, #{birth}
+				, #{postNo}
+				, #{addr}
+				, #{detlAddr}
+				, #{mbphNo}
+				, #{telNo}
+				, #{email}
+				, #{useYn}
+				, #{note}
+				
+				, #{userTypeCd}
+				, #{userTypeDetCd}
+				, #{stdNo}
+				, #{colgCd}
+				, #{grade}
+				, #{sex}
+				, #{local}
+				
+				, #{inptId}
+				, #{inptIp}
+				, NOW()
+				, #{modiId}
+				, #{modiIp}
+				, NOW()
+				, #{authCd}
+		)
+	</insert>
+	
+	<update id="updateUser" parameterType="userVO">
+		UPDATE
+				COM_USER
+		SET
+				  USER_NM 			= #{userNm}
+				<if test='password != null and password != "" and saltKey != null and saltKey != ""'>
+				, PASSWORD 			= #{password}
+				, SALT_KEY 			= #{saltKey}
+				</if>
+				, DEPT_CD 			= #{deptCd}
+				, DEPT_NM 			= #{deptNm}
+				, BIRTH 			= #{birth}
+				, POST_NO 			= #{postNo}
+				, ADDR 				= #{addr}
+				, DETL_ADDR 		= #{detlAddr}
+				, MBPH_NO 			= #{mbphNo}
+				, TEL_NO			= #{telNo}
+				, EMAIL				= #{email}
+				, USE_YN 			= #{useYn}
+				, NOTE 				= #{note}
+				, MODI_ID 			= #{modiId}
+				, MODI_IP 			= #{modiIp}
+				, MODI_DTTM 		= NOW()
+				, AUTH_CD 			= #{authCd}
+			
+				, USER_TYPE_CD      = #{userTypeCd}
+				, USER_TYPE_DET_CD  = #{userTypeDetCd}
+				, STD_NO            = #{stdNo}
+				, COLG_CD           = #{colgCd}
+				, GRADE             = #{grade}
+				, SEX               = #{sex}
+				, LOCAL             = #{local}
+		WHERE	USER_ID = #{userId}
+	</update>
+	
+	<update id="updateUserDeleteState" parameterType="userVO">
+		UPDATE
+				COM_USER
+		SET
+				  DEL_YN = #{delYn}
+				, DEL_ID = #{delId}
+				, DEL_IP = #{delIp}
+				<choose>
+					<when test='"Y".equals(delYn)'>
+						, DEL_DTTM = NOW()	
+					</when>
+					<otherwise>
+						, DEL_DTTM = null	
+					</otherwise>
+				</choose>
+		WHERE	USER_ID = #{userId}
+	</update>
+	
+	<delete id="deleteUser" parameterType="string">
+		DELETE 
+		FROM	COM_USER
+		WHERE 	USER_ID = #{userId}
+	</delete>
+	
+	<select id="selectUserIdExist" parameterType="string" resultType="int">
+		SELECT
+				COUNT(USER_ID)
+		FROM 	COM_USER
+		WHERE	USER_ID = #{userId}
+	</select>
+	
+	<update id="updateUserFile" parameterType="userVO">
+		UPDATE
+				COM_USER
+		SET
+				FILE_NO = #{fileNo}
+		WHERE	USER_ID = #{userId}
+	</update>
+	
+	<select id="selectUserListByUse" resultType="userVO">
+		SELECT
+					  USER_ID
+					, USER_NM
+					, DEPT_NM
+		FROM 		COM_USER
+		WHERE		USE_YN = 'Y'
+		ORDER BY	INPT_DTTM DESC
+	</select>
+	
+	<select id="findUserId" parameterType="map" resultType="egovMap">
+		SELECT	  USER_ID AS ID
+				, USER_NM AS NAME
+				, MBPH_NO AS PHONE
+				, EMAIL   AS EMAIL
+		FROM 	COM_USER
+		WHERE	USER_NM = #{name}
+		<!-- AND		BIRTH = #{birth} -->
+		<if test='phone != null and !"".equals(phone)'>
+		AND		MBPH_NO IS NOT NULL
+		AND 	REPLACE(REPLACE(IFNULL(MBPH_NO, ''), ' ', ''), '-', '') = REPLACE(REPLACE(IFNULL(#{phone}, ''), ' ', ''), '-', '')
+		</if>
+		<if test='email != null and !"".equals(email)'>
+		AND		EMAIL IS NOT NULL
+		AND 	EMAIL = #{email}
+		</if>
+	</select>	
+	
+	<select id="findUserPw" parameterType="map" resultType="egovMap">
+		SELECT	  USER_ID AS ID
+				, USER_NM AS NAME
+				, MBPH_NO AS PHONE
+				, EMAIL   AS EMAIL
+		FROM 	COM_USER
+		WHERE	USER_ID = #{id}
+		AND		USER_NM = #{name}
+		<if test='email != null and !"".equals(email)'>
+		AND		EMAIL IS NOT NULL
+		AND 	EMAIL = #{email}
+		</if>
+	</select>
+	
+	<update id="updateUserPassword" parameterType="userVO">
+		UPDATE
+				COM_USER
+		SET
+				  PASSWORD 		= #{password}
+				, SALT_KEY 		= #{saltKey}
+		WHERE	USER_ID = #{userId}
+	</update>
+	
+	<select id="selectUserListByAfterSaveMonth" parameterType="int" resultType="userVO">
+		SELECT  USER_ID
+		FROM	COM_USER
+		WHERE 	DEL_YN = 'Y'
+		AND		DATE_FORMAT(NOW() + INTERVAL 1 MONTH, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d')
+		
+	</select>
+	
+	<select id="selectUserPhoneExist" parameterType="map" resultType="int">
+		SELECT	COUNT(MBPH_NO)
+		FROM 	COM_USER
+		WHERE	MBPH_NO = #{mbphNo}
+		AND		USER_ID != #{userId}
+	</select>
+	
+	<select id="selectUserEmailExist" parameterType="map" resultType="int">
+		SELECT	COUNT(EMAIL)
+		FROM 	COM_USER
+		WHERE	EMAIL = #{email}
+		AND		USER_ID != #{userId}
+	</select>
+	
+	<select id="selectCnslerUserList" resultType="userVO">
+		SELECT
+			  A.USER_ID
+			, A.USER_NM
+			, A.DEPT_NM
+		FROM COM_USER A
+		LEFT OUTER JOIN CNSLER_MST B
+		ON A.USER_ID = B.CNSLER_ID
+		WHERE B.CNSLER_ID IS NULL
+		AND	A.USER_TYPE_CD = 'USER_TYPE_040'
+	</select>
+</mapper>

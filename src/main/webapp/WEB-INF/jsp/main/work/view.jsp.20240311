@@ -1,0 +1,220 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="/WEB-INF/jsp/include/taglibs.jspf" %>
+<% pageContext.setAttribute("LF", "\n"); %>
+<%
+/**
+ * @Class Name 	: view.jsp
+ * @Description : 게시글 상세조회 화면
+ * @Modification Information
+ * @
+ * @ 수정일			수정자			수정내용
+ * @ --------------------------------------------------------------------------
+ * @ 2020.01.06		임문환			최초생성
+ */
+%>
+<div class="board_wrap">
+
+	<c:if test='${bbsMgtVO.header ne null and bbsMgtVO.header ne ""}'>
+		<div class="board_top">
+			<c:out value="${bbsMgtVO.header }" escapeXml="false"/>
+		</div>
+	</c:if>
+	
+	<div class="board_cont">
+		<form:form commandName="laborVO" id="detailForm" name="detailForm" method="post" autocomplete="off">	
+		
+			<table class="detail_table">
+				<caption>wk인력풀 상세조회</caption>
+				<colgroup>
+			  		<col width="150"/>
+			  		<col width="?"/>
+			  	</colgroup>
+				<tr>
+					<th><label for="deptCd">학과</label></th>
+					<td>
+						<c:out value="${laborVO.deptNm }" escapeXml="false" />
+					</td>
+				</tr>  	
+				<tr>
+					<th><label for="stdNo">학번</label></th>
+					<td>
+						<c:out value="${laborVO.stdNo }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="gYear">졸업년월 혹은<br/>졸업예정일</label></th>
+					<td>
+						<c:out value="${laborVO.grYear }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="userNm">이름 </label></th>
+					<td>
+						<c:out value="${laborVO.userNm }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="email">이메일주소 </label></th>
+					<td>
+						<c:out value="${laborVO.email }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="sexCd">성별 </label></th>
+					<td>
+						<c:out value="${laborVO.sexNm }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="colgScore">학점</label></th>
+					<td>
+						<c:out value="${laborVO.colgScore }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="license">자격증 </label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.license, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="langScore">어학능력(점수)</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.langScore, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="extAct">대외활동<br/>(수상실적)</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.extAct, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whJob">희망직무 *</label></th>
+					<td>
+						<c:out value="${laborVO.whJob }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whCompany">희망기업 *</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.whCompany, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whLocal">희망근무지</label></th>
+					<td class="w_local_list">
+						<c:forEach var="item" items="${localList.list }" varStatus="i">
+							<label class="check" for="whLocal<c:out value="${i.count }"/>" style="line-height: normal; height: auto;">
+								<input type="checkbox" id="whLocal<c:out value="${i.count }"/>" name="whLocal" value="${item.cd }" disabled <c:forEach var="local" items="${laborVO.whLocalList}" varStatus="i"><c:if test="${local eq item.cd }" >checked</c:if></c:forEach> />
+								<i></i><c:out value='${item.cdNm }'/>
+							</label>
+						</c:forEach>
+						<span class="form_error" data-path="whLocal"><form:errors path="whLocal" /></span>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="jobPrepPlan">취업준비 계획 *<br/>(or 자신의 커리어 목표)</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.jobPrepPlan, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="jobPrepTime">취업을 위해 주당 투자한 평균 시간</label></th>
+					<td>
+						<c:out value="${laborVO.jobPrepTime }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whQuestions">취업에 대한<br/>궁금한 점 *</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.whQuestions, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whProgram01">대학일자리플러스센터 참여 희망 프로그램 *</label></th>
+					<td>
+						<ul style="padding-left: 0; margin-bottom: 0;">
+							<c:forEach var="item" items="${wProgList.list }" varStatus="i">
+								<li>
+									<label class="check" for="whProgram01<c:out value="${i.count }"/>" style="line-height: normal; height: auto; margin-left: 0;">
+										<input type="checkbox" id="whProgram01<c:out value="${i.count }"/>" name="whProgram01" value="${item.cd }" disabled <c:forEach var="prog" items="${laborVO.whProgList01}" varStatus="i"><c:if test="${prog eq item.cd }" >checked</c:if></c:forEach> />
+										<i></i><c:out value='${item.cdNm }'/>
+									</label>
+								</li>
+							</c:forEach>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="whProgram02">희망 프로그램</label></th>
+					<td>
+						<c:out value="${fn:replace(laborVO.whProgram02, LF, '<br>') }" escapeXml="false" />
+					</td>
+				</tr>
+			</table>
+							
+			<div class="btn_wrap">
+				<ul>
+					<c:if test='${bbsMgtVO.adminUser or bbsMgtVO.regiAuthYn}'>
+						<li><a class="button register_btn" href="javascript:fn_registerView();"><spring:message code="button.register" /></a></li>
+					</c:if>
+					<c:if test='${bbsMgtVO.adminUser or laborVO.inptId eq LOGIN_USER.loginId}'>
+						<li><a class="button modify_btn" href="javascript:fn_modifyView();"><spring:message code="button.modify" /></a></li>
+					</c:if>
+					<c:if test='${bbsMgtVO.adminUser or laborVO.inptId eq LOGIN_USER.loginId}'>
+						<li><a class="button remove_btn" href="javascript:fn_removeView();"><spring:message code="button.remove" /></a></li>
+					</c:if>
+					<li><a class="button list_btn" href="javascript:fn_listView();"><spring:message code="button.list" /></a></li>
+				</ul>
+			</div>
+			<% /** 이중방지 토큰 */ %>
+			<double-submit:preventer/>			
+		   	<% /** 검색조건 유지 */ %>
+		  	<input type="hidden" name="sId" value="<c:out value='${laborVO.labrId }'/>">
+			<input type="hidden" name="sCate" value="<c:out value='${sCate }'/>">
+			<%-- <c:if test='${bbsPw ne null and bbsPw ne ""}'>
+				<input type="hidden" name="bbsPw" value="<c:out value='${bbsPw }'/>">
+			</c:if> --%>	
+		  	<c:import url="/WEB-INF/jsp/cmmn/search_cond.jsp"></c:import>
+		  	<% /** //검색조건 유지 */ %>  	
+		</form:form>
+	</div>
+	
+	<c:if test='${bbsMgtVO.footer ne null and bbsMgtVO.footer ne ""}'>
+		<div class="board_bottom">
+			<c:out value="${bbsMgtVO.footer }" escapeXml="false"/>
+		</div>
+	</c:if>
+
+	<script type="text/javaScript" defer="defer">
+	
+		//목록
+		function fn_listView() {
+			document.detailForm.action = GV_PRESENT_PATH + "/list.do";
+			document.detailForm.submit();
+		}
+		
+		//등록
+		function fn_registerView() {
+			document.detailForm.action = GV_PRESENT_PATH + "/register.do";
+			document.detailForm.submit();
+		}
+		
+		//수정
+		function fn_modifyView() {
+			document.detailForm.action = GV_PRESENT_PATH + "/modify.do";
+			document.detailForm.submit();
+		}
+		
+		//삭제
+		function fn_removeView() {
+			var msg = confirm('<spring:message code="message.confirm.remove" />');
+			if(msg == true){
+				document.detailForm.action = GV_PRESENT_PATH + "/removeAction.do";
+				document.detailForm.submit();
+			}
+		}
+		
+	</script>
+</div>

@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+/** 입력페이지 */
+.cnslLabel{padding-right: 10px;}
+.cnslLabel input{margin-right: 10px;}
+/** 입력페이지 */
+
+/** 학과선택 팝업 */
+#detailForm{padding: 30px;}
+.colgList{width: 100%;border: solid 1px #333;}
+.colgList th, .colgList td{padding: 10px; text-align: center; border: solid 1px #333;}
+.colgList th{border-bottom: solid 2px #333; background-color: #d3d3d3;}
+#boardSearchForm{margin-top: 30px; padding: 0 30px;}
+.colg_submit{text-align: center; margin-top: 30px;}
+.colg_submit a{display: inline-block; margin: auto; border: solid 1px #333; padding: 5px 20px; border-radius: 5px;}
+
+
+/** 사용자단 리스트페이지 */
+#cateTd ul {padding: 0; margin: 0;}
+#cateTd ul li{display: inline-block;}
+#cateTd ul li:after{content:"/";}
+#cateTd ul li:last-child:after{content: "";}
+
+/** 관리자 상담일정등록 팝업 */
+.title{font-size: 24px; font-weigth: bold; text-align: center; padding: 10px 0;}
+
+/** 상담일정 달력화면 */
+.link{height: 60px; display: flex; align-items: center; justify-content: space-evenly;}
+
+/** 20231120추가 */
+.list_table td a.link{display: flex; justify-content: center;}

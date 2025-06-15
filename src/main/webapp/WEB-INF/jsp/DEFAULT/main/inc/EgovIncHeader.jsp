@@ -36,12 +36,9 @@
 <!-- //행정안전부 로고 및 타이틀 끝 -->
 <div class="header_login">
 	
-	${LOGIN_USER.loginNm }/
-	${LOGIN_USER.loginNm }/
-	${LOGIN_USER.loginNm }/
-	${LOGIN_USER.loginNm }/
+
 	<c:choose>
-		<c:when test='${LOGIN_USER.loginNm ne ""}'>
+		<c:when test="${not empty LOGIN_USER and not empty LOGIN_USER.loginNm}">
 			<c:set var="loginName" value="${LOGIN_USER.loginNm }"/>
 			    <div id="header_loginname">
 			        <a href="#LINK" onclick="alert('개인정보 확인 등의 링크 제공'); return false;">${LOGIN_USER.loginNm } 님</a>

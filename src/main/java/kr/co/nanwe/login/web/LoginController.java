@@ -269,6 +269,9 @@ public class LoginController {
 		//현재 언어정보
 		String language = web.getLanguage();
 		
+		request.getSession().removeAttribute("LOGIN_USER");
+		request.getSession().invalidate(); 
+		
 		//로그아웃
 		SessionUtil.logout(request);
 		

@@ -4,6 +4,7 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.let.uat.uia.service.EgovLoginService;
+import kr.co.nanwe.cmmn.util.SessionUtil;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
@@ -84,7 +85,7 @@ public class EgovLoginController {
 		if (resultVO != null && resultVO.getId() != null && !resultVO.getId().equals("") && loginPolicyYn) {
 
 			request.getSession().setAttribute("LoginVO", resultVO);
-			return "forward:/cmm/main/mainPage.do";
+			return "redirect:/cmm/main/mainPage.do";
 		} else {
 
 			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
@@ -120,10 +121,13 @@ public class EgovLoginController {
 	 */
 	@RequestMapping(value = "/uat/uia/actionLogout.do")
 	public String actionLogout(HttpServletRequest request, ModelMap model) throws Exception {
-
+		request.getSession().removeAttribute("LOGIN_USER");
+		request.getSession().invalidate(); 
+		SessionUtil.logout(request);
+		
 		RequestContextHolder.getRequestAttributes().removeAttribute("LoginVO", RequestAttributes.SCOPE_SESSION);
 
-		return "forward:/cmm/main/mainPage.do";
+		return "redirect:/cmm/main/mainPage.do";
 	}
 
 }

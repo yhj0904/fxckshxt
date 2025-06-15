@@ -26,64 +26,58 @@ since : 2009.03.03
 <link href="<c:url value='/'/>css/common.css" rel="stylesheet" type="text/css" >
 <link href="<c:url value='/'/>css/login.css" rel="stylesheet" type="text/css" >
 <script type="text/javascript">
-<!--
 function actionLogin() {
-
-if (document.loginForm.loginId.value =="") {
-alert("아이디를 입력하세요");
-return false;
-} else if (document.loginForm.loginPw.value =="") {
-alert("비밀번호를 입력하세요");
-return false;
-} else {
-document.loginForm.action="<c:url value='/loginAction.do'/>";
-document.loginForm.submit();
+    if (document.loginForm.loginId.value == "") {
+        alert("아이디를 입력하세요");
+        return false;
+    } else if (document.loginForm.loginPw.value == "") {
+        alert("비밀번호를 입력하세요");
+        return false;
+    } else {
+        document.loginForm.action = "<c:url value='/loginAction.do'/>";
+        document.loginForm.submit();
+    }
 }
-}
 
-function setCookie (name, value, expires) {
-document.cookie = name + "=" + escape (value) + "; path=/; expires=" + expires.toGMTString();
+function setCookie(name, value, expires) {
+    document.cookie = name + "=" + escape(value) + "; path=/; expires=" + expires.toGMTString();
 }
 
 function getCookie(Name) {
-var search = Name + "="
-if (document.cookie.length > 0) { // 쿠키가 설정되어 있다면
-offset = document.cookie.indexOf(search)
-if (offset != -1) { // 쿠키가 존재하면
-offset += search.length
-// set index of beginning of value
-end = document.cookie.indexOf(";", offset)
-// 쿠키 값의 마지막 위치 인덱스 번호 설정
-if (end == -1)
-end = document.cookie.length
-return unescape(document.cookie.substring(offset, end))
-}
-}
-return "";
+    var search = Name + "=";
+    if (document.cookie.length > 0) {
+        offset = document.cookie.indexOf(search);
+        if (offset != -1) {
+            offset += search.length;
+            end = document.cookie.indexOf(";", offset);
+            if (end == -1)
+                end = document.cookie.length;
+            return unescape(document.cookie.substring(offset, end));
+        }
+    }
+    return "";
 }
 
 function saveid(form) {
-var expdate = new Date();
-// 기본적으로 30일동안 기억하게 함. 일수를 조절하려면 * 30에서 숫자를 조절하면 됨
-if (form.checkId.checked)
-expdate.setTime(expdate.getTime() + 1000 * 3600 * 24 * 30); // 30일
-else
-expdate.setTime(expdate.getTime() - 1); // 쿠키 삭제조건
-setCookie("saveid", form.loginId.value, expdate);
+    var expdate = new Date();
+    if (form.checkId.checked)
+        expdate.setTime(expdate.getTime() + 1000 * 3600 * 24 * 30); // 30일
+    else
+        expdate.setTime(expdate.getTime() - 1); // 쿠키 삭제조건
+    setCookie("saveid", form.loginId.value, expdate);
 }
 
 function getid(form) {
-form.checkId.checked = ((form.loginId.value = getCookie("saveid")) != "");
+    form.checkId.checked = ((form.loginId.value = getCookie("saveid")) != "");
 }
 
 function fnInit() {
-var message = document.loginForm.message.value;
-if (message != "") {
-alert(message);
+    var message = document.loginForm.message.value;
+    if (message != "") {
+        alert(message);
+    }
+    getid(document.loginForm);
 }
-getid(document.loginForm);
-}
-//-->
 </script>
 </head>
 <body onload="fnInit();">
@@ -113,7 +107,7 @@ getid(document.loginForm);
 <!-- 타이틀 이미지 -->
 <div id="content_img_div"><img alt="LOGIN 표준프레임워크 경량환경 단순 홈페이지에 오신것을 환영합니다." src="<c:url value='/'/>images/subtitle/img_subtitle_login.gif" width="776" height="230" /></div>
 <div class="user_login">
-<form:form name="loginForm" method="post" action="#LINK">
+ <form:form modelAttribute="loginVO" name="loginForm" method="post" action="#LINK">
 <div class="user_login_ultop">
 <ul>
 <li>
@@ -133,7 +127,7 @@ onkeydown="javascript:if (event.keyCode == 13) { actionLogin(); }"/>
 </div>
 <input type="hidden" name="message" value="${message}" />
 <input type="hidden" name="userSe" value="USR"/>
-<input type="hidden" name="returnLogin" value="${returnLogin}"/>
+<input type="hidden" name="returnLogin" value="/cmm/main/mainPage.do"/>
 <!-- <input type="hidden" name="j_username" />-->
 </form:form>
 <div class="text_area">

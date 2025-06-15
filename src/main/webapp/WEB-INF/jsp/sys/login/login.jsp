@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form commandName="loginVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data" action="/sys/loginAction.do">
+<form:form modelAttribute="loginVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data" action="/sys/loginAction.do">
 	<form:hidden path="loginCertKey"/>
 	<form:hidden path="loginId"/>
 	<form:password path="loginPw" cssStyle="display:none;"/>

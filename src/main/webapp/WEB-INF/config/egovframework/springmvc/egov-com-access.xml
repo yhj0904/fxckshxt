@@ -48,6 +48,7 @@
 	    requestMatcherType="regex"
 		excludeList="/uat/uia/**, /index.do, /EgovLeft.do, /EgovContent.do, /EgovTop.do, /EgovBottom.do, /validator.do, /uss/umt/**, /EgovModal.do"
 	/>
+	-->
 	<!--
 		* 예외 목록 URL
 		회원관리 : /uat/uia/**

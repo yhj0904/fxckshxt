@@ -92,6 +92,7 @@ public class EgovMainController {
 
 		// 공지사항 메인컨텐츠 조회 끝 -----------------------------------
 
+		System.out.println("######################---123");
 		return "main/EgovMainView";
 	}
 

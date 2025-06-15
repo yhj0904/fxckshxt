@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:egov-access="http://maven.egovframe.go.kr/schema/egov-access"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://maven.egovframe.go.kr/schema/egov-access http://maven.egovframe.go.kr/schema/egov-access/egov-access-4.2.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
     	globalAuthen : globals.properties 설정(전자정부 프레임워크 기본 설정 중 dummy, security 사용 시 session 으로 재설정됨)
@@ -22,6 +30,7 @@
     	- 로그인 페이지 등 ANONYMOUS 접근이 가능한 페이지만 등록한다.
     	- excludeList에 등록하게 되면 접근권한 체크를 SKIP하게 되니 반드시 주의한다.
     -->
+	    <!-- 
 	<egov-access:config id="egovAccessConfig"
 	    globalAuthen="session"
 	    mappingPath="/**/*.do"

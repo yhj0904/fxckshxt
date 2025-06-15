@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="BBSAttributeManageDAO" class="egovframework.let.cop.bbs.service.impl.BBSAttributeManageDAO" />
+    <bean id="BBSManageDAO" class="egovframework.let.cop.bbs.service.impl.BBSManageDAO" />
+    <bean id="BBSAddedOptionsDAO" class="egovframework.let.cop.bbs.service.impl.BBSAddedOptionsDAO" />
+    <bean id="BBSUseInfoManageDAO" class="egovframework.let.cop.com.service.impl.BBSUseInfoManageDAO" />
+
+</beans>

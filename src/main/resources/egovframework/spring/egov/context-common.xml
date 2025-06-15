@@ -13,8 +13,8 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
-    <context:component-scan base-package="kr.co.nanwe">
-    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    <context:component-scan base-package="kr.co.nanwe,egovframework.let">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     </context:component-scan>
     
     <bean id="messageSource" class="kr.co.nanwe.cmmn.bean.WildcardReloadableResourceBundleMessageSource">

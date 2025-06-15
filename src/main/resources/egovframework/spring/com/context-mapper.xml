@@ -34,9 +34,9 @@
         </property>
 	</bean>
 	
-	<bean class="org.egovframe.rte.psl.dataaccess.mapper.MapperConfigurer">
-		<property name="basePackage" value="kr.co.nanwe,egovframework.com.cmm.service.impl" />
-		<property name="sqlSessionFactoryBeanName" value="sqlSession" />
-	</bean>
+        <bean class="org.egovframe.rte.psl.dataaccess.mapper.MapperConfigurer">
+                <property name="basePackage" value="kr.co.nanwe,egovframework.com.cmm.service.impl,egovframework.let" />
+                <property name="sqlSessionFactoryBeanName" value="sqlSession" />
+        </bean>
 	
 </beans> 

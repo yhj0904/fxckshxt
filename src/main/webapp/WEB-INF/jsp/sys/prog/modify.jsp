@@ -14,7 +14,7 @@
 <c:set var="now" value="<%=new java.util.Date()%>" />
 <c:set var="nowDate"><fmt:formatDate value="${now}" pattern="MM" /></c:set> 
 
-<form:form modelAttribute
+<form:form modelAttribute="progVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	
 	<form:hidden path="progId"/>
 	<form:hidden path="semstrCd"/>

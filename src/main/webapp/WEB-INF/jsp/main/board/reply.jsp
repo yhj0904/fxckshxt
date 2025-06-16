@@ -21,7 +21,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="bbsVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="bbsCd" value="${bbsMgtVO.code }"/>
 			<form:hidden path="parentId"/>
 			<form:hidden path="category" />			

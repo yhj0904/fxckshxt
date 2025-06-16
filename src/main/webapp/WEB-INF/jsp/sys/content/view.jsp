@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelattribue="contentVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute="contentVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 	
 	<form:hidden path="contId"/>
 	
@@ -122,19 +122,19 @@
 
 	//목록
 	function fn_listView() {
-		document.detailForm.action = GV_PRESENT_PATH + "/content.do";
+		document.detailForm.action = GV_PRESENT_PATH + "/list.do";
 		document.detailForm.submit();
 	}
 	
 	//등록
 	function fn_registerView() {
-		document.detailForm.action = GV_PRESENT_PATH + "/content/register.do";
+		document.detailForm.action = GV_PRESENT_PATH + "/register.do";
 		document.detailForm.submit();
 	}
 	
 	//수정
 	function fn_modifyView() {
-		document.detailForm.action = GV_PRESENT_PATH + "/content/modify.do";
+		document.detailForm.action = GV_PRESENT_PATH + "/modify.do";
 		document.detailForm.submit();
 	}
 	
@@ -142,7 +142,7 @@
 	function fn_removeView() {
 		var msg = confirm('<spring:message code="message.confirm.remove" />');
 		if(msg == true){
-			document.detailForm.action = GV_PRESENT_PATH + "/content/removeAction.do";
+			document.detailForm.action = GV_PRESENT_PATH + "/removeAction.do";
 			document.detailForm.submit();
 		}
 	}

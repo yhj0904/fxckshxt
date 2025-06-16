@@ -12,7 +12,7 @@
  */
 %>
 <div class="pop_wrap">
-<form:form modelAttribute
+	<form:form modelAttribute="templateCodeVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 		<form:hidden path="templateCd"/>
 		<form:hidden path="seq"/>		
 		<div class="tab_wrap02">

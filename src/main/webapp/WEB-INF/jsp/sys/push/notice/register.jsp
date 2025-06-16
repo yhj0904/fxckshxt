@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="pushNoticeVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<div class="grid_wrap">
 		<div class="col50">
 			<div class="col_title">

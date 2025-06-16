@@ -13,7 +13,7 @@
 %>
 <link rel="stylesheet" href="/css/cnsl/cnsl.css" />
 
-<form:form modelAttribute
+<form:form modelAttribute="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 
 	<table class="detail_table">
 		<colgroup>

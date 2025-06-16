@@ -15,7 +15,7 @@
 
 <link href="/css/template/basic/mypage.css" rel="stylesheet" />
 
-<form:form modelAttribute
+<form:form modelAttribute="userVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 
 	<form:hidden path="authCd"/>
 	<form:hidden path="useYn"/>

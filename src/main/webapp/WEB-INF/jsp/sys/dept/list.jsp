@@ -87,7 +87,7 @@
 					</li>
 				</ul>
 			</div>
-<form:form modelAttribute
+			<form:form modelAttribute="deptVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 			
 				<input type="hidden" name="registerFlag" value="C"/>
 			

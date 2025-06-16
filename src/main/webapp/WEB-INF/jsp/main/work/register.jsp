@@ -21,7 +21,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="laborVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			
 			<input id="colgCd" name="colgCd" type="hidden" value="<c:out value="${userVO.colgCd }" escapeXml="false" />">
 			<input id="userId" name="userId" type="hidden" value="<c:out value="${userVO.userId }" escapeXml="false" />">

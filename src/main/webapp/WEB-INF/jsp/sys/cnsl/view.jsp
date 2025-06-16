@@ -18,7 +18,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 	
 	<form:hidden path="cnslId"/>
 	

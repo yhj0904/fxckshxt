@@ -19,7 +19,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="schVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="schId"/>
 		   	<form:hidden path="schCd"/>
 			<form:hidden path="category" />			

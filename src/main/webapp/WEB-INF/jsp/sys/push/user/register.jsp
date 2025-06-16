@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="pushAppUserVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<table class="detail_table">
 		<caption>앱사용자관리 등록</caption>
 		<colgroup>

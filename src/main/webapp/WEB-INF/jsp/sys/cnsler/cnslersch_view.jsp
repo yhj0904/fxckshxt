@@ -18,7 +18,7 @@
 %>
 <link rel="stylesheet" href="/css/cnsl/cnsl.css" />
 
-<form:form modelAttribute
+<form:form modelAttribute="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<input type="hidden" name="cnslerId" value="${cnslerVO.cnslerId }" />
 	<input type="hidden" name="schDt" value="${cnslerVO.schDt }" />
 	<input type="hidden" name="sId" value="${cnslerVO.cnslerId }" />

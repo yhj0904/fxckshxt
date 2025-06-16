@@ -16,7 +16,7 @@
 		<p>사이트 최초 등록 화면입니다.</p>
 	</div>
 	<div class="start_content">
-<form:form modelAttribute
+		<form:form modelAttribute="siteVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="siteCd"/>
 			<form:hidden path="useYn"/>
 			<form:hidden path="loginYn"/>

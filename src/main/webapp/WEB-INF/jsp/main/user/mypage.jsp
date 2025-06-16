@@ -15,7 +15,7 @@
 <link href="/css/common/temp/common.css" rel="stylesheet" />
 <link href="/css/template/basic/mypage.css" rel="stylesheet" />
 
-<form:form modelAttribute
+<form:form modelAttribute="userVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 	
 	<form:hidden path="userId"/>
 	<div class="scroll">

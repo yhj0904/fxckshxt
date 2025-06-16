@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="loginLogVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 	<table class="detail_table">
 		<caption>로그인 로그 상세조회</caption>
 		<colgroup>

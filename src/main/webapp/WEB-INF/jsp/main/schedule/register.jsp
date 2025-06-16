@@ -20,7 +20,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="schVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="schCd" value="${schMgtVO.code }"/>			
 			<c:if test='${!empty schMgtVO and GV_SCHEDULE_SKIN_CODE ne null and GV_SCHEDULE_SKIN_CODE ne ""}'>
 				<c:import url="/WEB-INF/jsp/main/schedule/${GV_SCHEDULE_SKIN_CODE }/register.jsp"></c:import>

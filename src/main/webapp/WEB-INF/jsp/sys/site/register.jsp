@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="siteVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<ul class="sub_ul">
 		<li>
 			<div class="sub_tit">

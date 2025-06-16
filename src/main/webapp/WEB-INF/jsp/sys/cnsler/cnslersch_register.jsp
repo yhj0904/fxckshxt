@@ -20,7 +20,7 @@
 
 <p class="title">상담 일정 등록</p>
 
-<form:form modelAttribute
+<form:form modelAttribute="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<input type="hidden" name="cnslerId" id="cnslerId" value="${userVO.userId }" />
 	
 	<table class="detail_table">

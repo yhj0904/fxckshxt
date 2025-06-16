@@ -20,7 +20,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="bbsVO" id="detailForm" name="detailForm" method="post" autocomplete="off">	
 			<form:hidden path="bbsId"/>
 			<c:if test='${!empty bbsMgtVO and GV_BOARD_SKIN_CODE ne null and GV_BOARD_SKIN_CODE ne ""}'>
 				<c:import url="/WEB-INF/jsp/main/board/${GV_BOARD_SKIN_CODE }/view.jsp"></c:import>

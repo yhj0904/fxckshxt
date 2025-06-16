@@ -12,7 +12,7 @@
  */
 %>
 <div class="pop_wrap">
-<form:form modelAttribute
+	<form:form modelAttribute="contentVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 		
 		<form:hidden path="contId"/>
 		<form:hidden path="seq"/>

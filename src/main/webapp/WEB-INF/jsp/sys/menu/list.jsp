@@ -98,7 +98,7 @@
 					</li>
 				</ul>
 			</div>
-<form:form modelAttribute
+			<form:form modelAttribute="menuVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			
 				<input type="hidden" name="registerFlag" value="C"/>
 			

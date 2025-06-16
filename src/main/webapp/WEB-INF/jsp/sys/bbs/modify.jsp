@@ -15,7 +15,7 @@
 <div class="board_wrap">
 
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="bbsVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="bbsId"/>
 		   	<form:hidden path="bbsCd"/>
 			<form:hidden path="category" />

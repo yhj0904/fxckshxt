@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="sysLogVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 	<table class="detail_table">
 		<caption>시스템 로그 상세조회</caption>
 		<colgroup>

@@ -21,7 +21,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="bbsVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 			<form:hidden path="bbsCd" value="${bbsMgtVO.code }"/>
 			<c:if test='${!empty bbsMgtVO and GV_BOARD_SKIN_CODE ne null and GV_BOARD_SKIN_CODE ne ""}'>
 				<c:import url="/WEB-INF/jsp/main/board/${GV_BOARD_SKIN_CODE }/register.jsp"></c:import>

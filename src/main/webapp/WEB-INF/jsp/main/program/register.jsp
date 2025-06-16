@@ -13,7 +13,7 @@
 %>
 
 <div id="PROG_APPLY" class="prog_apply_wrap register2">
-<form:form modelAttribute
+	<form:form modelAttribute="progUserVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
 		<form:hidden path="progId" />
 		
 		<table class="detail_table">

@@ -21,7 +21,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-<form:form modelAttribute
+		<form:form modelAttribute="laborVO" id="detailForm" name="detailForm" method="post" autocomplete="off">	
 		
 			<table class="detail_table">
 				<caption>wk인력풀 상세조회</caption>

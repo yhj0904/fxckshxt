@@ -12,7 +12,7 @@
  * @ 2023.10.18		신한나			필드 값 조정 및 기능 추가
  */
 %>
-<form:form modelAttribute
+<form:form modelAttribute="userVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 
 	<table class="detail_table">
 		<caption>사용자 등록</caption>

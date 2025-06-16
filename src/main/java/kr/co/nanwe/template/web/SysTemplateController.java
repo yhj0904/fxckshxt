@@ -38,7 +38,6 @@ import kr.co.nanwe.template.service.TemplateService;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/template")
 @Program(code="COM_TEMPLATE", name="템플릿관리")
 @Controller
 public class SysTemplateController {
@@ -47,7 +46,7 @@ public class SysTemplateController {
 	private static final String VIEW_PATH = "sys/template";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/template";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -73,22 +72,13 @@ public class SysTemplateController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 템플릿관리 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/template.do", "/sys/template/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -110,7 +100,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/template/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String templateCd){
@@ -142,7 +132,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/template/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -164,7 +154,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/copy.do")
+	@RequestMapping(value = "/sys/template/copy.do")
 	@ProgramInfo(code="COPY_FORM", name="복사폼 화면")
 	public String copyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							,@RequestParam(value = "sId", defaultValue="") String templateCd){
@@ -196,7 +186,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/template/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,TemplateMgtVO templateMgtVO ,BindingResult templateBindingResult) {
@@ -265,7 +255,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/template/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String templateCd){
@@ -297,7 +287,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/template/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,TemplateMgtVO templateMgtVO ,BindingResult templateBindingResult) {
@@ -361,12 +351,12 @@ public class SysTemplateController {
 	}
 	
 	/**
-	 * 템플릿관리 삭제 화면
+	 * 템플릿관리 삭제처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do")
+	@RequestMapping(value = "/sys/template/removeAction.do")
 	@ProgramInfo(code="REMOVE", name="삭제폼 화면")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String templateCd){
@@ -420,12 +410,12 @@ public class SysTemplateController {
 	}
 	
 	/**
-	 * 템플릿관리 코드목록조회
+	 * 템플릿관리 코드 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/code/list.do")
+	@RequestMapping(value = "/sys/template/code/list.do")
 	@ProgramInfo(code="CODE_LIST", name="코드 목록조회")
 	public String codeList(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							, @RequestParam(value = "templateCd", required=false) String templateCd){
@@ -449,7 +439,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/code/view.do")
+	@RequestMapping(value = "/sys/template/code/view.do")
 	@ProgramInfo(code="CODE_VIEW", name="코드 상세조회")
 	public String codeView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "templateCd", defaultValue="") String templateCd
@@ -480,7 +470,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/code/modifyAction.json", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/template/code/modifyAction.json", method = RequestMethod.POST)
 	@ProgramInfo(code="CODE_MODIFY", name="코드 복원")
 	@ResponseBody
 	public boolean modifyAction( HttpServletRequest request , @RequestParam(value = "templateCd", defaultValue="") String templateCd, @RequestParam(value = "seq", defaultValue="0") int seq) {
@@ -499,7 +489,7 @@ public class SysTemplateController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/preview.do")
+	@RequestMapping(value = "/sys/template/preview.do")
 	@ProgramInfo(code="PREVIEW", name="미리보기")
 	public String preview(Model model, HttpServletRequest request
 							, @RequestParam(value = "sId", defaultValue="") String templateCd
@@ -522,12 +512,12 @@ public class SysTemplateController {
 	}
 	
 	/**
-	 * 템플릿관리 미리보기
+	 * 템플릿관리 미리보기 프레임
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/previewFrame.do")
+	@RequestMapping(value = "/sys/template/previewFrame.do")
 	public String previewFrame(Model model, HttpServletRequest request
 							, @RequestParam(value = "sId", defaultValue="") String templateCd
 							, @RequestParam(value = "type", defaultValue="MAIN") String type){		

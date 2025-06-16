@@ -163,42 +163,60 @@ public class LoginController {
 		model.addAttribute("search", search);
 		model.addAttribute("returnLogin", returnLogin);
 		
-		// RSA, 2차 인증 제거: 바로 평문 사용
+		//RSA 검증
+		PrivateKey privateKey = rsaUtil.getPrivateKey(request);
+		if (privateKey == null) {
+			model.addAttribute("redirectUrl", "/login.do");
+			return web.returnError();
+		}
+		
+		//RSA 유효성 검증을 위해 객체 생성 후 진행 (에러시 리턴은 파라미터로 넘어온 객체를 리턴)
 		if(loginVO == null) {
 			model.addAttribute("redirectUrl", "/login.do");
 			return web.returnError();
 		}
-
-		String loginId = loginVO.getLoginId();
-		String loginPw = loginVO.getLoginPw();
-
+		
+		//2차인증검증
+		if(web.isCertUse()) {
+			boolean certResult = certificationService.checkEncryptCertKey(request, loginVO.getLoginCertKey());
+			if(!certResult) {
+				model.addAttribute("redirectUrl", "/login.do");
+				return web.returnError();
+			}
+		}
+		
+		String loginId = rsaUtil.decryptRsa(privateKey, loginVO.getLoginId());
+		String loginPw = rsaUtil.decryptRsa(privateKey, loginVO.getLoginPw());
+		
 		LoginVO validLoginVO = loginVO;
 		validLoginVO.setLoginId(loginId);
 		validLoginVO.setLoginPw(loginPw);
-
+		
 		//유효성 검증
 		beanValidator.validate(validLoginVO, loginBindingResult);
-
+		
 		//유효성 검증 에러인 경우 RETURN
 		if (loginBindingResult.hasErrors()) {
 			model.addAttribute("loginVO", loginVO);
 			return web.returnView(VIEW_PATH, "/login", "LOGIN");
 		}
-
+		
 		//로그인 결과
 		boolean result = false; //로그인 결과
-
+		
 		//사용자 체크
 		LoginVO loginInfo = loginService.selectLoginUser(loginId, loginPw);
 		if("Y".equals(loginInfo.getLoginSuccess())) {
 			result = true;
 			SessionUtil.setSessionVal(SessionUtil.LOGIN_SESSION_KEY, loginInfo);
 		}
-
+		
 		//성공시
 		if(result) {
+			
 			//로그 등록
 			loginService.insertLoginLog(loginInfo);
+			
 			//중복로그인 리스너
 			if(!web.isMultiLogin()) {
 				String siteCd = "";
@@ -220,20 +238,23 @@ public class LoginController {
 				SessionBindingListener listener = SessionBindingListener.getInstance();
 				request.getSession().setAttribute(loginInfo.getLoginId(), listener);
 			}
+			
 			//Redirect URL이 있는지 확인
 			if(StringUtil.isNull(returnLogin)) {
 				returnLogin = "/";
 			}
+			
 			model.addAttribute("returnLogin", returnLogin);
 			return web.returnLogin();
-		} else { //실패시
+			
+		} else { //실패시			
 			model.addAttribute("redirectUrl", "/login.do");
 			model.addAttribute("resultMsg", messageUtil.getMessage("errors.login"));
 			Map<String, Object> resultParam = new HashMap<String, Object>();
 			resultParam.put("returnLogin", returnLogin);
 			model.addAttribute("resultParam", resultParam);
-			return web.returnError();
-		}
+			return web.returnError();			
+		}		
 	}
 	
 	/**
@@ -247,9 +268,6 @@ public class LoginController {
 		
 		//현재 언어정보
 		String language = web.getLanguage();
-		
-		request.getSession().removeAttribute("LOGIN_USER");
-		request.getSession().invalidate(); 
 		
 		//로그아웃
 		SessionUtil.logout(request);

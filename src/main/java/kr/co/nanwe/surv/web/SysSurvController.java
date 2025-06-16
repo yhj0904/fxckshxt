@@ -41,7 +41,6 @@ import kr.co.nanwe.surv.service.SurvService;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/surv")
 @Program(code="COM_SURV", name="설문관리")
 @Controller
 public class SysSurvController {
@@ -52,7 +51,7 @@ public class SysSurvController {
 	private static final String VIEW_PATH = "sys/surv";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/surv";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -76,14 +75,11 @@ public class SysSurvController {
 	
 	/** Constructor */
 	public SysSurvController() {		
-		RequestMapping requestMapping = SysSurvController.class.getAnnotation(RequestMapping.class);
-		if(requestMapping != null) {
-			this.REDIRECT_PATH = requestMapping.value()[0];
-		}
+		this.REDIRECT_PATH = "/sys/surv";
 	}
 	
 	/** Root Forward */
-	@RequestMapping(value = "")
+	@RequestMapping(value = "/sys/surv")
 	public String root(){
 		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
 			return web.returnJsp("error/error404");
@@ -97,7 +93,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/surv.do", "/sys/surv/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -119,7 +115,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/surv/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -148,7 +144,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/surv/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -175,7 +171,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,SurvMgtVO survMgtVO ,BindingResult survBindingResult) {
@@ -234,7 +230,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/surv/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -263,7 +259,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,SurvMgtVO survMgtVO ,BindingResult survBindingResult) {
@@ -323,7 +319,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {
@@ -367,7 +363,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyState.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/modifyState.do", method = RequestMethod.POST)
 	@ProgramInfo(code="STATE", name="문항,항목 수정 처리")
 	@ResponseBody
 	public boolean modifyState(HttpServletRequest request, @RequestParam(value = "survId", defaultValue="") String survId, @RequestParam(value = "survState", defaultValue="") String survState) {
@@ -381,7 +377,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/manage.do")
+	@RequestMapping(value = "/sys/surv/manage.do")
 	@ProgramInfo(code="MANAGE_FORM", name="문항,항목 관리 화면")
 	public String manageView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -416,7 +412,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/manageAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/manageAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MANAGE", name="문항,항목 수정 처리")
 	@ResponseBody
 	public boolean manageAction(HttpServletRequest request, @RequestBody Map<String, Object> map) {
@@ -429,7 +425,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/result.do")
+	@RequestMapping(value = "/sys/surv/result.do")
 	@ProgramInfo(code="RESULT", name="결과조회")
 	public String result(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -452,7 +448,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/etcView.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/surv/etcView.do", method = RequestMethod.POST)
 	@ProgramInfo(code="ETC_VIEW", name="기타 항목 조회")
 	@ResponseBody
 	public List<String> etcView(HttpServletRequest request
@@ -468,7 +464,7 @@ public class SysSurvController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/resultUser.do")
+	@RequestMapping(value = "/sys/surv/resultUser.do")
 	@ProgramInfo(code="RESULT_USER", name="사용자결과조회")
 	public String resultUser(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String survId

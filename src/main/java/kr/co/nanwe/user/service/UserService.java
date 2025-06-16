@@ -1,6 +1,5 @@
 package kr.co.nanwe.user.service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +82,4 @@ public interface UserService {
 	/** 엑셀 다운을 위한 사용자목록조회 */
 	void selectUserListForExcel(ExcelDownloadHandler<HashMap<String, Object>> handler, SearchVO search);
 	
-	/**
-	 * 만료된 사용자 데이터를 삭제합니다.
-	 * @param retentionDate 보관 기간 기준일
-	 */
-	void deleteExpiredUserData(Date retentionDate) throws Exception;
 }

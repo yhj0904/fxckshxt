@@ -36,7 +36,6 @@ import kr.co.nanwe.join.service.TermsVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/terms")
 @Program(code="COM_TERMS", name="약관관리")
 @Controller
 public class SysTermsController {
@@ -47,7 +46,7 @@ public class SysTermsController {
 	private static final String VIEW_PATH = "sys/terms";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/terms";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -73,22 +72,13 @@ public class SysTermsController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 약관관리 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/terms.do", "/sys/terms/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -110,7 +100,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/terms/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -142,7 +132,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/terms/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -164,7 +154,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/terms/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,TermsVO termsVO ,BindingResult termsBindingResult) {
@@ -229,7 +219,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/terms/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -261,7 +251,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/terms/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,TermsVO termsVO ,BindingResult termsBindingResult) {
@@ -325,12 +315,12 @@ public class SysTermsController {
 	}
 	
 	/**
-	 * 약관관리 삭제 화면
+	 * 약관관리 삭제처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do")
+	@RequestMapping(value = "/sys/terms/removeAction.do")
 	@ProgramInfo(code="REMOVE", name="삭제폼 화면")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -383,7 +373,7 @@ public class SysTermsController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/terms/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {

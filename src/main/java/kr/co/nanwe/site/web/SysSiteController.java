@@ -41,18 +41,15 @@ import kr.co.nanwe.template.service.TemplateService;
  * @ 2020.06.02		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/site")
 @Program(code="COM_SITE", name="사이트관리")
 @Controller
 public class SysSiteController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(SysSiteController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/site";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/site";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -82,22 +79,13 @@ public class SysSiteController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 사이트화면 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/site.do", "/sys/site/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -119,7 +107,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/site/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String siteCd){
@@ -148,7 +136,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/site/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -178,7 +166,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/site/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,SiteVO siteVO ,BindingResult siteBindingResult) {
@@ -257,7 +245,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/site/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String siteCd){
@@ -293,7 +281,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/site/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,SiteVO siteVO ,BindingResult siteBindingResult) {
@@ -371,7 +359,7 @@ public class SysSiteController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do")
+	@RequestMapping(value = "/sys/site/removeAction.do")
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String siteCd){
@@ -426,12 +414,12 @@ public class SysSiteController {
 	}
 	
 	/**
-	 * 사이트화면 코드수정 화면
+	 * 사이트화면 코드수정폼 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/code.do")
+	@RequestMapping(value = "/sys/site/code.do")
 	@ProgramInfo(code="CODE_FORM", name="코드수정폼 화면")
 	public String codeView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String siteCd){
@@ -458,12 +446,12 @@ public class SysSiteController {
 	}
 	
 	/**
-	 * 사이트화면 수정처리
+	 * 사이트화면 코드수정처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/codeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/site/codeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="CODE_MODIFY", name="코드수정처리")
 	public String codeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,SiteVO siteVO ,BindingResult siteBindingResult) {

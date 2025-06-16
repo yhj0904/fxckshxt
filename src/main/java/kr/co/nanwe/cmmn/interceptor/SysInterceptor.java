@@ -246,11 +246,46 @@ public class SysInterceptor extends HandlerInterceptorAdapter {
 							String methodPath = methodMapping.value()[0];
 							if (methodPath.startsWith("/sys/content")) {
 								presentPath = "/sys/content";
-							}
+							}else if (methodPath.startsWith("/sys/bbsMgt")) {
+								presentPath = "/sys/bbsMgt";
+							}else if (methodPath.startsWith("/sys/popup")) {
+								presentPath = "/sys/popup";
+							}else if (methodPath.startsWith("/sys/banner")) {
+								presentPath = "/sys/banner";
+							}else if (methodPath.startsWith("/sys/surv")) {
+								presentPath = "/sys/surv";
+							}else if (methodPath.startsWith("/sys/schMgt")) {
+								presentPath = "/sys/schMgt";
+							}else if (methodPath.startsWith("/sys/prog")) {
+								presentPath = "/sys/prog";
+							}else if (methodPath.startsWith("/sys/prog_surv")) {
+								presentPath = "/sys/prog_surv";
+							}else if (methodPath.startsWith("/sys/log")) {
+								presentPath = "/sys/log";
+							}else if (methodPath.startsWith("/sys/dept")) {
+								presentPath = "/sys/dept";
+							}else if (methodPath.startsWith("/sys/site")) {
+								presentPath = "/sys/site";
+							}else if (methodPath.startsWith("/sys/template")) {
+								presentPath = "/sys/template";
+							}else if (methodPath.startsWith("/sys/user")) {
+								presentPath = "/sys/user";
+							}else if (methodPath.startsWith("/sys/userIp")) {
+								presentPath = "/sys/userIp";
+							}else if (methodPath.startsWith("/sys/log/login")) {
+								presentPath = "/sys/log/login";
+							}else if (methodPath.startsWith("/sys/terms")) {
+								presentPath = "/sys/terms";
+							}else if (methodPath.startsWith("/sys/cnsler")) {
+								presentPath = "/sys/cnsler";
+							}else if (methodPath.startsWith("/sys/cnsl")) {
+								presentPath = "/sys/cnsl";
+							}else if (methodPath.startsWith("/labr")) {
+								presentPath = "/labr";
+							}	
 						}
 					}
 				}
-				System.out.println(presentPath + "<<<<presentPath");
 				modelAndView.addObject("GV_PRESENT_PATH", presentPath);
 				
 				//사이트 정보

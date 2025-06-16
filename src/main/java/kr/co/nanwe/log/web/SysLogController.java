@@ -41,7 +41,6 @@ import kr.co.nanwe.log.service.SysLogVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/log")
 @Program(code="SYS_LOG", name="시스템로그")
 @Controller
 public class SysLogController {	
@@ -52,7 +51,7 @@ public class SysLogController {
 	private static final String VIEW_PATH = "sys/sysLog";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/log";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -78,22 +77,13 @@ public class SysLogController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-		
 	/**
 	 * 시스템로그 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/log.do", "/sys/log/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						, @RequestParam(value = "sProgram", defaultValue="ALL") String sProgram){
@@ -121,7 +111,7 @@ public class SysLogController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/log/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						, @RequestParam(value = "sId", defaultValue="") String sysCode
@@ -160,7 +150,7 @@ public class SysLogController {
 	 * @exception 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/excelDown.do")
+	@RequestMapping(value = "/sys/log/excelDown.do")
 	@ProgramInfo(code = "EXCEL_DOWN", name = "샘플 엑셀다운")
 	public void excelDown(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search
 						, @RequestParam(value = "sProgram", defaultValue="ALL") String sProgram) throws IOException {

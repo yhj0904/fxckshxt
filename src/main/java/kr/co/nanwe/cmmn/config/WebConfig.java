@@ -395,13 +395,4 @@ public class WebConfig {
 		return null;
 	}
 	
-	/**
-	 * 사용자 데이터 보관 기간(월)을 반환합니다.
-	 * @return 보관 기간(월)
-	 */
-	public int getUserDataRetentionMonths() {
-		String retentionMonths = serverProp.getProperty("server.user.save.month", "0");
-		return Integer.parseInt(retentionMonths);
-	}
-	
 }

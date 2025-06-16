@@ -1,19 +1,11 @@
 package kr.co.nanwe.cmmn.scheduler;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import egovframework.com.cmm.service.EgovFileMngService;
-import egovframework.com.cmm.service.FileVO;
 import kr.co.nanwe.cmmn.config.WebConfig;
 import kr.co.nanwe.cmmn.util.StringUtil;
 import kr.co.nanwe.file.service.CkEditorUpload;
@@ -46,51 +38,17 @@ public class CmmnScheduler {
 	@Resource(name = "userService")
 	private UserService userService;
 	
-	@Resource(name = "EgovFileMngService")
-	private EgovFileMngService fileMngService;
-	
-	/**
-	 * 임시 파일 삭제 스케줄러
-	 */
-	/*
-	@Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
-	public void deleteTempFiles() {
-		try {
-			// 임시 파일 삭제 로직
-			FileVO fileVO = new FileVO();
-			fileVO.setAtchFileId("TEMP");
-			List<FileVO> fileList = fileMngService.selectFileInfs(fileVO);
-			
-			for (FileVO file : fileList) {
-				File physicalFile = new File(file.getFileStreCours() + file.getStreFileNm());
-				if (physicalFile.exists()) {
-					physicalFile.delete();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void executeJob() throws Exception {	
+		LOGGER.info("** CmmnScheduler Execute **");
+		
+		//임시 웹에디터 삭제
+		ckEditorUpload.deleteTempEditorFiles();
+		
+		//개인정보보관기간이 있는 경우 날짜 비교하여 삭제
+		int saveMonth = Integer.parseInt(StringUtil.isNullToString(web.getServerProp("server.user.save.month")));
+		if(saveMonth > 0) {
+			userService.deleteUserListByAfterSaveMonth(saveMonth);		
+		}		
+		
 	}
-	*/
-	
-	/**
-	 * 사용자 데이터 보관 기간 관리 스케줄러
-	 */
-	/*
-	@Scheduled(cron = "0 0 1 * * ?") // 매일 새벽 1시에 실행
-	public void manageUserDataRetention() {
-		try {
-			// 사용자 데이터 보관 기간 관리 로직
-			int retentionMonths = web.getUserDataRetentionMonths();
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.MONTH, -retentionMonths);
-			Date retentionDate = cal.getTime();
-			
-			// 보관 기간이 지난 사용자 데이터 삭제
-			userService.deleteExpiredUserData(retentionDate);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	*/
 }

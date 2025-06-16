@@ -41,7 +41,6 @@ import kr.co.nanwe.code.service.CommCdVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/bbsMgt")
 @Program(code="COM_BBS_MGT", name="게시판관리")
 @Controller
 public class SysBbsMgtController {
@@ -52,7 +51,7 @@ public class SysBbsMgtController {
 	private static final String VIEW_PATH = "sys/bbsMgt";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/bbsMgt";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -86,22 +85,13 @@ public class SysBbsMgtController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 게시판관리화면 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/bbsMgt.do", "/sys/bbsMgt/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -123,7 +113,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/bbsMgt/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -155,7 +145,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/bbsMgt/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -212,7 +202,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/copy.do")
+	@RequestMapping(value = "/sys/bbsMgt/copy.do")
 	@ProgramInfo(code="COPY_FORM", name="복사폼 화면")
 	public String copyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -255,7 +245,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/bbsMgt/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,BbsMgtVO bbsMgtVO ,BindingResult bbsMgtBindingResult
@@ -338,7 +328,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/bbsMgt/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -378,7 +368,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/bbsMgt/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,BbsMgtVO bbsMgtVO ,BindingResult bbsMgtBindingResult
@@ -460,7 +450,7 @@ public class SysBbsMgtController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/bbsMgt/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {

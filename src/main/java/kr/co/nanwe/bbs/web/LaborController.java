@@ -58,7 +58,6 @@ import kr.co.nanwe.user.service.UserVO;
  * @ 2024.06.10		정기훈			인력풀 등록 전체엑셀다운 추가
  */
 
-@RequestMapping(value = "/labr")
 @Program(code="LABOR", name="WK인력풀")
 @Controller
 public class LaborController {
@@ -78,7 +77,7 @@ public class LaborController {
 	private static final String BBS_CD = "BOARD09";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/labr";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -123,22 +122,13 @@ public class LaborController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 게시글화면 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/labr.do", "/labr/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sCate", defaultValue="ALL") String category){
@@ -180,7 +170,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/labr/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sCate", defaultValue="ALL") String category){
@@ -247,7 +237,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/labr/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,LaborVO laborVO, BindingResult lbrBindingResult
@@ -371,7 +361,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/labr/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id
@@ -471,7 +461,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/labr/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								, @RequestParam(value = "sId", defaultValue="") String id
@@ -592,7 +582,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/labr/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, LaborVO laborVO ,BindingResult labrBindingResult
@@ -737,7 +727,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/labr/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								, @RequestParam(value = "sId", defaultValue="") String id
@@ -822,7 +812,7 @@ public class LaborController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/labr/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "sCate", defaultValue="ALL") String category
@@ -889,7 +879,7 @@ public class LaborController {
 		
 	}
 	
-	@RequestMapping(value = "/excelDown.do")
+	@RequestMapping(value = "/labr/excelDown.do")
 	@ProgramInfo(code = "EXCEL_DOWN", name = "엑셀다운")
 	public void excelDown(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search, @RequestParam(value = "labrIds", required = false) String labrIds) throws IOException {
 		
@@ -919,7 +909,7 @@ public class LaborController {
 		ExcelDownload.excelDownload(request, response, excelName, wb);
 	}
 
-	@RequestMapping(value = "/excelDownAll.do")
+	@RequestMapping(value = "/labr/excelDownAll.do")
 	@ProgramInfo(code = "EXCEL_DOWN", name = "엑셀다운")
 	public void excelDownAll(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search) throws IOException {
 

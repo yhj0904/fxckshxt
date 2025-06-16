@@ -41,18 +41,15 @@ import kr.co.nanwe.site.service.SiteVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/menu")
 @Program(code="COM_MENU", name="메뉴관리")
 @Controller
 public class SysMenuController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(SysMenuController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/menu";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/menu";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -87,7 +84,7 @@ public class SysMenuController {
 	}
 	
 	/** Root Forward */
-	@RequestMapping(value = "")
+	@RequestMapping(value = "/sys/menu")
 	public String root(){
 		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
 			return web.returnJsp("error/error404");
@@ -96,54 +93,108 @@ public class SysMenuController {
 	}
 		
 	/**
-	 * 메뉴화면 목록조회
+	 * 메뉴관리 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/menu.do", "/sys/menu/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search, @RequestParam(value = "sMenuCd", defaultValue="") String sMenuCd){
+				
+		//검색조건 MODEL ADD
+				model.addAttribute("search", search);
+				
+				//권한 목록 조회
+				List<AuthVO> authList = authService.selectAuthUseList();
+				model.addAttribute("authList", authList);
+				
+				//사이트 목록 조회
+				List<SiteVO> siteList = siteService.selectSiteCdList();
+				model.addAttribute("siteList", siteList);
+				if(siteList != null) {
+					
+					if(StringUtil.isNull(sMenuCd)) {
+						sMenuCd = siteList.get(0).getSiteCd();
+					}
+					
+					//목록조회
+					Map<String, Object> map = menuService.selectMenuList(search, sMenuCd);	
+					
+					//조회결과 MODEL ADD
+					model.addAllAttributes(map);
+				}
+				
+				model.addAttribute("sMenuCd", sMenuCd);
+				
+				//메뉴 VO 생성
+				MenuVO menuVO = new MenuVO();
+				model.addAttribute("menuVO", menuVO);
+				
+				return web.returnView(VIEW_PATH, "/list");
+	}
+	
+	/**
+	 * 메뉴관리 상세조회
+	 * @param 
+	 * @return
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/menu/view.do")
+	@ProgramInfo(code="VIEW", name="상세조회")
+	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
+						,@RequestParam(value = "sId", defaultValue="") String id){
 		
 		//검색조건 MODEL ADD
 		model.addAttribute("search", search);
 		
-		//권한 목록 조회
-		List<AuthVO> authList = authService.selectAuthUseList();
-		model.addAttribute("authList", authList);
+		//상세조회
+		MenuVO menuVO = menuService.selectMenu(id);
 		
-		//사이트 목록 조회
-		List<SiteVO> siteList = siteService.selectSiteCdList();
-		model.addAttribute("siteList", siteList);
-		if(siteList != null) {
+		//조회결과가 없는 경우 RESULT VIEW 이동
+		if(menuVO == null) {
 			
-			if(StringUtil.isNull(sMenuCd)) {
-				sMenuCd = siteList.get(0).getSiteCd();
-			}
+			//리턴페이지 (생략시 메인페이지 리턴)
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
 			
-			//목록조회
-			Map<String, Object> map = menuService.selectMenuList(search, sMenuCd);	
-			
-			//조회결과 MODEL ADD
-			model.addAllAttributes(map);
+			return web.returnError();
 		}
 		
-		model.addAttribute("sMenuCd", sMenuCd);
-		
-		//메뉴 VO 생성
-		MenuVO menuVO = new MenuVO();
+		//조회결과 MODEL ADD
 		model.addAttribute("menuVO", menuVO);
 		
-		return web.returnView(VIEW_PATH, "/list");
+		return web.returnView(VIEW_PATH, "/view");
 	}
 	
 	/**
-	 * 메뉴화면 등록처리
+	 * 메뉴관리 등록폼 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/menu/register.do")
+	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
+	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
+		
+		//검색조건 MODEL ADD
+		model.addAttribute("search", search);
+		
+		//VO 생성
+		MenuVO menuVO = new MenuVO();
+		
+		//조회결과 MODEL ADD
+		model.addAttribute("menuVO", menuVO);
+		
+		return web.returnView(VIEW_PATH, "/register");
+	}
+	
+	/**
+	 * 메뉴관리 등록처리
+	 * @param 
+	 * @return
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/menu/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search, @RequestParam(value = "sMenuCd", defaultValue="") String sMenuCd
 								,MenuVO menuVO ,BindingResult menuBindingResult
@@ -233,17 +284,49 @@ public class SysMenuController {
 	}
 	
 	/**
-	 * 메뉴화면 수정처리
+	 * 메뉴관리 수정폼 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/menu/modify.do")
+	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
+	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
+								,@RequestParam(value = "sId", defaultValue="") String id){
+		
+		//검색조건 MODEL ADD
+		model.addAttribute("search", search);
+		
+		//상세조회
+		MenuVO menuVO = menuService.selectMenu(id);
+		
+		//조회결과가 없는 경우 RESULT VIEW 이동
+		if(menuVO == null) {
+			
+			//리턴페이지 (생략시 메인페이지 리턴)
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+				
+			return web.returnError();
+		}
+		
+		//조회결과 MODEL ADD
+		model.addAttribute("menuVO", menuVO);
+		
+		return web.returnView(VIEW_PATH, "/modify");
+	}
+	
+	/**
+	 * 메뉴관리 수정처리
+	 * @param 
+	 * @return
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/menu/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search, @RequestParam(value = "sMenuCd", defaultValue="") String sMenuCd
-									,MenuVO menuVO ,BindingResult menuBindingResult
-									,@RequestParam(value = "menuAuth", required=false) String[] menuAuthArr) {
-		
+			,MenuVO menuVO ,BindingResult menuBindingResult
+			,@RequestParam(value = "menuAuth", required=false) String[] menuAuthArr) {
+
 		//검색조건 MODEL ADD
 		model.addAttribute("search", search);
 		
@@ -255,7 +338,7 @@ public class SysMenuController {
 		List<SiteVO> siteList = siteService.selectSiteCdList();
 		model.addAttribute("siteList", siteList);
 		if(siteList != null) {
-			
+		
 			if(StringUtil.isNull(sMenuCd)) {
 				sMenuCd = siteList.get(0).getSiteCd();
 			}
@@ -268,7 +351,7 @@ public class SysMenuController {
 		}
 		
 		model.addAttribute("sMenuCd", sMenuCd);
-
+		
 		//유효성 검증
 		beanValidator.validate(menuVO, menuBindingResult);
 		
@@ -277,7 +360,7 @@ public class SysMenuController {
 			model.addAttribute("menuVO", menuVO);
 			return web.returnView(VIEW_PATH, "/list");
 		}
-		
+			
 		/* 유효성 추가검증 (Validator 외의 검증이 필요한 경우 작성) */
 		boolean addtionalValid = true;
 		//유효성 검사 로직 작성
@@ -308,7 +391,7 @@ public class SysMenuController {
 			model.addAttribute("resultParam", resultParam);
 			
 			return web.returnSuccess();
-			
+		
 		} else { //실패시
 			
 			//리턴페이지 (생략시 메인페이지 리턴)
@@ -319,20 +402,20 @@ public class SysMenuController {
 			model.addAttribute("resultParam", resultParam);
 			
 			return web.returnError();
-			
+		
 		}
 		
 	}
 	
 	/**
-	 * 메뉴화면 삭제처리
+	 * 메뉴관리 삭제 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
-	@ProgramInfo(code="REMOVE", name="삭제처리")
-	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search, @RequestParam(value = "sMenuCd", defaultValue="") String sMenuCd, MenuVO menuVO) {
+	@RequestMapping(value = "/sys/menu/removeAction.do")
+	@ProgramInfo(code="REMOVE", name="삭제폼 화면")
+public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search, @RequestParam(value = "sMenuCd", defaultValue="") String sMenuCd, MenuVO menuVO) {
 		
 		//검색조건 MODEL ADD
 		model.addAttribute("search", search);
@@ -382,5 +465,6 @@ public class SysMenuController {
 		}
 		
 	}
+	
 	
 }

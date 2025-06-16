@@ -51,8 +51,7 @@ import kr.co.nanwe.prog.service.ProgVO;
  * @ 2023.10.11		신한나			최초생성
  */
 
-@RequestMapping(value = "/sys/prog")
-@Program(code="PROG_MST", name="프로그램 관리")
+@Program(code="COM_PROG", name="프로그램관리")
 @Controller
 public class SysProgController {
 	
@@ -62,7 +61,7 @@ public class SysProgController {
 	private static final String VIEW_PATH = "sys/prog";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/prog";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -86,14 +85,11 @@ public class SysProgController {
 	
 	/** Constructor */
 	public SysProgController() {		
-		RequestMapping requestMapping = SysProgController.class.getAnnotation(RequestMapping.class);
-		if(requestMapping != null) {
-			this.REDIRECT_PATH = requestMapping.value()[0];
-		}
+		this.REDIRECT_PATH = "/sys/prog";
 	}
 	
 	/** Root Forward */
-	@RequestMapping(value = "")
+	@RequestMapping(value = "/sys/prog")
 	public String root(){
 		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
 			return web.returnJsp("error/error404");
@@ -107,7 +103,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/prog.do", "/sys/prog/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 						,@RequestParam(value = "sCode", defaultValue="") String code
@@ -137,7 +133,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/prog/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 						,@RequestParam(value = "sCode", defaultValue="") String code
@@ -175,7 +171,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/prog/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 								,@RequestParam(value = "sCode", defaultValue="") String code
@@ -218,7 +214,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/prog/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 								,ProgVO progVO ,BindingResult progBindingResult
@@ -331,7 +327,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/prog/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 								,@RequestParam(value = "sCode", defaultValue="") String code
@@ -385,7 +381,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/prog/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 									,ProgVO progVO ,BindingResult progBindingResult
@@ -492,8 +488,6 @@ public class SysProgController {
 			model.addAttribute("redirectUrl", REDIRECT_PATH + "/modify.do");
 
 			Map<String, Object> resultParam = new HashMap<String, Object>();
-//			resultParam.put("sCode", bbsVO.getBbsCd());
-//			resultParam.put("sId", bbsVO.getBbsId());
 			resultParam.put("sCate", category);
 			model.addAttribute("resultParam", resultParam);
 			return web.returnError();			
@@ -506,7 +500,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/prog/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {
@@ -537,8 +531,6 @@ public class SysProgController {
 			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
 
 			Map<String, Object> resultParam = new HashMap<String, Object>();
-			//resultParam.put("sCode", bbsVO.getBbsCd());
-			//resultParam.put("sCate", category);
 			model.addAttribute("resultParam", resultParam);
 			return web.returnSuccess();
 			
@@ -546,9 +538,7 @@ public class SysProgController {
 			model.addAttribute("redirectUrl", REDIRECT_PATH + "/view.do");
 			
 			Map<String, Object> resultParam = new HashMap<String, Object>();
-			//resultParam.put("sCode", bbsVO.getBbsCd());
 			resultParam.put("sId", progVO.getProgId());
-			//resultParam.put("sCate", category);
 			model.addAttribute("resultParam", resultParam);
 			return web.returnError();				
 		}
@@ -561,7 +551,7 @@ public class SysProgController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/prog/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute ProgSearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {
@@ -580,21 +570,18 @@ public class SysProgController {
 		if(checkedSId == null || "".equals(checkedSId)) {
 			model.addAttribute("resultMsg", messageUtil.getMessage("message.error.noCheck"));
 			model.addAttribute("redirectUrl",  REDIRECT_PATH + "/list.do");		
-			//Map<String, Object> resultParam = new HashMap<String, Object>();
-			//resultParam.put("sCate", category);
-			//model.addAttribute("resultParam", resultParam);
 			return web.returnError();
 		}
 		
 		//관리자인지 확인
-//		if(!bbsMgtVO.isAdminUser()){
-//			model.addAttribute("resultMsg", messageUtil.getMessage("message.error.auth"));
-//			model.addAttribute("redirectUrl", "/board/"+path+".do");
-//			Map<String, Object> resultParam = new HashMap<String, Object>();
-//			resultParam.put("sCate", category);
-//			model.addAttribute("resultParam", resultParam);
-//			return web.returnError();
-//		}
+		//if(!bbsMgtVO.isAdminUser()){
+		//	model.addAttribute("resultMsg", messageUtil.getMessage("message.error.auth"));
+		//	model.addAttribute("redirectUrl", "/board/"+path+".do");
+		//	Map<String, Object> resultParam = new HashMap<String, Object>();
+		//	resultParam.put("sCate", category);
+		//	model.addAttribute("resultParam", resultParam);
+		//	return web.returnError();
+		//}
 		
 		//삭제처리
 		int result = progService.deleteCheckedProg(checkedSId);
@@ -604,9 +591,6 @@ public class SysProgController {
 				
 		//리턴페이지 (생략시 메인페이지 리턴)
 		model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");		
-		//Map<String, Object> resultParam = new HashMap<String, Object>();
-		//resultParam.put("sCate", category);
-		//model.addAttribute("resultParam", resultParam);
 		
 		return web.returnSuccess();
 		

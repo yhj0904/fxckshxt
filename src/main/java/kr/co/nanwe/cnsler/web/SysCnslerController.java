@@ -57,18 +57,15 @@ import kr.co.nanwe.user.service.UserVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/cnsler")
 @Program(code="CNSL_MST", name="상담기준정보")
 @Controller
 public class SysCnslerController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(SysBbsController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/cnsler";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/cnsler";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -110,22 +107,13 @@ public class SysCnslerController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 게시글화면 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/cnsler.do", "/sys/cnsler/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sCode", defaultValue="") String code
@@ -147,7 +135,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/cnsler/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sCode", defaultValue="") String code
@@ -181,7 +169,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/cnsler/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -198,7 +186,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,CnslerVO cnslerVO ,BindingResult bbsBindingResult
@@ -248,7 +236,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/cnsler/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sCode", defaultValue="") String code
@@ -283,7 +271,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,CnslerVO cnslerVO ,BindingResult bbsBindingResult
@@ -326,7 +314,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {
@@ -370,7 +358,7 @@ public class SysCnslerController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {
@@ -400,12 +388,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 설문조사 화면
+	 * 부서 선택 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/selectDept.do")
+	@RequestMapping(value = "/sys/cnsler/selectDept.do")
 	@ProgramInfo(code="VIEW", name="등록 화면")
 	public String view(Model model, HttpServletRequest request, SearchVO search){
 		
@@ -426,12 +414,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 상담원 학과 등록
-	 * @param
+	 * 단과/부서 등록처리
+	 * @param 
 	 * @return
-	 * @exception
-	 * */
-	@RequestMapping(value = "/colgRegist.do")
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/cnsler/colgRegist.do")
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String colgRegisterAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 			,CnslerVO cnslerVO
@@ -467,12 +455,12 @@ public class SysCnslerController {
 
 	
 	/**
-	 * 상담원 스케줄
+	 * 상담원 일정 조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSch.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSch.do", method = RequestMethod.POST)
 	@ProgramInfo(code="CNSLERSCH", name="상담원일정")
 	public String cnslerSch(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							,@RequestParam(value = "sId", defaultValue="") String id
@@ -498,12 +486,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 상담원 스케줄
+	 * 상담원 일정 등록 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerRegisterSch.do")
+	@RequestMapping(value = "/sys/cnsler/cnslerRegisterSch.do")
 	@ProgramInfo(code="CNSLERSCH", name="상담원일정")
 	public String cnslerRegisterSch(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							,@RequestParam(value = "sId", defaultValue="") String id
@@ -520,12 +508,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 상담원일정 등록처리
+	 * 상담원 일정 등록처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSchRegisterAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSchRegisterAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String cnslerSchRegisterAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,CnslerVO cnslerVO ,BindingResult bbsBindingResult
@@ -573,12 +561,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 상담원 스케줄
+	 * 상담원 일정 상세조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSch_view.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSch_view.do", method = RequestMethod.POST)
 	@ProgramInfo(code="CNSLERSCH", name="상담원일정")
 	public String cnslerSch_view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							,@ModelAttribute CnslerVO cnslerVO
@@ -608,12 +596,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 상담원 일정수정
+	 * 상담원 일정 수정 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSch_modify.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSch_modify.do", method = RequestMethod.POST)
 	@ProgramInfo(code="CNSLERSCH", name="상담원일정수정")
 	public String cnslerSch_modify(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 							,@ModelAttribute CnslerVO cnslerVO
@@ -643,12 +631,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 게시글화면 삭제처리
+	 * 상담원 일정 수정처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSchModifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSchModifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String cnslerSchModifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,CnslerVO cnslerVO ,BindingResult bbsBindingResult
@@ -683,12 +671,12 @@ public class SysCnslerController {
 	}
 	
 	/**
-	 * 게시글화면 삭제처리
+	 * 상담원 일정 삭제처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/cnslerSchRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsler/cnslerSchRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String cnslerSchRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,CnslerVO cnslerVO ,BindingResult bbsBindingResult

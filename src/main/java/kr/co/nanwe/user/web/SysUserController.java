@@ -49,18 +49,15 @@ import kr.co.nanwe.user.service.UserVO;
  * @ 2023.10.18		신한나			필드 값 조정 및 기능 추가
  */
 
-@RequestMapping(value = "/sys/user")
 @Program(code="COM_USER", name="사용자관리")
 @Controller
 public class SysUserController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/user";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/user";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -94,22 +91,13 @@ public class SysUserController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-		
 	/**
 	 * 사용자 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/user.do", "/sys/user/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -131,7 +119,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/user/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -160,7 +148,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/user/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -204,7 +192,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/user/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,UserVO userVO ,BindingResult userBindingResult) {
@@ -338,7 +326,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/user/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -386,7 +374,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/user/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,UserVO userVO ,BindingResult userBindingResult
@@ -521,7 +509,7 @@ public class SysUserController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/user/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {
@@ -592,12 +580,12 @@ public class SysUserController {
 	}
 	
 	/**
-	 * 탈퇴사용자  목록조회
+	 * 사용자 삭제 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/del/list.do")
+	@RequestMapping(value = "/sys/user/del/list.do")
 	@ProgramInfo(code="DEL_LIST", name="목록조회")
 	public String delList(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -614,12 +602,12 @@ public class SysUserController {
 	}
 	
 	/**
-	 * 탈퇴사용자 상세조회
+	 * 사용자 삭제 상세조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/del/view.do")
+	@RequestMapping(value = "/sys/user/del/view.do")
 	@ProgramInfo(code="DEL_VIEW", name="상세조회")
 	public String delView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -643,12 +631,12 @@ public class SysUserController {
 	}
 	
 	/**
-	 * 탈퇴사용자 상태변경
+	 * 사용자 삭제 수정처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/del/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/user/del/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="DEL_MODIFY", name="수정처리")
 	public String delModifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								, @RequestParam(value = "userId", defaultValue="") String userId
@@ -683,7 +671,13 @@ public class SysUserController {
 		}		
 	}
 	
-	@RequestMapping(value = "/excelDown.do")
+	/**
+	 * 사용자 엑셀다운
+	 * @param 
+	 * @return
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/user/excelDown.do")
 	@ProgramInfo(code = "EXCEL_DOWN", name = "엑셀다운")
 	public void excelDown(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search) throws IOException {
 		

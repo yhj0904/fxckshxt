@@ -34,7 +34,7 @@ import kr.co.nanwe.code.service.CommCdVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/commCd")
+@RequestMapping(value = "/sys")
 @Program(code="COMM_CD", name="공통코드관리")
 @Controller
 public class SysCommCdController {
@@ -77,7 +77,12 @@ public class SysCommCdController {
 		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
 			return web.returnJsp("error/error404");
 		}
-		return web.forward(REDIRECT_PATH + "/list.do");
+		return web.forward(REDIRECT_PATH + "/commCd/list.do");
+	}
+	
+	@RequestMapping(value = "/commCd.do")
+	public String commCdDo(){
+		return web.forward(REDIRECT_PATH + "/commCd/list.do");
 	}
 		
 	/**
@@ -86,7 +91,7 @@ public class SysCommCdController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = "/commCd/list.do")
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -102,6 +107,7 @@ public class SysCommCdController {
 		//공통코드 VO 생성
 		CommCdVO commCdVO = new CommCdVO();
 		model.addAttribute("commCdVO", commCdVO);
+		model.addAttribute("command", commCdVO); // 추가
 		
 		return web.returnView(VIEW_PATH, "/list");
 	}
@@ -112,7 +118,7 @@ public class SysCommCdController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/commCd/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,CommCdVO commCdVO ,BindingResult commCdBindingResult) {
@@ -139,7 +145,7 @@ public class SysCommCdController {
 		boolean addtionalValid = true;
 		//유효성 검사 로직 작성
 		if(commCdVO == null) {
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 			return web.returnError();
 		}
 		//중복 코드 검사
@@ -163,14 +169,14 @@ public class SysCommCdController {
 		if(result > 0) { //성공시
 
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 
 			return web.returnSuccess();
 			
 		} else { //실패시
 			
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 
 			return web.returnError();			
 		}		
@@ -203,7 +209,7 @@ public class SysCommCdController {
 		boolean addtionalValid = true;
 		//유효성 검사 로직 작성
 		if(commCdVO == null) {
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 			return web.returnError();
 		}
 		//false 인 경우 view로 리턴
@@ -222,14 +228,14 @@ public class SysCommCdController {
 		if(result > 0) { //성공시
 		
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 			
 			return web.returnSuccess();
 			
 		} else { //실패시
 			
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 			
 			return web.returnError();
 			
@@ -243,7 +249,7 @@ public class SysCommCdController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/commCd/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search,CommCdVO commCdVO) {
 		
@@ -254,7 +260,7 @@ public class SysCommCdController {
 		if(commCdVO == null) {
 			
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 				
 			return web.returnError();
 		}
@@ -269,14 +275,14 @@ public class SysCommCdController {
 		if(result > 0) { //성공시		
 			
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 	
 			return web.returnSuccess();
 			
 		} else { //실패시			
 
 			//리턴페이지 (생략시 메인페이지 리턴)
-			model.addAttribute("redirectUrl", REDIRECT_PATH + "/list.do");
+			model.addAttribute("redirectUrl", REDIRECT_PATH + "/commCd/list.do");
 
 			return web.returnError();				
 		}

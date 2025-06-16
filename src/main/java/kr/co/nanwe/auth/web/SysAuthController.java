@@ -37,7 +37,6 @@ import kr.co.nanwe.code.service.CommCdService;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/auth")
 @Program(code="COM_AUTH", name="권한관리")
 @Controller
 public class SysAuthController {
@@ -48,7 +47,7 @@ public class SysAuthController {
 	private static final String VIEW_PATH = "sys/auth";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/auth";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -78,22 +77,7 @@ public class SysAuthController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-		
-	/**
-	 * 권한화면 목록조회
-	 * @param 
-	 * @return
-	 * @exception 
-	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/auth", "/sys/auth.do", "/sys/auth/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request){
 		

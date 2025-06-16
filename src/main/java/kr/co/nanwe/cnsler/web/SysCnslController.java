@@ -48,18 +48,15 @@ import kr.co.nanwe.user.service.UserVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/cnsl")
 @Program(code="CNSL_MST", name="상담관리")
 @Controller
 public class SysCnslController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(SysBbsController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/cnsl";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/cnsl";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -101,22 +98,13 @@ public class SysCnslController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-	
 	/**
 	 * 게시글화면 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/cnsl.do", "/sys/cnsl/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -136,7 +124,7 @@ public class SysCnslController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/cnsl/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,UserVO userVO
@@ -166,7 +154,7 @@ public class SysCnslController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/cnsl/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sCode", defaultValue="") String code
@@ -206,7 +194,7 @@ public class SysCnslController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsl/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,CnslerVO cnslerVO ,BindingResult bbsBindingResult
@@ -249,7 +237,7 @@ public class SysCnslController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsl/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id) {
@@ -293,7 +281,7 @@ public class SysCnslController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsl/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {
@@ -331,12 +319,12 @@ public class SysCnslController {
 	}
 	
 	/**
-	 * 게시글화면 선택 삭제처리
+	 * 상담 상태 수정처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/updateCnslStat.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/cnsl/updateCnslStat.do", method = RequestMethod.POST)
 	@ProgramInfo(code="UPDATE", name="수정처리")
 	public String updateCnslStat(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId
@@ -373,7 +361,13 @@ public class SysCnslController {
 		
 	}
 	
-	@RequestMapping(value = "/excelDown.do")
+	/**
+	 * 엑셀 다운로드
+	 * @param 
+	 * @return
+	 * @exception 
+	 */
+	@RequestMapping(value = "/sys/cnsl/excelDown.do")
 	@ProgramInfo(code = "EXCEL_DOWN", name = "엑셀다운")
 	public void excelDown(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search) throws IOException {
 		

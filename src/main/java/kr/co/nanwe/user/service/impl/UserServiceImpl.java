@@ -2,7 +2,6 @@ package kr.co.nanwe.user.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -708,10 +707,5 @@ public class UserServiceImpl extends EgovAbstractServiceImpl implements UserServ
 		Map<String, Object> paramMap = search.convertMap();
 		
 		userMapper.selectUserListForExcel(paramMap, handler);
-	}
-
-	@Override
-	public void deleteExpiredUserData(Date retentionDate) throws Exception {
-		userMapper.deleteExpiredUserData(retentionDate);
 	}
 }

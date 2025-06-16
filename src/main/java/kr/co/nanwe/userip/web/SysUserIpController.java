@@ -41,18 +41,15 @@ import kr.co.nanwe.userip.service.UserIpVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/userIp")
 @Program(code="COM_USER_IP", name="사용자 아이피 관리")
 @Controller
 public class SysUserIpController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(UserIpController.class);
 	
 	/** View Path */
 	private static final String VIEW_PATH = "sys/userIp";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/userIp";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -78,22 +75,13 @@ public class SysUserIpController {
 		}
 	}
 	
-	/** Root Forward */
-	@RequestMapping(value = "")
-	public String root(){
-		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
-			return web.returnJsp("error/error404");
-		}
-		return web.forward(REDIRECT_PATH + "/list.do");
-	}
-		
 	/**
 	 * 사용자 아이피 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/userIp.do", "/sys/userIp/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -115,7 +103,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/userIp/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id
@@ -145,7 +133,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/userIp/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -167,7 +155,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/userIp/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,UserIpVO userIpVO ,BindingResult userIpBindingResult) {
@@ -231,7 +219,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/userIp/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id
@@ -261,7 +249,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/userIp/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,UserIpVO userIpVO ,BindingResult userIpBindingResult) {
@@ -328,7 +316,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/userIp/removeAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id
@@ -376,7 +364,7 @@ public class SysUserIpController {
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/userIp/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {
@@ -414,7 +402,7 @@ public class SysUserIpController {
 	 * @exception 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/excelDown.do")
+	@RequestMapping(value = "/sys/userIp/excelDown.do")
 	@ProgramInfo(code = "COM_USER_IP_EXCEL_DOWN", name = "사용자 아이피 엑셀다운")
 	public void excelDown(HttpServletRequest request, HttpServletResponse response, @ModelAttribute SearchVO search) throws IOException {
 

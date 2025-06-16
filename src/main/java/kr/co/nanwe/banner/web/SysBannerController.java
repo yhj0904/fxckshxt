@@ -40,7 +40,6 @@ import kr.co.nanwe.code.service.CommCdVO;
  * @ 2020.01.06		임문환			최초생성
  */
 
-@RequestMapping(value = "/sys/banner")
 @Program(code="COM_BANNER", name="배너관리")
 @Controller
 public class SysBannerController {
@@ -51,7 +50,7 @@ public class SysBannerController {
 	private static final String VIEW_PATH = "sys/banner";
 	
 	/** Redirect Path */
-	private String REDIRECT_PATH = "";
+	private String REDIRECT_PATH = "/sys/banner";
 	
 	/** Validator */
 	@Resource(name = "beanValidator")
@@ -82,7 +81,7 @@ public class SysBannerController {
 	}
 	
 	/** Root Forward */
-	@RequestMapping(value = "")
+	@RequestMapping(value = "/sys/banner")
 	public String root(){
 		if(!"do".equals(StringUtil.getExtension(RequestUtil.getURI()))) {
 			return web.returnJsp("error/error404");
@@ -91,12 +90,12 @@ public class SysBannerController {
 	}
 		
 	/**
-	 * 배너화면 목록조회
+	 * 배너관리 목록조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/list.do")
+	@RequestMapping(value = {"/sys/banner.do", "/sys/banner/list.do"})
 	@ProgramInfo(code="LIST", name="목록조회")
 	public String list(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -113,12 +112,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 상세조회
+	 * 배너관리 상세조회
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/view.do")
+	@RequestMapping(value = "/sys/banner/view.do")
 	@ProgramInfo(code="VIEW", name="상세조회")
 	public String view(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 						,@RequestParam(value = "sId", defaultValue="") String id){
@@ -146,12 +145,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 등록폼 화면
+	 * 배너관리 등록폼 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/register.do")
+	@RequestMapping(value = "/sys/banner/register.do")
 	@ProgramInfo(code="REGISTER_FORM", name="등록폼 화면")
 	public String registerView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search){
 		
@@ -177,12 +176,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 등록처리
+	 * 배너관리 등록처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/registerAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/banner/registerAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REGISTER", name="등록처리")
 	public String registerAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,BannerVO bannerVO ,BindingResult bannerBindingResult) {
@@ -251,12 +250,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 수정폼 화면
+	 * 배너관리 수정폼 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modify.do")
+	@RequestMapping(value = "/sys/banner/modify.do")
 	@ProgramInfo(code="MODIFY_FORM", name="수정폼 화면")
 	public String modifyView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
@@ -287,12 +286,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 수정처리
+	 * 배너관리 수정처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/modifyAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/banner/modifyAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="MODIFY", name="수정처리")
 	public String modifyAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									,BannerVO bannerVO ,BindingResult bannerBindingResult) {
@@ -365,14 +364,14 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 삭제처리
+	 * 배너관리 삭제 화면
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/removeAction.do")
-	@ProgramInfo(code="REMOVE", name="삭제처리")
-	public String removeView(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
+	@RequestMapping(value = "/sys/banner/removeAction.do")
+	@ProgramInfo(code="REMOVE", name="삭제폼 화면")
+	public String removeAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 								,@RequestParam(value = "sId", defaultValue="") String id){
 		
 		//검색조건 MODEL ADD
@@ -418,12 +417,12 @@ public class SysBannerController {
 	}
 	
 	/**
-	 * 배너화면 선택 삭제처리
+	 * 배너관리 선택 삭제처리
 	 * @param 
 	 * @return
 	 * @exception 
 	 */
-	@RequestMapping(value = "/checkRemoveAction.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/sys/banner/checkRemoveAction.do", method = RequestMethod.POST)
 	@ProgramInfo(code="REMOVE", name="삭제처리")
 	public String checkRemoveAction(Model model, HttpServletRequest request, @ModelAttribute SearchVO search
 									, @RequestParam(value = "checkedSId", required=false) String checkedSId) {

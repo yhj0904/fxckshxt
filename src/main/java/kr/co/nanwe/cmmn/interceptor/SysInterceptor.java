@@ -230,12 +230,27 @@ public class SysInterceptor extends HandlerInterceptorAdapter {
 				
 				//컨트롤러의 RequestMapping을 확인 후 해당 RequestMapping을 모델에 담는다.
 				Method method = ((HandlerMethod) handler).getMethod();
-				if (method.getDeclaringClass().isAnnotationPresent(Controller.class) && method.getDeclaringClass().isAnnotationPresent(RequestMapping.class)) {
-					RequestMapping requestMapping = method.getDeclaringClass().getAnnotation(RequestMapping.class);
-					if(requestMapping != null) {
-						presentPath = requestMapping.value()[0];
-			        }
+				if (method.getDeclaringClass().isAnnotationPresent(Controller.class)) {
+					// 클래스 레벨 RequestMapping 확인
+					if (method.getDeclaringClass().isAnnotationPresent(RequestMapping.class)) {
+						RequestMapping classMapping = method.getDeclaringClass().getAnnotation(RequestMapping.class);
+						if(classMapping != null && classMapping.value().length > 0) {
+							presentPath = classMapping.value()[0];
+						}
+					}
+					
+					// 메서드 레벨 RequestMapping 확인
+					if (method.isAnnotationPresent(RequestMapping.class)) {
+						RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
+						if(methodMapping != null && methodMapping.value().length > 0) {
+							String methodPath = methodMapping.value()[0];
+							if (methodPath.startsWith("/sys/content")) {
+								presentPath = "/sys/content";
+							}
+						}
+					}
 				}
+				System.out.println(presentPath + "<<<<presentPath");
 				modelAndView.addObject("GV_PRESENT_PATH", presentPath);
 				
 				//사이트 정보

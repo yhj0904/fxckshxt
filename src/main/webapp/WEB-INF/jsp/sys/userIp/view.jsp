@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form commandName="userIpVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 	
 	<table class="detail_table">
 		<caption>사용자 아이피 상세조회</caption>

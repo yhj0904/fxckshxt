@@ -158,7 +158,7 @@
 			var msg = confirm('<spring:message code="message.confirm.remove" />');
 			if(msg == true){				
 				document.listForm.checkedSId.value = checkedSId;
-				document.listForm.action = GV_PRESENT_PATH + "/checkRemoveAction.do";
+				document.listForm.action = GV_PRESENT_PATH + "/content/checkRemoveAction.do";
 				document.listForm.submit();
 			}
 		}
@@ -167,7 +167,7 @@
 	//상세보기
 	function fn_detailView(sId) {
 		document.listForm.sId.value = sId;
-		document.listForm.action = GV_PRESENT_PATH + "/view.do";
+		document.listForm.action = GV_PRESENT_PATH + "/content/view.do";
 		document.listForm.submit();
 	}
 	

@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form commandName="contentVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute="contentVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
 	<table class="detail_table">
 		<caption>컨텐츠관리 등록</caption>
 		<colgroup>

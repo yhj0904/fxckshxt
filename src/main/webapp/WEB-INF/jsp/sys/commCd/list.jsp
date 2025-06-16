@@ -87,7 +87,7 @@
 					</li>
 				</ul>
 			</div>
-			<form:form commandName="commCdVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 			
 				<input type="hidden" name="registerFlag" value="C"/>
 			

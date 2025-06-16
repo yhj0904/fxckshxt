@@ -15,7 +15,7 @@
 	주소록 관리
 </div>
 <div class="sub_content">
-	<form:form commandName="pushGrpMstVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">			
+<form:form modelAttribute
 		<div class="btn_wrap">
 			<ul>
 				<li>

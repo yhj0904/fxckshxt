@@ -33,7 +33,7 @@
 		</ul>
 	</div>	
 	<div class="join_content">
-		<form:form commandName="joinVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 			<input type="hidden" name="agree" value="<c:out value='${joinVO.agree }'/>">
 			<input type="hidden" name="authCd" value="NORMAL"/>
 			<c:if test="${!empty joinVO.termList }">

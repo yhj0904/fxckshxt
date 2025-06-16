@@ -42,7 +42,7 @@
 					</li>
 				</ul>
 			</div>
-			<form:form commandName="authVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 			
 				<input type="hidden" name="registerFlag" value="C"/>
 			

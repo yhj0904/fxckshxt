@@ -19,7 +19,7 @@
 %>
 <link rel="stylesheet" href="/css/cnsl/cnsl.css" />
 
-<form:form commandName="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 	
 	<form:hidden path="cnslerId"/>
 	

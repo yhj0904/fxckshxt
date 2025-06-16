@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form commandName="termsVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 	<form:hidden path="termsId"/>
 	<table class="detail_table">
 		<caption>약관관리 등록</caption>

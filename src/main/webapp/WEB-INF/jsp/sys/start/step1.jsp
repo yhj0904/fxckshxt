@@ -16,7 +16,7 @@
 		<p>관리자 최초 등록 화면입니다.</p>
 	</div>
 	<div class="start_content">
-		<form:form commandName="userVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 			<form:hidden path="useYn"/>
 			<form:hidden path="authCd"/>
 			

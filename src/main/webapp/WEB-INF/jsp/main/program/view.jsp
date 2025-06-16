@@ -12,7 +12,7 @@
  */
 %>
 
-<form:form commandName="progVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 	<form:hidden path="progId" />
 	<div class="register2 prog-view">
 		<div class="wrap">

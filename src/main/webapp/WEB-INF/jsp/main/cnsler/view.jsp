@@ -19,7 +19,7 @@
 <div class="board_wrap">
 	
 	<div class="board_cont">
-		<form:form commandName="cnslerVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 			<c:if test='${!empty bbsMgtVO and GV_BOARD_SKIN_CODE ne null and GV_BOARD_SKIN_CODE ne ""}'>
 				<c:import url="/WEB-INF/jsp/main/board/${GV_BOARD_SKIN_CODE }/register.jsp"></c:import>
 			</c:if>

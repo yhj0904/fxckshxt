@@ -67,7 +67,7 @@
 	</c:if>
 	<% /* //TEMPLATE IMPORT */%>
 	
-	<form:form commandName="loginVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data" action="/loginAction.do">
+<form:form modelAttribute
 		<form:hidden path="loginType"/>
 		<form:hidden path="loginCertKey"/>
 		<form:hidden path="loginId"/>

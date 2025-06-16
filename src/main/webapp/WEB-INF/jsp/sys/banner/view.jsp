@@ -12,7 +12,7 @@
  * @ 2023.10.02		신한나			배너 내용추가
  */
 %>
-<form:form commandName="bannerVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 	
 	<form:hidden path="bannerId"/>
 	

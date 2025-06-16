@@ -11,7 +11,7 @@
  * @ 2020.01.06		임문환			최초생성
  */
 %>
-<form:form commandName="siteVO" id="detailForm" name="detailForm" method="post" autocomplete="off">
+<form:form modelAttribute
 	
 	<form:hidden path="siteCd"/>
 	

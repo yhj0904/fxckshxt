@@ -12,7 +12,7 @@
  */
 %>
 
-<form:form commandName="progVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 	
 	<form:hidden path="progId"/>
 	<form:hidden path="semstrCd"/>

@@ -20,7 +20,7 @@
 	</c:if>
 	
 	<div class="board_cont">
-		<form:form commandName="bbsVO" id="detailForm" name="detailForm" method="post" autocomplete="off" enctype="multipart/form-data">
+<form:form modelAttribute
 			<form:hidden path="bbsId"/>
 		   	<form:hidden path="bbsCd"/>
 			<form:hidden path="category" />

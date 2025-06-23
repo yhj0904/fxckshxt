@@ -85,7 +85,7 @@ public class EgovLoginController {
 		if (resultVO != null && resultVO.getId() != null && !resultVO.getId().equals("") && loginPolicyYn) {
 
 			request.getSession().setAttribute("LoginVO", resultVO);
-			return "redirect:/cmm/main/mainPage.do";
+			return "forward:/cmm/main/mainPage.do";
 		} else {
 
 			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));

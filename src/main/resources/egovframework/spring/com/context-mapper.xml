@@ -22,10 +22,8 @@
 		<property name="configLocation" value="classpath:/egovframework/sqlmap/sql-mapper-config.xml" />
 		<property name="mapperLocations">
 			<list>
+				<value>classpath:/egovframework/mapper/let/**/*_${db.type}.xml</value>
 				<value>classpath:/egovframework/sqlmap/mappers/${db.type}/**/*.xml</value>
-				<value>classpath:/egovframework/mapper/let/cmm/fms/EgovFile_SQL_${db.type}.xml</value>
-				<value>classpath:/egovframework/mapper/let/cop/bbs/EgovBoard_SQL_${db.type}.xml</value>
-				<value>classpath:/egovframework/mapper/let/uat/uia/EgovLoginUsr_SQL_${db.type}.xml</value>
 			</list>
 		</property>
 		<property name="plugins">  

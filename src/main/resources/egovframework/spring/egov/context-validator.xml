@@ -10,7 +10,8 @@
         <property name="validationConfigLocations">
             <list>
 				<!-- <value>classpath:/egovframework/validator/validator-rules.xml</value> -->
-				<value>classpath:/egovframework/validator/validator-custom-rules.xml</value>
+				<value>classpath:/egovframework/validator/validator-rules-let.xml</value>
+	            <value>classpath:/egovframework/validator/let/**/*.xml</value>
                 <value>classpath:/egovframework/validator/vo/*.xml</value>
             </list>
         </property>

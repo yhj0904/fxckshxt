@@ -7,7 +7,7 @@
         <property name="dataSource" ref="egov.dataSource" />
         <property name="strategy"   ref="fileSysMntrngIdStrategy" />
         <property name="blockSize"  value="10"/>
-        <property name="table"      value="COMTECOPSEQ"/>
+        <property name="table"      value="COMTECOPSEQ_TEMP"/>
         <property name="tableName"  value="FILESYS_MNTRNG"/>
     </bean>
     <bean name="fileSysMntrngIdStrategy" class="org.egovframe.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
@@ -22,7 +22,7 @@
         <property name="dataSource" ref="egov.dataSource" />
         <property name="strategy"   ref="fileSysMntrngLogIdStrategy" />
         <property name="blockSize"  value="10"/>
-        <property name="table"      value="COMTECOPSEQ"/>
+        <property name="table"      value="COMTECOPSEQ_TEMP"/>
         <property name="tableName"  value="FILESYS_LOGID"/>
     </bean>
     <bean name="fileSysMntrngLogIdStrategy" class="org.egovframe.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">

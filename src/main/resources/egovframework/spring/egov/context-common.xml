@@ -24,9 +24,10 @@
 			<list>
 				<value>classpath*:egovframework/message/vo/**/*</value>
 				<value>classpath*:egovframework/message/contents/**/*</value>
-				<value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value>
+				<value>classpath:/org/egovframe/rte/fdl/idgnr/messages/idgnr</value>
 				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
                 <value>classpath:/egovframework/message/message-common</value>
+                <value>classpath:/egovframework/message/com/message-common</value>
 				
 			</list>
 		</property>

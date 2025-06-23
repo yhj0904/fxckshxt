@@ -309,13 +309,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>5.2.5</version>
+			<artifactId>poi</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>ooxml-schemas</artifactId>
-			<version>1.4</version>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>5.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -439,14 +444,50 @@
 			<version>${spring.maven.artifact.version}</version>
 		</dependency>
 	</dependencies>
+	<!--Maven  Build 대상설정#1 시작-->
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<environment>local</environment>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<environment>dev</environment>
+			</properties>
+		</profile>
+		<profile>
+			<id>release</id>
+			<properties>
+				<environment>release</environment>
+			</properties>
+		</profile>
+	</profiles>
+	<!--Maven  Build 대상설정#1 끝-->
 
-    <build>
-        <defaultGoal>install</defaultGoal>
-        <directory>${basedir}/target</directory>
-        <finalName>sht_webapp</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
+	<build>
+		<!--Maven  Build 대상설정#2 시작-->
+		<resources>
+		<resource>
+			<directory>src/main/resources</directory>
+		</resource>
+		<resource>
+			<!-- 환경별 프로파일 리소스 경로 -->
+			<directory>src/main/resources-${environment}</directory>
+		</resource>
+	</resources>
+		<!--Maven  Build 대상설정#2 끝-->
+		<defaultGoal>install</defaultGoal>
+		<directory>${basedir}/target</directory>
+		<finalName>sht_webapp</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.13.0</version>
@@ -458,44 +499,44 @@
 					</configuration>
 				</plugin>
 				<plugin>
-                	<groupId>org.apache.maven.plugins</groupId>
-                	<artifactId>maven-war-plugin</artifactId>
-			<version>3.4.0</version>
-                	<configuration>
-                		<failOnMissingWebXml>false</failOnMissingWebXml>
-                	</configuration>
-                </plugin>
-                <!-- PMD manven plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-		    <version>3.23.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <!-- maven-surefire-plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-		<version>3.3.0</version>
-                <configuration>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>3.4.0</version>
+					<configuration>
+						<failOnMissingWebXml>false</failOnMissingWebXml>
+					</configuration>
+				</plugin>
+				<!-- PMD manven plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.23.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<!-- maven-surefire-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
 					<includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <parallel>methods</parallel>
-        			<threadCount>2</threadCount>
-                    <systemPropertyVariables>
-            			<propertyName>propertyValue</propertyName>
-        			</systemPropertyVariables> 
-                </configuration>
-            </plugin>
-            <!-- JavaDoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-		<version>3.7.0</version>
-            </plugin>
-        </plugins>
-    </build>
+						<include>**/*Test.java</include>
+					</includes>
+					<parallel>methods</parallel>
+					<threadCount>2</threadCount>
+					<systemPropertyVariables>
+						<propertyName>propertyValue</propertyName>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<!-- JavaDoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.7.0</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>

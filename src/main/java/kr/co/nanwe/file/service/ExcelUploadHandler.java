@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.SAXHelper;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+import org.xml.sax.XMLReader;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -65,8 +67,12 @@ public class ExcelUploadHandler implements SheetContentsHandler{
 			
 			ContentHandler handle = new XSSFSheetXMLHandler(styles, strings, sheetHandler, false);
 
-			XMLReader xmlReader = SAXHelper.newXMLReader();
+			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+			saxFactory.setNamespaceAware(true);
+			SAXParser saxParser = saxFactory.newSAXParser();
+			XMLReader xmlReader = saxParser.getXMLReader();
 			xmlReader.setContentHandler(handle);
+			xmlReader.parse(inputSource);
 
 			xmlReader.parse(inputSource);
 
